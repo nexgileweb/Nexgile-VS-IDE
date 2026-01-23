@@ -22,22 +22,19 @@ USE_CASES = ["remote development", "containerized builds", "cloud deployment", "
 
 def get_random_message():
     """Generate a random realistic commit message."""
-    categories = [
-        ("Fixed issue with {} not responding", ["editor", "terminal", "debugger", "search"]),
-        ("Fixed crash when {}", ["opening a file", "saving changes", "building project"]),
-        ("Resolved bug in {} causing {}", ["editor", "IntelliSense", "completion"], SYPTOMS),
-        ("Added support for {}", FEATURES),
-        ("Implemented {}", FEATURES),
-        ("Applied patch for {}", ["editor", "debugger", "build system"]),
-        ("Hotfix for {}", SYPTOMS),
-        ("Refactored {} for better performance", COMPONENTS),
-        ("Cleaned up {} code", COMPONENTS),
-        ("Added tests for {}", COMPONENTS),
+    templates = [
+        f"Fixed issue with {random.choice(COMPONENTS)} not responding",
+        f"Fixed crash when {random.choice(ACTIONS)}",
+        f"Resolved bug in {random.choice(COMPONENTS)} causing {random.choice(SYPTOMS)}",
+        f"Added support for {random.choice(FEATURES)}",
+        f"Implemented {random.choice(FEATURES)}",
+        f"Applied patch for {random.choice(COMPONENTS)}",
+        f"Hotfix for {random.choice(SYPTOMS)}",
+        f"Refactored {random.choice(COMPONENTS)} for better performance",
+        f"Cleaned up {random.choice(COMPONENTS)} code",
+        f"Added tests for {random.choice(COMPONENTS)}",
     ]
-    template, *fills = random.choice(categories)
-    if fills:
-        return template.format(random.choice(fills[0]))
-    return template
+    return random.choice(templates)
 
 def generate_random_date(start_date, end_date):
     """Generate a random datetime between start and end dates."""
