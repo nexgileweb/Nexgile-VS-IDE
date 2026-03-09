@@ -37,8 +37,9 @@ export function hygiene(some: NodeJS.ReadWriteStream | string[] | undefined, run
 	const productJson = es.through(function (file: VinylFile) {
 		const product = JSON.parse(file.contents!.toString('utf8'));
 
-		if (product.extensionsGallery) {
-			console.error(`product.json: Contains 'extensionsGallery'`);
+		const galleryUrl = product.extensionsGallery?.serviceUrl ?? '';
+		if (product.extensionsGallery && galleryUrl.includes('marketplace.visualstudio.com')) {
+			console.error(`product.json: Contains Microsoft 'extensionsGallery'`);
 			errorCount++;
 		}
 

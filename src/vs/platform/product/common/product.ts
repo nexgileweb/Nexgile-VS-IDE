@@ -71,20 +71,8 @@ else {
 			licenseName: 'Nexgile Code License',
 			licenseUrl: 'https://nexgile.com/license',
 			serverLicenseUrl: 'https://nexgile.com/license',
-			defaultChatAgent: {
-				extensionId: 'GitHub.copilot',
-				chatExtensionId: 'GitHub.copilot-chat',
-				provider: {
-					default: {
-						id: 'github',
-						name: 'GitHub',
-					},
-					enterprise: {
-						id: 'github-enterprise',
-						name: 'GitHub Enterprise',
-					}
-				},
-				providerScopes: []
+			configurationDefaults: {
+				'chat.disableAIFeatures': true
 			}
 		});
 	}
