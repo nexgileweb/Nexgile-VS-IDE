@@ -1,0 +1,39 @@
+{
+  "name": "nexgile-theme",
+  "displayName": "Nexgile Enterprise Themes",
+  "description": "Professional dark and light themes for Nexgile Code",
+  "categories": [
+    "Themes"
+  ],
+  "version": "1.0.0",
+  "publisher": "nexgile",
+  "license": "MIT",
+  "engines": {
+    "vscode": "*"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "id": "Nexgile Dark Enterprise",
+        "label": "Nexgile Dark Enterprise",
+        "uiTheme": "vs-dark",
+        "path": "./themes/nexgile-dark.json"
+      },
+      {
+        "id": "Nexgile Light Enterprise",
+        "label": "Nexgile Light Enterprise",
+        "uiTheme": "vs",
+        "path": "./themes/nexgile-light.json"
+      }
+    ],
+    "configurationDefaults": {
+      "workbench.colorTheme": "Nexgile Dark Enterprise",
+      "workbench.preferredDarkColorTheme": "Nexgile Dark Enterprise",
+      "workbench.preferredLightColorTheme": "Nexgile Light Enterprise"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nexgileweb/Nexgile-VS-IDE.git"
+  }
+}
