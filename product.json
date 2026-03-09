@@ -115,8 +115,24 @@
 			}
 		}
 	],
+	"extensionEnabledApiProposals": {
+		"nexgile.nexgile-theme": ["css"]
+	},
 	"configurationDefaults": {
 		"chat.disableAIFeatures": true,
+		"workbench.colorTheme": "Nexgile Teal Dark",
+		"workbench.preferredDarkColorTheme": "Nexgile Teal Dark",
+		"workbench.preferredLightColorTheme": "Nexgile Light Enterprise",
+		"editor.smoothScrolling": true,
+		"editor.cursorSmoothCaretAnimation": "on",
+		"editor.cursorBlinking": "smooth",
+		"editor.fontLigatures": true,
+		"editor.bracketPairColorization.enabled": true,
+		"editor.guides.bracketPairs": "active",
+		"workbench.list.smoothScrolling": true,
+		"terminal.integrated.smoothScrolling": true,
+		"editor.minimap.renderCharacters": false,
+		"editor.minimap.showSlider": "always",
 		"workbench.secondarySideBar.defaultVisibility": "visible"
 	},
 	"auxiliaryBarExtensionContainers": [

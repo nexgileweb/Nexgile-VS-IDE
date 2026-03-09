@@ -1,0 +1,72 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+/* Activity Bar - Teal Glow on Active Item */
+.monaco-workbench .activitybar .action-item.checked .active-item-indicator:before {
+	box-shadow: 0 0 12px #03D6C660, 0 0 4px #03D6C640;
+	border-radius: 4px;
+}
+
+/* Sidebar - Subtle Glass Effect */
+.monaco-workbench .part.sidebar {
+	backdrop-filter: blur(8px);
+	background: rgba(6, 10, 16, 0.85) !important;
+}
+
+/* Status Bar - Gradient with Teal */
+.monaco-workbench .part.statusbar {
+	background: linear-gradient(90deg, #060A10 0%, #03D6C610 50%, #060A10 100%) !important;
+	border-top: 1px solid #03D6C630;
+}
+
+/* Title Bar - Subtle Bottom Glow */
+.monaco-workbench .part.titlebar {
+	border-bottom: 1px solid #03D6C620;
+	box-shadow: 0 1px 8px #03D6C610;
+}
+
+/* Active Tab - Teal Glow Indicator */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tab.active {
+	box-shadow: 0 -2px 8px #03D6C620 inset;
+}
+
+/* Command Center - Glass Box */
+.monaco-workbench .part.titlebar .command-center .action-item.command-center-center {
+	backdrop-filter: blur(4px);
+	border: 1px solid #03D6C630 !important;
+	border-radius: 6px;
+}
+
+/* Panel - Top Border Glow */
+.monaco-workbench .part.panel {
+	border-top: 1px solid #03D6C625;
+}
+
+/* Notification Toast - Glass + Teal Border */
+.monaco-workbench .notifications-container .notification {
+	backdrop-filter: blur(12px);
+	border-left: 3px solid #03D6C6;
+}
+
+/* Welcome Page - Branded Cards */
+.gettingStartedContainer .getting-started-category {
+	border: 1px solid #03D6C620;
+	border-radius: 8px;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.gettingStartedContainer .getting-started-category:hover {
+	border-color: #03D6C650;
+	box-shadow: 0 0 16px #03D6C615;
+}
+
+/* Scrollbar - Rounded Teal Tint */
+.monaco-workbench .monaco-scrollable-element > .scrollbar > .slider {
+	border-radius: 4px;
+}
+
+/* Primary Button - Glow on Hover */
+.monaco-workbench .monaco-button.default:hover {
+	box-shadow: 0 0 12px #03D6C640;
+}

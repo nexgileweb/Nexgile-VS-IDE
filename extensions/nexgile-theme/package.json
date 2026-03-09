@@ -11,8 +11,15 @@
   "engines": {
     "vscode": "*"
   },
+  "enabledApiProposals": ["css"],
   "contributes": {
     "themes": [
+      {
+        "id": "Nexgile Teal Dark",
+        "label": "Nexgile Teal Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/nexgile-teal-dark.json"
+      },
       {
         "id": "Nexgile Dark Enterprise",
         "label": "Nexgile Dark Enterprise",
@@ -26,9 +33,14 @@
         "path": "./themes/nexgile-light.json"
       }
     ],
+    "css": [
+      {
+        "path": "./styles/nexgile-glass.css"
+      }
+    ],
     "configurationDefaults": {
-      "workbench.colorTheme": "Nexgile Dark Enterprise",
-      "workbench.preferredDarkColorTheme": "Nexgile Dark Enterprise",
+      "workbench.colorTheme": "Nexgile Teal Dark",
+      "workbench.preferredDarkColorTheme": "Nexgile Teal Dark",
       "workbench.preferredLightColorTheme": "Nexgile Light Enterprise"
     }
   },
