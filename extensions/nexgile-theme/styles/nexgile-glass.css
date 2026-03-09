@@ -3,70 +3,618 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-/* Activity Bar - Teal Glow on Active Item */
-.monaco-workbench .activitybar .action-item.checked .active-item-indicator:before {
-	box-shadow: 0 0 12px #03D6C660, 0 0 4px #03D6C640;
-	border-radius: 4px;
+/* ==========================================================================
+	Part 1: Custom Typography — Inter Variable Font
+	========================================================================== */
+
+@font-face {
+	font-family: 'Nexgile Sans';
+	src: url('./fonts/Inter-Variable.woff2') format('woff2');
+	font-weight: 100 900;
+	font-display: swap;
 }
 
-/* Sidebar - Subtle Glass Effect */
-.monaco-workbench .part.sidebar {
-	backdrop-filter: blur(8px);
-	background: rgba(6, 10, 16, 0.85) !important;
+@font-face {
+	font-family: 'Nexgile Sans';
+	src: url('./fonts/Inter-Variable-Italic.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: italic;
+	font-display: swap;
 }
 
-/* Status Bar - Gradient with Teal */
-.monaco-workbench .part.statusbar {
-	background: linear-gradient(90deg, #060A10 0%, #03D6C610 50%, #060A10 100%) !important;
-	border-top: 1px solid #03D6C630;
+.monaco-workbench.windows,
+.monaco-workbench.linux,
+.monaco-workbench.mac {
+	font-family: 'Nexgile Sans', 'Inter', system-ui, -apple-system, sans-serif !important;
+	letter-spacing: 0.01em !important;
+	-webkit-font-smoothing: antialiased !important;
 }
 
-/* Title Bar - Subtle Bottom Glow */
+/* ==========================================================================
+	Part 2: Global Design Token Overrides
+	Rounded corners + teal-tinted shadows propagate to 100+ surfaces
+	========================================================================== */
+
+.monaco-workbench {
+	--vscode-cornerRadius-small: 8px !important;
+	--vscode-cornerRadius-medium: 12px !important;
+	--vscode-cornerRadius-large: 16px !important;
+	--vscode-shadow-sm: 0 1px 3px rgba(3,214,198,0.06), 0 1px 2px rgba(0,0,0,0.12) !important;
+	--vscode-shadow-md: 0 2px 8px rgba(3,214,198,0.08), 0 2px 4px rgba(0,0,0,0.14) !important;
+	--vscode-shadow-lg: 0 4px 16px rgba(3,214,198,0.10), 0 4px 8px rgba(0,0,0,0.18) !important;
+	--vscode-shadow-xl: 0 8px 32px rgba(3,214,198,0.12), 0 8px 16px rgba(0,0,0,0.22) !important;
+}
+
+/* ==========================================================================
+	Part 3: Title Bar — Gradient + Prominent Glass Command Center
+	========================================================================== */
+
 .monaco-workbench .part.titlebar {
-	border-bottom: 1px solid #03D6C620;
-	box-shadow: 0 1px 8px #03D6C610;
+	background: linear-gradient(180deg, #080E18 0%, rgba(6,10,16,0.98) 100%) !important;
+	border-bottom: 1px solid rgba(3,214,198,0.15) !important;
+	box-shadow: 0 1px 12px rgba(3,214,198,0.06) !important;
 }
 
-/* Active Tab - Teal Glow Indicator */
-.monaco-workbench .part.editor > .content .editor-group-container > .title .tab.active {
-	box-shadow: 0 -2px 8px #03D6C620 inset;
-}
-
-/* Command Center - Glass Box */
+/* Command Center: frosted glass pill — signature element */
 .monaco-workbench .part.titlebar .command-center .action-item.command-center-center {
-	backdrop-filter: blur(4px);
-	border: 1px solid #03D6C630 !important;
-	border-radius: 6px;
+	backdrop-filter: blur(16px) saturate(180%) !important;
+	background: rgba(3,214,198,0.06) !important;
+	border: 1px solid rgba(3,214,198,0.20) !important;
+	border-radius: 12px !important;
+	box-shadow: inset 0 1px 0 rgba(255,255,255,0.03) !important;
+	transition: all 0.2s cubic-bezier(0.4,0,0.2,1) !important;
 }
 
-/* Panel - Top Border Glow */
+/* Command Center hover: glow + subtle scale */
+.monaco-workbench .part.titlebar .command-center .action-item.command-center-center:hover {
+	background: rgba(3,214,198,0.12) !important;
+	border-color: rgba(3,214,198,0.35) !important;
+	box-shadow: 0 0 20px rgba(3,214,198,0.10) !important;
+	transform: scale(1.01) !important;
+}
+
+/* ==========================================================================
+	Part 4: Activity Bar — Pill-Shaped Active Indicators + Icon Glow
+	========================================================================== */
+
+/* Active indicator: pill background instead of left border */
+.monaco-workbench .activitybar .action-item.checked .active-item-indicator:before {
+	background: linear-gradient(180deg, rgba(3,214,198,0.25), rgba(3,214,198,0.08)) !important;
+	border-radius: 10px !important;
+	box-shadow: 0 0 16px rgba(3,214,198,0.15), inset 0 0 0 1px rgba(3,214,198,0.12) !important;
+	left: 6px !important;
+	right: 6px !important;
+	top: 4px !important;
+	bottom: 4px !important;
+	height: auto !important;
+	width: auto !important;
+}
+
+/* Icon hover: teal drop-shadow */
+.monaco-workbench .activitybar .action-item:hover .action-label.codicon {
+	filter: drop-shadow(0 0 6px rgba(3,214,198,0.3)) !important;
+}
+
+/* Badge: pill + glow */
+.monaco-workbench .activitybar .badge .badge-content {
+	border-radius: 10px !important;
+	box-shadow: 0 0 8px rgba(3,214,198,0.4) !important;
+}
+
+/* ==========================================================================
+	Part 5: Sidebar — Deep Frosted Glass + Refined Headers
+	========================================================================== */
+
+.monaco-workbench .part.sidebar {
+	backdrop-filter: blur(20px) saturate(150%) !important;
+	background: rgba(6,10,16,0.80) !important;
+	border-right: 1px solid rgba(3,214,198,0.08) !important;
+}
+
+/* Sidebar title: uppercase tracking */
+.monaco-workbench .part.sidebar > .title {
+	letter-spacing: 0.08em !important;
+	font-weight: 600 !important;
+}
+
+/* Pane headers: uppercase, glass strip */
+.monaco-workbench .monaco-pane-view .pane > .pane-header {
+	background: rgba(3,214,198,0.03) !important;
+	letter-spacing: 0.06em !important;
+	font-size: 10.5px !important;
+	font-weight: 600 !important;
+}
+
+/* Tree indent guides: teal */
+.monaco-workbench .part.sidebar .monaco-tl-indent > .indent-guide.active {
+	border-color: rgba(3,214,198,0.30) !important;
+}
+
+/* ==========================================================================
+	Part 6: Editor Tabs — Floating Cards with Gap + Gradient Top Accent
+	========================================================================== */
+
+/* Tab bar: slightly transparent */
+.monaco-workbench .part.editor > .content .editor-group-container > .title {
+	background: rgba(8,12,20,0.6) !important;
+	backdrop-filter: blur(8px) !important;
+}
+
+/* Individual tabs: card shape with margin spacing */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab {
+	border-radius: 8px 8px 0 0 !important;
+	margin: 4px 2px 0 2px !important;
+	border: 1px solid transparent !important;
+	border-bottom: none !important;
+	transition: all 0.15s ease !important;
+}
+
+/* Active tab: elevated with teal glow */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active {
+	border-color: rgba(3,214,198,0.15) !important;
+	box-shadow: 0 -2px 12px rgba(3,214,198,0.08), inset 0 1px 0 rgba(3,214,198,0.10) !important;
+	position: relative !important;
+}
+
+/* Active tab top accent: gradient bar */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab.active::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 20%;
+	right: 20%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, #03D6C6, transparent);
+	border-radius: 0 0 2px 2px;
+	pointer-events: none;
+}
+
+/* Tab hover: subtle lift */
+.monaco-workbench .part.editor > .content .editor-group-container > .title .tabs-container > .tab:hover:not(.active) {
+	border-color: rgba(3,214,198,0.08) !important;
+}
+
+/* ==========================================================================
+	Part 7: Bottom Panel — Glass with Top Glow
+	========================================================================== */
+
 .monaco-workbench .part.panel {
-	border-top: 1px solid #03D6C625;
+	backdrop-filter: blur(16px) saturate(140%) !important;
+	background: rgba(7,11,18,0.85) !important;
+	border-top: 1px solid rgba(3,214,198,0.12) !important;
+	box-shadow: 0 -2px 16px rgba(0,0,0,0.15) !important;
 }
 
-/* Notification Toast - Glass + Teal Border */
-.monaco-workbench .notifications-container .notification {
-	backdrop-filter: blur(12px);
-	border-left: 3px solid #03D6C6;
+/* Panel tab indicator: gradient underline */
+.monaco-workbench .part.panel > .title .action-label.checked {
+	border-bottom-color: #03D6C6 !important;
 }
 
-/* Welcome Page - Branded Cards */
-.gettingStartedContainer .getting-started-category {
-	border: 1px solid #03D6C620;
-	border-radius: 8px;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.gettingStartedContainer .getting-started-category:hover {
-	border-color: #03D6C650;
-	box-shadow: 0 0 16px #03D6C615;
+/* ==========================================================================
+	Part 8: Status Bar — Gradient + Pill-Shaped Hover Items
+	========================================================================== */
+
+.monaco-workbench .part.statusbar {
+	background: linear-gradient(90deg, rgba(4,8,16,0.95), rgba(3,214,198,0.06) 35%, rgba(3,214,198,0.06) 65%, rgba(4,8,16,0.95)) !important;
+	border-top: 1px solid rgba(3,214,198,0.15) !important;
+	backdrop-filter: blur(12px) !important;
+	height: 26px !important;
+	font-size: 11.5px !important;
 }
 
-/* Scrollbar - Rounded Teal Tint */
+/* Pill-shaped hover on status items */
+.monaco-workbench .part.statusbar .statusbar-item a:hover {
+	background-color: rgba(3,214,198,0.12) !important;
+	border-radius: 6px !important;
+}
+
+/* ==========================================================================
+	Part 9: Command Palette — Hero Moment (Frosted Glass Overlay)
+	========================================================================== */
+
+.quick-input-widget {
+	backdrop-filter: blur(24px) saturate(180%) !important;
+	background: rgba(10,15,26,0.88) !important;
+	border: 1px solid rgba(3,214,198,0.18) !important;
+	border-radius: 16px !important;
+	box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 60px rgba(3,214,198,0.04) !important;
+	overflow: hidden !important;
+}
+
+/* Selected item: glass highlight with rounded shape */
+.quick-input-list .monaco-list-row.focused {
+	background: rgba(3,214,198,0.12) !important;
+	border-radius: 8px !important;
+	margin: 0 4px !important;
+}
+
+/* Input: rounded glass */
+.quick-input-widget .monaco-inputbox {
+	border-radius: 10px !important;
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	background: rgba(6,10,16,0.6) !important;
+}
+
+/* Quick input header */
+.quick-input-widget .quick-input-header {
+	padding: 8px 12px !important;
+}
+
+/* Quick input list items: rounded hover */
+.quick-input-list .monaco-list-row {
+	border-radius: 6px !important;
+	margin: 1px 4px !important;
+	transition: background 0.1s ease !important;
+}
+
+/* ==========================================================================
+	Part 10: Context Menus — Floating Glass Cards
+	========================================================================== */
+
+.context-view .monaco-menu {
+	backdrop-filter: blur(20px) saturate(180%) !important;
+	background: rgba(10,15,26,0.90) !important;
+	border: 1px solid rgba(3,214,198,0.12) !important;
+	border-radius: 12px !important;
+	box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
+	padding: 4px !important;
+	overflow: hidden !important;
+}
+
+/* Menu items: rounded hover */
+.context-view .monaco-menu .action-menu-item {
+	border-radius: 8px !important;
+	margin: 1px 2px !important;
+}
+
+/* Menu separator */
+.context-view .monaco-menu .action-item.disabled.separator {
+	margin: 4px 8px !important;
+}
+
+/* Submenu indicator */
+.context-view .monaco-menu .monaco-submenu {
+	border-radius: 12px !important;
+}
+
+/* ==========================================================================
+	Part 11: Scrollbars — Thin Teal Pills
+	========================================================================== */
+
+/* Thumb: pill-shaped, teal-tinted, thin */
 .monaco-workbench .monaco-scrollable-element > .scrollbar > .slider {
-	border-radius: 4px;
+	border-radius: 100px !important;
+	background: rgba(3,214,198,0.12) !important;
+	transition: width 0.15s ease, background 0.15s ease !important;
 }
 
-/* Primary Button - Glow on Hover */
+/* Vertical: thin, expands on hover */
+.monaco-workbench .monaco-scrollable-element > .scrollbar.vertical > .slider {
+	width: 6px !important;
+	min-width: 6px !important;
+}
+
+.monaco-workbench .monaco-scrollable-element > .scrollbar.vertical:hover > .slider,
+.monaco-workbench .monaco-scrollable-element > .scrollbar.vertical > .slider:hover {
+	width: 10px !important;
+	background: rgba(3,214,198,0.25) !important;
+}
+
+/* Horizontal scrollbar */
+.monaco-workbench .monaco-scrollable-element > .scrollbar.horizontal > .slider {
+	height: 6px !important;
+	min-height: 6px !important;
+}
+
+.monaco-workbench .monaco-scrollable-element > .scrollbar.horizontal:hover > .slider,
+.monaco-workbench .monaco-scrollable-element > .scrollbar.horizontal > .slider:hover {
+	height: 10px !important;
+	background: rgba(3,214,198,0.25) !important;
+}
+
+/* ==========================================================================
+	Part 12: Input Fields, Buttons, Notifications
+	========================================================================== */
+
+/* --- Inputs: rounded glass with teal focus glow --- */
+.monaco-workbench .monaco-inputbox {
+	border-radius: 8px !important;
+	border: 1px solid rgba(3,214,198,0.10) !important;
+	background: rgba(6,10,16,0.6) !important;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.monaco-workbench .monaco-inputbox.synthetic-focus,
+.monaco-workbench .monaco-inputbox:focus-within {
+	border-color: rgba(3,214,198,0.40) !important;
+	box-shadow: 0 0 0 3px rgba(3,214,198,0.10), 0 0 12px rgba(3,214,198,0.06) !important;
+}
+
+/* --- Primary Buttons: gradient with glow + lift --- */
+.monaco-workbench .monaco-button {
+	border-radius: 8px !important;
+	transition: all 0.15s cubic-bezier(0.4,0,0.2,1) !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.02em !important;
+}
+
+.monaco-workbench .monaco-button.default {
+	background: linear-gradient(180deg, #03D6C6 0%, #029E93 100%) !important;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+}
+
 .monaco-workbench .monaco-button.default:hover {
-	box-shadow: 0 0 12px #03D6C640;
+	box-shadow: 0 0 16px rgba(3,214,198,0.40), 0 2px 6px rgba(0,0,0,0.25) !important;
+	transform: translateY(-1px) !important;
+}
+
+.monaco-workbench .monaco-button.default:active {
+	transform: translateY(0) !important;
+	box-shadow: 0 0 8px rgba(3,214,198,0.3) !important;
+}
+
+/* --- Secondary Buttons: glass with teal border --- */
+.monaco-workbench .monaco-button.secondary {
+	background: rgba(3,214,198,0.06) !important;
+	border: 1px solid rgba(3,214,198,0.20) !important;
+	backdrop-filter: blur(8px) !important;
+}
+
+.monaco-workbench .monaco-button.secondary:hover {
+	background: rgba(3,214,198,0.12) !important;
+	border-color: rgba(3,214,198,0.35) !important;
+	box-shadow: 0 0 12px rgba(3,214,198,0.15) !important;
+	transform: translateY(-1px) !important;
+}
+
+/* --- Notifications: frosted glass card with teal left border --- */
+.monaco-workbench .notifications-container .notification-toast {
+	border-radius: 12px !important;
+	overflow: hidden !important;
+	box-shadow: 0 8px 32px rgba(0,0,0,0.30), 0 0 40px rgba(3,214,198,0.04) !important;
+}
+
+.monaco-workbench .notifications-container .notification {
+	backdrop-filter: blur(20px) saturate(160%) !important;
+	background: rgba(10,15,26,0.88) !important;
+	border-left: 3px solid #03D6C6 !important;
+	border-radius: 12px !important;
+}
+
+/* Notification center */
+.monaco-workbench .notifications-center {
+	border-radius: 12px !important;
+	overflow: hidden !important;
+	box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
+}
+
+/* --- Dropdown / Select --- */
+.monaco-workbench .monaco-select-box {
+	border-radius: 8px !important;
+	border: 1px solid rgba(3,214,198,0.10) !important;
+}
+
+/* --- Checkbox --- */
+.monaco-workbench .monaco-custom-toggle {
+	border-radius: 4px !important;
+}
+
+/* ==========================================================================
+	Part 13: Editor Overlays (Suggest, Hover, Find)
+	========================================================================== */
+
+/* --- Suggest Widget --- */
+.monaco-workbench .editor-widget.suggest-widget {
+	backdrop-filter: blur(20px) saturate(180%) !important;
+	background: rgba(10,15,26,0.90) !important;
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	border-radius: 12px !important;
+	box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 40px rgba(3,214,198,0.04) !important;
+	overflow: hidden !important;
+}
+
+.monaco-workbench .editor-widget.suggest-widget .monaco-list-row.focused {
+	background: rgba(3,214,198,0.12) !important;
+	border-radius: 6px !important;
+}
+
+/* --- Hover Widget --- */
+.monaco-workbench .monaco-hover {
+	backdrop-filter: blur(20px) saturate(180%) !important;
+	background: rgba(10,15,26,0.90) !important;
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	border-radius: 10px !important;
+	box-shadow: 0 8px 24px rgba(0,0,0,0.30) !important;
+}
+
+/* --- Find Widget --- */
+.monaco-workbench .find-widget {
+	backdrop-filter: blur(16px) saturate(160%) !important;
+	background: rgba(10,15,26,0.90) !important;
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	border-radius: 10px !important;
+	box-shadow: 0 4px 16px rgba(0,0,0,0.25) !important;
+}
+
+/* --- Parameter Hints --- */
+.monaco-workbench .parameter-hints-widget {
+	backdrop-filter: blur(20px) saturate(180%) !important;
+	background: rgba(10,15,26,0.90) !important;
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	border-radius: 10px !important;
+	box-shadow: 0 4px 16px rgba(0,0,0,0.25) !important;
+}
+
+/* --- Peek View --- */
+.monaco-workbench .peekview-widget .head {
+	border-radius: 8px 8px 0 0 !important;
+}
+
+/* --- Editor sticky scroll --- */
+.monaco-workbench .sticky-widget {
+	backdrop-filter: blur(8px) !important;
+}
+
+/* ==========================================================================
+	Part 14: Micro-Animations + Focus Rings + Polish
+	========================================================================== */
+
+/* Smooth transitions on all interactive elements */
+.monaco-workbench .monaco-action-bar .action-item {
+	transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+/* Teal focus ring instead of default outline */
+.monaco-workbench *:focus-visible {
+	outline: 2px solid rgba(3,214,198,0.40) !important;
+	outline-offset: 2px !important;
+}
+
+/* Progress bar: teal glow trail */
+.monaco-workbench .monaco-progress-container .progress-bit {
+	box-shadow: 0 0 8px rgba(3,214,198,0.4), 0 0 3px rgba(3,214,198,0.6) !important;
+	border-radius: 4px !important;
+}
+
+/* Action bar items: subtle hover lift */
+.monaco-workbench .monaco-action-bar .action-item .action-label:hover {
+	transform: scale(1.05) !important;
+}
+
+/* List hover: smooth transition */
+.monaco-workbench .monaco-list .monaco-list-row {
+	transition: background 0.1s ease !important;
+}
+
+/* ==========================================================================
+	Part 15: Welcome Page — Premium Cards
+	========================================================================== */
+
+/* Welcome category cards */
+.gettingStartedContainer .getting-started-category {
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	border-radius: 12px !important;
+	backdrop-filter: blur(8px) !important;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+.gettingStartedContainer .getting-started-category:hover {
+	border-color: rgba(3,214,198,0.35) !important;
+	box-shadow: 0 4px 24px rgba(3,214,198,0.10), 0 0 40px rgba(3,214,198,0.04) !important;
+	transform: translateY(-2px) !important;
+}
+
+/* Welcome step items */
+.gettingStartedContainer .getting-started-step {
+	border-radius: 8px !important;
+	transition: background 0.15s ease !important;
+}
+
+/* ==========================================================================
+	Part 16: Dialog / Modal Overlays
+	========================================================================== */
+
+.monaco-workbench .dialog-shadow {
+	backdrop-filter: blur(4px) !important;
+}
+
+.monaco-workbench .monaco-dialog-box {
+	backdrop-filter: blur(24px) saturate(180%) !important;
+	background: rgba(10,15,26,0.92) !important;
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	border-radius: 16px !important;
+	box-shadow: 0 16px 48px rgba(0,0,0,0.4) !important;
+}
+
+/* ==========================================================================
+	Part 17: Breadcrumb Bar
+	========================================================================== */
+
+.monaco-workbench .breadcrumbs-below-tabs {
+	backdrop-filter: blur(8px) !important;
+}
+
+/* ==========================================================================
+	Part 18: Extension / Marketplace Views
+	========================================================================== */
+
+.monaco-workbench .extension-editor {
+	backdrop-filter: blur(8px) !important;
+}
+
+/* Extension list items */
+.monaco-workbench .extensions-list .monaco-list-row {
+	border-radius: 8px !important;
+	margin: 2px 4px !important;
+}
+
+/* ==========================================================================
+	Part 19: Terminal
+	========================================================================== */
+
+.monaco-workbench .terminal-wrapper {
+	backdrop-filter: blur(12px) !important;
+}
+
+/* ==========================================================================
+	Part 20: Debug Toolbar
+	========================================================================== */
+
+.monaco-workbench .debug-toolbar {
+	backdrop-filter: blur(16px) saturate(180%) !important;
+	background: rgba(10,15,26,0.88) !important;
+	border: 1px solid rgba(3,214,198,0.15) !important;
+	border-radius: 12px !important;
+	box-shadow: 0 4px 16px rgba(0,0,0,0.25) !important;
+}
+
+/* ==========================================================================
+	Part 21: Settings Editor
+	========================================================================== */
+
+.monaco-workbench .settings-editor .setting-item {
+	border-radius: 8px !important;
+	transition: background 0.1s ease !important;
+}
+
+/* ==========================================================================
+	Part 22: Editor Group Header — Refined Breadcrumb + Action Spacing
+	========================================================================== */
+
+.monaco-workbench .part.editor > .content .editor-group-container > .editor-group-header {
+	backdrop-filter: blur(8px) !important;
+}
+
+/* ==========================================================================
+	Part 23: Minimap — Soft Edges
+	========================================================================== */
+
+.monaco-workbench .minimap {
+	border-radius: 4px !important;
+	overflow: hidden !important;
+}
+
+/* ==========================================================================
+	Part 24: Widget Overlays — Keybinding, Badge polish
+	========================================================================== */
+
+/* Keybinding labels: glass pill */
+.monaco-workbench .keybinding .monaco-keybinding-key {
+	border-radius: 6px !important;
+	backdrop-filter: blur(4px) !important;
+}
+
+/* Badge: pill shape everywhere */
+.monaco-workbench .badge .badge-content {
+	border-radius: 10px !important;
+}
+
+/* ==========================================================================
+	Part 25: Auxiliary / Secondary Sidebar
+	========================================================================== */
+
+.monaco-workbench .part.auxiliarybar {
+	backdrop-filter: blur(20px) saturate(150%) !important;
+	background: rgba(6,10,16,0.80) !important;
+	border-left: 1px solid rgba(3,214,198,0.08) !important;
 }

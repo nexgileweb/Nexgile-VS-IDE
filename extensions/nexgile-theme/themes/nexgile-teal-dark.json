@@ -374,7 +374,7 @@
 
     "editorGhostText.foreground": "#03D6C650",
 
-    "editorGroup.border": "#121A28",
+    "editorGroup.border": "#03D6C610",
     "editorGroup.dropBackground": "#03D6C620",
     "editorGroupHeader.tabsBackground": "#0A0F1A",
     "editorGroupHeader.noTabsBackground": "#080C14",
@@ -386,7 +386,7 @@
     "tab.activeBorder": "#00000000",
     "tab.inactiveBackground": "#0A0F1A",
     "tab.inactiveForeground": "#7B8BA3",
-    "tab.border": "#00000000",
+    "tab.border": "#03D6C608",
     "tab.hoverBackground": "#0D1320",
     "tab.hoverBorder": "#03D6C680",
     "tab.unfocusedActiveBackground": "#080C14",
@@ -398,7 +398,7 @@
 
     "sideBar.background": "#060A10",
     "sideBar.foreground": "#7B8BA3",
-    "sideBar.border": "#121A28",
+    "sideBar.border": "#03D6C60C",
     "sideBar.dropBackground": "#03D6C620",
     "sideBarTitle.foreground": "#E8EDF5",
     "sideBarSectionHeader.background": "#040810",
@@ -408,7 +408,7 @@
     "activityBar.background": "#040810",
     "activityBar.foreground": "#E8EDF5",
     "activityBar.inactiveForeground": "#546E7A",
-    "activityBar.border": "#121A28",
+    "activityBar.border": "#03D6C60C",
     "activityBar.activeBorder": "#03D6C6",
     "activityBar.activeBackground": "#03D6C615",
     "activityBarBadge.background": "#03D6C6",
@@ -438,10 +438,10 @@
     "titleBar.activeForeground": "#E8EDF5",
     "titleBar.inactiveBackground": "#060A10",
     "titleBar.inactiveForeground": "#546E7A",
-    "titleBar.border": "#121A28",
+    "titleBar.border": "#03D6C610",
 
     "panel.background": "#070B12",
-    "panel.border": "#121A28",
+    "panel.border": "#03D6C610",
     "panel.dropBorder": "#03D6C6",
     "panelTitle.activeBorder": "#03D6C6",
     "panelTitle.activeForeground": "#E8EDF5",
