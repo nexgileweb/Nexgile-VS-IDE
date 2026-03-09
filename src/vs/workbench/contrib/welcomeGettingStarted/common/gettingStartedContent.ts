@@ -220,6 +220,26 @@ export const startEntries: GettingStartedStartEntryContent = [
 			command: 'command:welcome.newWorkspaceChat',
 		}
 	},
+	{
+		id: 'nexgileDigitalWorkers',
+		title: localize('gettingStarted.nexgileDigitalWorkers.title', "Explore Digital Workers"),
+		description: localize('gettingStarted.nexgileDigitalWorkers.description', "Deploy 333+ AI-powered Digital Workers across your enterprise"),
+		icon: Codicon.globe,
+		content: {
+			type: 'startEntry',
+			command: 'https://nexgile.com',
+		}
+	},
+	{
+		id: 'nexgilePortals',
+		title: localize('gettingStarted.nexgilePortals.title', "Enterprise Portals"),
+		description: localize('gettingStarted.nexgilePortals.description', "111+ industry-specific portals ready to deploy"),
+		icon: Codicon.dashboard,
+		content: {
+			type: 'startEntry',
+			command: 'https://nexgile.com',
+		}
+	},
 ];
 
 const Button = (title: string, href: string) => `[${title}](${href})`;
@@ -252,7 +272,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 	{
 		id: 'Setup',
 		title: localize('gettingStarted.setup.title', "Get started with Nexgile Code"),
-		description: localize('gettingStarted.setup.description', "Customize your editor, learn the basics, and start coding"),
+		description: localize('gettingStarted.setup.description', "Set up your AI-powered development environment and start building"),
 		isFeatured: true,
 		icon: setupIcon,
 		when: '!isWeb',
@@ -277,8 +297,8 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 				},
 				{
 					id: 'videoTutorial',
-					title: localize('gettingStarted.videoTutorial.title', "Watch video tutorials"),
-					description: localize('gettingStarted.videoTutorial.description.interpolated', "Watch the first in a series of short & practical video tutorials for Nexgile Code's key features.\n{0}", Button(localize('watch', "Watch Tutorial"), 'https://aka.ms/vscode-getting-started-video')),
+					title: localize('gettingStarted.videoTutorial.title', "Explore Nexgile ecosystem"),
+					description: localize('gettingStarted.videoTutorial.description.interpolated', "Discover 333+ Digital Workers, 2K+ Intelligent Agents, and 111+ Enterprise Portals ready to deploy across your operations.\n{0}", Button(localize('watch', "Visit nexgile.com"), 'https://nexgile.com')),
 					media: { type: 'svg', altText: 'Nexgile Code Settings', path: 'learn.svg' },
 				}
 			]
@@ -288,7 +308,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 	{
 		id: 'SetupWeb',
 		title: localize('gettingStarted.setupWeb.title', "Get Started with Nexgile Code for the Web"),
-		description: localize('gettingStarted.setupWeb.description', "Customize your editor, learn the basics, and start coding"),
+		description: localize('gettingStarted.setupWeb.description', "Set up your AI-powered development environment and start building"),
 		isFeatured: true,
 		icon: setupIcon,
 		when: 'isWeb',
@@ -482,7 +502,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 		isFeatured: false,
 		title: localize('gettingStarted.beginner.title', "Learn the Fundamentals"),
 		icon: beginnerIcon,
-		description: localize('gettingStarted.beginner.description', "Get an overview of the most essential features"),
+		description: localize('gettingStarted.beginner.description', "Master the essential features of your AI-powered IDE"),
 		walkthroughPageTitle: localize('gettingStarted.beginner.walkthroughPageTitle', 'Essential Features'),
 		content: {
 			type: 'steps',
