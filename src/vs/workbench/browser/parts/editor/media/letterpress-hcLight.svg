@@ -1,11 +1,9 @@
 <svg width="260" height="260" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="n-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#025E56" stop-opacity="0.10"/>
-      <stop offset="100%" stop-color="#025E56" stop-opacity="0.06"/>
+    <linearGradient id="ng" x1="0" y1="0" x2="260" y2="260" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#025E56" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#025E56" stop-opacity="0.08"/>
     </linearGradient>
   </defs>
-  <!-- Geometric N monogram — high contrast light variant -->
-  <path d="M72 210V50h24l68 112V50h24v160h-24l-68-112v112H72z"
-        fill="url(#n-grad)" stroke="#025E56" stroke-opacity="0.08" stroke-width="1"/>
+  <path d="M44 228V32h60l96 152V32h60v196h-60L104 76v152H44z" fill="url(#ng)"/>
 </svg>

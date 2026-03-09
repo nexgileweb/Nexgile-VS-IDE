@@ -1,19 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#060A10"/>
-      <stop offset="100%" stop-color="#0A1020"/>
-    </linearGradient>
-    <linearGradient id="n-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="ng" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#5EEADF"/>
       <stop offset="100%" stop-color="#03D6C6"/>
     </linearGradient>
   </defs>
-  <!-- Rounded square background -->
-  <rect x="64" y="64" width="896" height="896" rx="192" fill="url(#bg-grad)"/>
-  <!-- Subtle border -->
-  <rect x="64" y="64" width="896" height="896" rx="192" fill="none" stroke="#03D6C6" stroke-opacity="0.2" stroke-width="4"/>
-  <!-- N monogram -->
-  <path d="M310 740V284h80l244 380V284h80v456h-80L390 360v380h-80z"
-        fill="url(#n-grad)"/>
+  <rect width="1024" height="1024" rx="220" fill="#040810"/>
+  <path d="M248 800V224h144l240 384V224h144v576H632L392 416v384H248z" fill="url(#ng)"/>
 </svg>
