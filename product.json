@@ -95,7 +95,11 @@
 		}
 	],
 	"configurationDefaults": {
-		"chat.disableAIFeatures": true
+		"chat.disableAIFeatures": true,
+		"workbench.secondarySideBar.defaultVisibility": "visible"
 	},
+	"auxiliaryBarExtensionContainers": [
+		"workbench.view.extension.nexgile-code-ActivityBar"
+	],
 	"trustedExtensionAuthAccess": {}
 }

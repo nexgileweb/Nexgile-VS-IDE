@@ -775,7 +775,9 @@ export abstract class Layout extends Disposable implements IWorkbenchLayoutServi
 
 		// Auxiliary View to restore
 		if (this.isVisible(Parts.AUXILIARYBAR_PART)) {
-			const viewContainerToRestore = this.storageService.get(AuxiliaryBarPart.activeViewSettingsKey, StorageScope.WORKSPACE, this.viewDescriptorService.getDefaultViewContainer(ViewContainerLocation.AuxiliaryBar)?.id);
+			const viewContainerToRestore = this.storageService.get(AuxiliaryBarPart.activeViewSettingsKey, StorageScope.WORKSPACE,
+				this.viewDescriptorService.getDefaultViewContainer(ViewContainerLocation.AuxiliaryBar)?.id
+				?? this.viewDescriptorService.getProductConfiguredContainerId(ViewContainerLocation.AuxiliaryBar));
 			if (viewContainerToRestore) {
 				this.state.initialization.views.containerToRestore.auxiliaryBar = viewContainerToRestore;
 			} else {

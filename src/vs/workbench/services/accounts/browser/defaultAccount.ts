@@ -85,7 +85,22 @@ interface IMcpRegistryResponse {
 	readonly mcp_registries: ReadonlyArray<IMcpRegistryProvider>;
 }
 
-function toDefaultAccountConfig(defaultChatAgent: IDefaultChatAgent): IDefaultAccountConfig {
+function toDefaultAccountConfig(defaultChatAgent: IDefaultChatAgent | undefined): IDefaultAccountConfig {
+	if (!defaultChatAgent) {
+		return {
+			preferredExtensions: [],
+			authenticationProvider: {
+				default: { id: '', name: '' },
+				enterprise: { id: '', name: '' },
+				enterpriseProviderConfig: '',
+				enterpriseProviderUriSetting: '',
+				scopes: [],
+			},
+			tokenEntitlementUrl: '',
+			entitlementUrl: '',
+			mcpRegistryDataUrl: '',
+		};
+	}
 	return {
 		preferredExtensions: [
 			defaultChatAgent.chatExtensionId,
@@ -911,6 +926,9 @@ class DefaultAccountProviderContribution extends Disposable implements IWorkbenc
 		@IDefaultAccountService defaultAccountService: IDefaultAccountService,
 	) {
 		super();
+		if (!productService.defaultChatAgent) {
+			return;
+		}
 		const defaultAccountProvider = this._register(instantiationService.createInstance(DefaultAccountProvider, toDefaultAccountConfig(productService.defaultChatAgent)));
 		defaultAccountService.setDefaultAccountProvider(defaultAccountProvider);
 	}
