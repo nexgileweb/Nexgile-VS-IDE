@@ -8,4 +8,5 @@ ThirdPartyNotices.txt eol=crlf
 *.ps1 eol=lf
 *.sh eol=lf
 *.rtf -text
+*.vsix -text -diff
 **/*.json linguist-language=jsonc
