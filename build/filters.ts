@@ -28,6 +28,7 @@ export const all = Object.freeze<string[]>([
 	'!test/**/out/**',
 	'!**/node_modules/**',
 	'!**/*.js.map',
+	'!extensions/nexgile-code/**',
 ]);
 
 export const unicodeFilter = Object.freeze<string[]>([

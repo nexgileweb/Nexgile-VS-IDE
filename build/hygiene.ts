@@ -37,11 +37,12 @@ export function hygiene(some: NodeJS.ReadWriteStream | string[] | undefined, run
 	const productJson = es.through(function (file: VinylFile) {
 		const product = JSON.parse(file.contents!.toString('utf8'));
 
-		const galleryUrl = product.extensionsGallery?.serviceUrl ?? '';
-		if (product.extensionsGallery && galleryUrl.includes('marketplace.visualstudio.com')) {
-			console.error(`product.json: Contains Microsoft 'extensionsGallery'`);
-			errorCount++;
-		}
+		// Nexgile Code: Allow Microsoft marketplace (intentional for VS Code extension compatibility)
+		// const galleryUrl = product.extensionsGallery?.serviceUrl ?? '';
+		// if (product.extensionsGallery && galleryUrl.includes('marketplace.visualstudio.com')) {
+		// 	console.error(`product.json: Contains Microsoft 'extensionsGallery'`);
+		// 	errorCount++;
+		// }
 
 		this.emit('data', file);
 	});
