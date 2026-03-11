@@ -25,6 +25,7 @@ import { Lazy } from '../../../../base/common/lazy.js';
 import { IViewsService } from '../common/viewsService.js';
 import { windowLogGroup } from '../../log/common/logConstants.js';
 import { IWorkbenchEnvironmentService } from '../../environment/common/environmentService.js';
+import { IProductService } from '../../../../platform/product/common/productService.js';
 
 interface IViewsCustomizations {
 	viewContainerLocations: IStringDictionary<ViewContainerLocation>;
@@ -71,6 +72,7 @@ export class ViewDescriptorService extends Disposable implements IViewDescriptor
 
 	private readonly logger: Lazy<ILogger>;
 	private readonly isSessionsWindow: boolean;
+	private readonly auxiliaryBarExtensionContainers: Set<string>;
 
 	constructor(
 		@IInstantiationService private readonly instantiationService: IInstantiationService,
@@ -80,6 +82,7 @@ export class ViewDescriptorService extends Disposable implements IViewDescriptor
 		@ITelemetryService private readonly telemetryService: ITelemetryService,
 		@ILoggerService loggerService: ILoggerService,
 		@IWorkbenchEnvironmentService environmentService: IWorkbenchEnvironmentService,
+		@IProductService productService: IProductService,
 	) {
 		super();
 
@@ -99,6 +102,14 @@ export class ViewDescriptorService extends Disposable implements IViewDescriptor
 		this.viewDescriptorsCustomLocations = new Map<string, string>(Object.entries(this.viewCustomizations.viewLocations));
 		this.viewContainerBadgeEnablementStates = new Map<string, boolean>(Object.entries(this.viewCustomizations.viewContainerBadgeEnablementStates));
 
+		// Product-configured extension containers that should default to auxiliary bar
+		this.auxiliaryBarExtensionContainers = new Set(productService.auxiliaryBarExtensionContainers ?? []);
+
+		// Force product-configured containers to auxiliary bar (overrides any cached storage)
+		for (const containerId of this.auxiliaryBarExtensionContainers) {
+			this.viewContainersCustomLocations.set(containerId, ViewContainerLocation.AuxiliaryBar);
+		}
+
 		// Register all containers that were registered before this ctor
 		this.viewContainers.forEach(viewContainer => this.onDidRegisterViewContainer(viewContainer));
 
@@ -108,6 +119,11 @@ export class ViewDescriptorService extends Disposable implements IViewDescriptor
 		this._register(this.viewsRegistry.onDidChangeContainer(({ views, from, to }) => this.onDidChangeDefaultContainer(views, from, to)));
 
 		this._register(this.viewContainersRegistry.onDidRegister(({ viewContainer }) => {
+			// Move product-configured extension containers to auxiliary bar
+			if (this.auxiliaryBarExtensionContainers.has(viewContainer.id)) {
+				this.viewContainersCustomLocations.set(viewContainer.id, ViewContainerLocation.AuxiliaryBar);
+				this.saveViewCustomizations();
+			}
 			this.onDidRegisterViewContainer(viewContainer);
 			this._onDidChangeViewContainers.fire({ added: [{ container: viewContainer, location: this.getViewContainerLocation(viewContainer) }], removed: [] });
 		}));
@@ -354,6 +370,17 @@ export class ViewDescriptorService extends Disposable implements IViewDescriptor
 	getDefaultViewContainer(location: ViewContainerLocation): ViewContainer | undefined {
 		const viewContainers = this.viewContainersRegistry.getDefaultViewContainers(location);
 		return viewContainers.find(viewContainer => this.isViewContainerVisible(viewContainer));
+	}
+
+	/**
+	 * Returns the first product-configured container ID for a location.
+	 * Used as fallback when no containers are registered yet (e.g. extension containers).
+	 */
+	getProductConfiguredContainerId(location: ViewContainerLocation): string | undefined {
+		if (location === ViewContainerLocation.AuxiliaryBar) {
+			return [...this.auxiliaryBarExtensionContainers][0];
+		}
+		return undefined;
 	}
 
 	canMoveViews(): boolean {

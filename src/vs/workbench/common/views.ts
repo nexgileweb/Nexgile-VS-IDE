@@ -620,6 +620,7 @@ export interface IViewDescriptorService {
 	readonly onDidChangeViewContainers: Event<{ added: ReadonlyArray<{ container: ViewContainer; location: ViewContainerLocation }>; removed: ReadonlyArray<{ container: ViewContainer; location: ViewContainerLocation }> }>;
 
 	getDefaultViewContainer(location: ViewContainerLocation): ViewContainer | undefined;
+	getProductConfiguredContainerId(location: ViewContainerLocation): string | undefined;
 	getViewContainerById(id: string): ViewContainer | null;
 	isViewContainerRemovedPermanently(id: string): boolean;
 	getDefaultViewContainerLocation(viewContainer: ViewContainer): ViewContainerLocation | null;

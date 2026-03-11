@@ -1,0 +1,199 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      arch:
+        description: "Architecture"
+        required: true
+        type: choice
+        options:
+          - x64
+          - arm64
+          - both
+        default: x64
+      branch:
+        description: "Branch to build (defaults to the branch you run from)"
+        required: false
+        type: string
+
+jobs:
+  build-x64:
+    if: ${{ inputs.arch == 'x64' || inputs.arch == 'both' }}
+    name: Windows x64
+    runs-on: windows-2022
+    timeout-minutes: 90
+    env:
+      VSCODE_ARCH: x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch || github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install setuptools
+        run: pip install setuptools
+
+      - name: Restore node_modules cache
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: .build/node_modules_cache
+          key: node_modules-windows-x64-${{ hashFiles('package-lock.json') }}
+
+      - name: Extract node_modules cache
+        if: steps.cache-node-modules.outputs.cache-hit == 'true'
+        shell: bash
+        run: tar -xzf .build/node_modules_cache/cache.tgz
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -e
+          for i in {1..3}; do
+            npm ci && break
+            if [ $i -eq 3 ]; then echo "npm ci failed" >&2; exit 1; fi
+            echo "Retry $i..."
+          done
+        env:
+          npm_config_arch: x64
+          ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create node_modules cache
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -e
+          mkdir -p .build
+          node build/azure-pipelines/common/listNodeModules.ts .build/node_modules_list.txt
+          mkdir -p .build/node_modules_cache
+          tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
+
+      - name: Download built-in extensions
+        shell: bash
+        run: node build/lib/builtInExtensions.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build client (minified)
+        shell: bash
+        run: npm run gulp vscode-win32-x64-min
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package .zip
+        shell: bash
+        run: |
+          set -e
+          cd ../VSCode-win32-x64
+          7z a "$GITHUB_WORKSPACE/.build/NexgileCode-win32-x64.zip" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NexgileCode-win32-x64
+          path: .build/NexgileCode-win32-x64.zip
+          retention-days: 30
+
+  build-arm64:
+    if: ${{ inputs.arch == 'arm64' || inputs.arch == 'both' }}
+    name: Windows arm64
+    runs-on: windows-2022
+    timeout-minutes: 90
+    env:
+      VSCODE_ARCH: arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch || github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install setuptools
+        run: pip install setuptools
+
+      - name: Restore node_modules cache
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: .build/node_modules_cache
+          key: node_modules-windows-arm64-${{ hashFiles('package-lock.json') }}
+
+      - name: Extract node_modules cache
+        if: steps.cache-node-modules.outputs.cache-hit == 'true'
+        shell: bash
+        run: tar -xzf .build/node_modules_cache/cache.tgz
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -e
+          for i in {1..3}; do
+            npm ci && break
+            if [ $i -eq 3 ]; then echo "npm ci failed" >&2; exit 1; fi
+            echo "Retry $i..."
+          done
+        env:
+          npm_config_arch: arm64
+          ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create node_modules cache
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -e
+          mkdir -p .build
+          node build/azure-pipelines/common/listNodeModules.ts .build/node_modules_list.txt
+          mkdir -p .build/node_modules_cache
+          tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
+
+      - name: Download built-in extensions
+        shell: bash
+        run: node build/lib/builtInExtensions.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build client (minified)
+        shell: bash
+        run: npm run gulp vscode-win32-arm64-min
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package .zip
+        shell: bash
+        run: |
+          set -e
+          cd ../VSCode-win32-arm64
+          7z a "$GITHUB_WORKSPACE/.build/NexgileCode-win32-arm64.zip" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NexgileCode-win32-arm64
+          path: .build/NexgileCode-win32-arm64.zip
+          retention-days: 30

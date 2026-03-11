@@ -68,14 +68,19 @@ if (process.arch !== os.arch()) {
 function hasSupportedVisualStudioVersion() {
 	// Translated over from
 	// https://source.chromium.org/chromium/chromium/src/+/master:build/vs_toolchain.py;l=140-175
-	const supportedVersions = ['2022', '2019'];
+	// Map of env var suffix -> directory names to check
+	const supportedVersions: Array<{ envSuffix: string; dirNames: string[] }> = [
+		{ envSuffix: '2026', dirNames: ['18'] },
+		{ envSuffix: '2022', dirNames: ['2022'] },
+		{ envSuffix: '2019', dirNames: ['2019'] },
+	];
 
 	const availableVersions = [];
-	for (const version of supportedVersions) {
+	for (const { envSuffix, dirNames } of supportedVersions) {
 		// Check environment variable first (explicit override)
-		let vsPath = process.env[`vs${version}_install`];
+		let vsPath = process.env[`vs${envSuffix}_install`];
 		if (vsPath && fs.existsSync(vsPath)) {
-			availableVersions.push(version);
+			availableVersions.push(envSuffix);
 			break;
 		}
 
@@ -84,21 +89,27 @@ function hasSupportedVisualStudioVersion() {
 		const programFiles64Path = process.env['ProgramFiles'];
 
 		const vsTypes = ['Enterprise', 'Professional', 'Community', 'Preview', 'BuildTools', 'IntPreview'];
-		if (programFiles64Path) {
-			vsPath = `${programFiles64Path}/Microsoft Visual Studio/${version}`;
-			if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
-				availableVersions.push(version);
-				break;
+		let found = false;
+		for (const dirName of dirNames) {
+			if (programFiles64Path) {
+				vsPath = `${programFiles64Path}/Microsoft Visual Studio/${dirName}`;
+				if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
+					availableVersions.push(envSuffix);
+					found = true;
+					break;
+				}
 			}
-		}
 
-		if (programFiles86Path) {
-			vsPath = `${programFiles86Path}/Microsoft Visual Studio/${version}`;
-			if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
-				availableVersions.push(version);
-				break;
+			if (programFiles86Path) {
+				vsPath = `${programFiles86Path}/Microsoft Visual Studio/${dirName}`;
+				if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
+					availableVersions.push(envSuffix);
+					found = true;
+					break;
+				}
 			}
 		}
+		if (found) { break; }
 	}
 
 	return availableVersions.length;
