@@ -29,3 +29,8 @@ test-output.json
 test/componentFixtures/.screenshots/*
 !test/componentFixtures/.screenshots/baseline/
 dist
+
+# Local build pipeline artifacts (script in .build-pipeline.ps1 writes these)
+.build-log.txt
+.vs-modify.log
+.vs-install-log/
