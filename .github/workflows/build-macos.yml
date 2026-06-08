@@ -100,6 +100,25 @@ jobs:
           path: .build/NexgileCode-darwin-arm64.zip
           retention-days: 30
 
+      - name: Install dmgbuild
+        run: python3 -m pip install --break-system-packages dmgbuild
+
+      - name: Build .dmg installer (unsigned)
+        run: |
+          set -e
+          mkdir -p "$GITHUB_WORKSPACE/.build/darwin"
+          node build/darwin/create-dmg.ts "$(dirname "$GITHUB_WORKSPACE")" "$GITHUB_WORKSPACE/.build/darwin"
+        env:
+          VSCODE_ARCH: arm64
+          VSCODE_QUALITY: stable
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: NexgileCodeSetup-darwin-arm64
+          path: .build/darwin/VSCode-darwin-arm64.dmg
+          retention-days: 30
+
   build-x64:
     if: ${{ inputs.arch == 'x64' || inputs.arch == 'both' }}
     name: macOS x64 (Intel)
@@ -180,4 +199,23 @@ jobs:
         with:
           name: NexgileCode-darwin-x64
           path: .build/NexgileCode-darwin-x64.zip
+          retention-days: 30
+
+      - name: Install dmgbuild
+        run: python3 -m pip install --break-system-packages dmgbuild
+
+      - name: Build .dmg installer (unsigned)
+        run: |
+          set -e
+          mkdir -p "$GITHUB_WORKSPACE/.build/darwin"
+          node build/darwin/create-dmg.ts "$(dirname "$GITHUB_WORKSPACE")" "$GITHUB_WORKSPACE/.build/darwin"
+        env:
+          VSCODE_ARCH: x64
+          VSCODE_QUALITY: stable
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: NexgileCodeSetup-darwin-x64
+          path: .build/darwin/VSCode-darwin-x64.dmg
           retention-days: 30
