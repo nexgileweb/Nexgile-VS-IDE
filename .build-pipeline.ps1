@@ -60,6 +60,33 @@ function Run-Step($label, [scriptblock]$cmd) {
 }
 
 Run-Step 'npm install'                    { npm install }
+
+# A copied or partial node_modules can pass 'npm install' with postinstall skipped,
+# leaving native modules (e.g. @vscode/sqlite3) uncompiled. At runtime that breaks
+# state.vscdb storage, so provider keys / secrets silently fail to persist across
+# restarts. Force a full rebuild if the SQLite native binary is missing, then verify
+# every required native (.node) module exists before we spend time compiling.
+if (-not (Test-Path 'node_modules\@vscode\sqlite3\build\Release\vscode-sqlite3.node')) {
+    Log "vscode-sqlite3.node missing after npm install; forcing a full install"
+    Run-Step 'force full install (native modules)' { node build/npm/fast-install.ts --force }
+}
+$requiredNative = @(
+    'node_modules\@vscode\sqlite3\build\Release\vscode-sqlite3.node',
+    'node_modules\@vscode\spdlog\build\Release\spdlog.node',
+    'node_modules\node-pty\build\Release\conpty.node',
+    'node_modules\@parcel\watcher\build\Release\watcher.node',
+    'node_modules\@vscode\windows-process-tree\build\Release\windows_process_tree.node',
+    'node_modules\@vscode\policy-watcher\build\Release\vscode-policy-watcher.node',
+    'node_modules\kerberos\build\Release\kerberos.node'
+)
+$missingNative = $requiredNative | Where-Object { -not (Test-Path $_) }
+if ($missingNative) {
+    Log "FATAL: native modules missing after install (the IDE would fall back to in-memory storage and lose secrets/keys):"
+    $missingNative | ForEach-Object { Log "  - $_" }
+    Log "Fix: run 'node build/npm/fast-install.ts --force' with Node 22.22.0 and VS Build Tools 2022 + Spectre VC runtimes installed."
+    exit 1
+}
+Log "Native module check: all required .node modules present"
 # Note: using compile-build-without-mangling instead of the default
 # compile-build-with-mangling. The mangler holds the entire VS Code AST
 # in memory and easily exceeds 12 GB on this fork. The resulting binary
