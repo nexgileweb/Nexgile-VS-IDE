@@ -16,7 +16,7 @@ Nexgile SAIC Code ships as a **single installable product** that bundles two co-
 | # | Component | Role | Upstream basis |
 |---|---|---|---|
 | 1 | **Nexgile Code IDE** | Desktop editor / workbench (Windows, macOS, Linux) | Microsoft Visual Studio Code |
-| 2 | **Nexgile Code AI Extension** (`nexgile.nexgile-code` v3.6.23) | Built-in AI coding agent — pre-installed, cannot be uninstalled by the user; appears in the activity bar on first launch | Roo Code (Apache 2.0) |
+| 2 | **Nexgile Code AI Extension** (`nexgile.nexgile-code` v3.6.25) | Built-in AI coding agent — pre-installed, cannot be uninstalled by the user; appears in the activity bar on first launch | Roo Code (Apache 2.0) |
 
 The agent is bundled as a **built-in extension** via `product.json`, so installing the IDE installs the agent. There is no separate setup step. Together they present one unified user experience (chat in the secondary side bar, modes in the dropdown, settings under Nexgile Code).
 
@@ -328,7 +328,7 @@ The optional **FastAPI orchestration backend** (`backend/`) handles code analysi
 | **Documentation surface** | Documentation URL `docs.nexgile.com`, issue URL `github.com/nexgileweb/Nexgile-VS-IDE/issues`, download URL `nexgile.com/download`, license URL `nexgile.com/license`. |
 | **Stock AI off** | Microsoft chat / Copilot UI disabled (`chat.disableAIFeatures: true`). |
 | **Update channel** | `updateUrl` blank — IDE does not auto-update; releases are distributed by Nexgile. |
-| **Built-in extension** | The Nexgile coding agent VSIX is bundled into `build/extensions/nexgile-code-3.6.23.vsix` and registered in `product.json` `builtInExtensions`. |
+| **Built-in extension** | The Nexgile coding agent VSIX is bundled into `build/extensions/nexgile-code-3.6.25.vsix` and registered in `product.json` `builtInExtensions`. |
 
 ---
 
