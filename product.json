@@ -104,7 +104,7 @@
 		{
 			"name": "nexgile.nexgile-code",
 			"version": "3.6.23",
-			"sha256": "fc13d966be9baab9c07a8423b0e521201ed06303567ff072add48d82e22f47c4",
+			"sha256": "cf67255914bf749caf46291a850fa2406171976883d5ddd3e2cbafdcad033bc3",
 			"repo": "https://github.com/nexgileweb/Nexgile-RC-CodingAgent",
 			"vsix": "build/extensions/nexgile-code-3.6.23.vsix",
 			"metadata": {
