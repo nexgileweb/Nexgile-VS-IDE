@@ -59,12 +59,17 @@ function Run-Step($label, [scriptblock]$cmd) {
     Log "OK   ($label)"
 }
 
-Run-Step 'npm install'                 { npm install }
-Run-Step 'compile-build'               { npm run compile-build }
-Run-Step 'compile-extensions-build'    { npm run gulp -- compile-extensions-build }
-Run-Step 'minify-vscode'               { npm run gulp -- minify-vscode }
-Run-Step 'vscode-win32-x64-min-ci'     { npm run gulp -- vscode-win32-x64-min-ci }
-Run-Step 'vscode-win32-x64-user-setup' { npm run gulp -- vscode-win32-x64-user-setup }
+Run-Step 'npm install'                    { npm install }
+# Note: using compile-build-without-mangling instead of the default
+# compile-build-with-mangling. The mangler holds the entire VS Code AST
+# in memory and easily exceeds 12 GB on this fork. The resulting binary
+# is ~10-15% larger but otherwise identical. Drop the -without- suffix
+# if you have >=24 GB RAM and want a smaller installer.
+Run-Step 'compile-build-without-mangling' { npm run gulp -- compile-build-without-mangling }
+Run-Step 'compile-extensions-build'       { npm run gulp -- compile-extensions-build }
+Run-Step 'minify-vscode'                  { npm run gulp -- minify-vscode }
+Run-Step 'vscode-win32-x64-min-ci'        { npm run gulp -- vscode-win32-x64-min-ci }
+Run-Step 'vscode-win32-x64-user-setup'    { npm run gulp -- vscode-win32-x64-user-setup }
 
 Log "=== DONE $(Get-Date) ==="
 Log "Installer at: $root\.build\win32-x64\user-setup\"
