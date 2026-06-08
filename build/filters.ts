@@ -29,6 +29,7 @@ export const all = Object.freeze<string[]>([
 	'!**/node_modules/**',
 	'!**/*.js.map',
 	'!**/*.vsix',
+	'!**/*.docx',
 ]);
 
 export const unicodeFilter = Object.freeze<string[]>([
