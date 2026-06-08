@@ -24,6 +24,14 @@
 # Behavior:
 #   - Reuses an existing node_modules tree (delete it manually for a clean install).
 #   - Logs to .build-log.txt at the repo root.
+#
+# Options:
+#   -NoInstaller   Build the packaged app only and skip the Inno Setup installer
+#                  step. Output is the unpacked app under .build/win32-x64/.
+
+param(
+    [switch]$NoInstaller
+)
 
 $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -96,7 +104,15 @@ Run-Step 'compile-build-without-mangling' { npm run gulp -- compile-build-withou
 Run-Step 'compile-extensions-build'       { npm run gulp -- compile-extensions-build }
 Run-Step 'minify-vscode'                  { npm run gulp -- minify-vscode }
 Run-Step 'vscode-win32-x64-min-ci'        { npm run gulp -- vscode-win32-x64-min-ci }
-Run-Step 'vscode-win32-x64-user-setup'    { npm run gulp -- vscode-win32-x64-user-setup }
+if ($NoInstaller) {
+    Log "Skipping installer step (-NoInstaller); packaged app is under .build\win32-x64\"
+} else {
+    Run-Step 'vscode-win32-x64-user-setup'    { npm run gulp -- vscode-win32-x64-user-setup }
+}
 
 Log "=== DONE $(Get-Date) ==="
-Log "Installer at: $root\.build\win32-x64\user-setup\"
+if ($NoInstaller) {
+    Log "App build at: $root\.build\win32-x64\"
+} else {
+    Log "Installer at: $root\.build\win32-x64\user-setup\"
+}
