@@ -1,280 +1,114 @@
-# NEXGILE CODE — END USER LICENSE AGREEMENT
-
-**Product:** Nexgile Code (the "Software")
-**Licensor:** Nexgile ("Nexgile", "we", "us", or "our")
-**Effective Date:** 2026-05-05
-**Version:** 1.0
-
-> **PLEASE READ THIS AGREEMENT CAREFULLY.** By downloading, installing, accessing, or using Nexgile Code, you ("you", "Licensee", or "User") agree to be bound by the terms of this End User License Agreement ("EULA" or "Agreement"). If you do not agree, do not install or use the Software. If you are entering into this Agreement on behalf of an entity, you represent that you have the authority to bind that entity, and "you" refers to that entity.
-
----
-
-## 1. THE SOFTWARE
-
-"Nexgile Code" is delivered as a single installable product that bundles two co-branded components:
-
-| # | Component | What it is | Underlying open-source basis |
-|---|---|---|---|
-| 1.1 | **Nexgile Code IDE** | A desktop code editor and developer workbench (Windows, macOS, Linux). The application binary registers itself as `nexgile-code` and stores user data under `.nexgile-code`. | Microsoft Visual Studio Code (MIT License) |
-| 1.2 | **Nexgile Code AI Extension** | An AI coding assistant pre-installed inside the IDE as the built-in extension `nexgile.nexgile-code`. Provides chat, code transformation modes (API modernization, dependency upgrade, documentation generation, refactor, security review, test generation, translate), Custom Modes, Custom Agents, MCP server support, and a Bring-Your-Own-Key (BYOK) connection to third-party AI model providers. | Roo Code by Roo Code, Inc. (Apache License 2.0) |
-
-The Software also includes Nexgile-authored additions that are **not** present in either upstream project, including without limitation: Nexgile branding, icons, themes, color schemes, marketing strings, the Enterprise project workspace and dashboard, KPI tracking, transformation reports, the Plan-First workflow, the optional Nexgile FastAPI orchestration backend, additional AI provider integrations, the rebranded configuration surface (`.nexgile/`, `.nexgilemodes`, `.nexgilerules`), the Windows installer (`NexgileCodeSetup`), and the Nexgile build pipeline (collectively, the **"Nexgile Additions"**).
-
----
-
-## 2. LICENSE GRANT
-
-Subject to your continuing compliance with this Agreement, Nexgile grants you a **non-exclusive, non-transferable, worldwide, royalty-free, revocable** license to:
-
-1. Install and use the Software on any number of devices that you own or control, for personal, internal business, commercial, or evaluation purposes;
-2. Make a reasonable number of copies of the Software solely for backup and archival purposes; and
-3. Use the Software's output, including code generated, transformed, refactored, translated, documented, or otherwise produced through the AI features, for any lawful purpose, subject to Section 6 (Artificial Intelligence Features).
-
-This Section 2 grants only the rights expressly stated. All rights not expressly granted are reserved by Nexgile and the applicable upstream licensors.
-
----
-
-## 3. RELATIONSHIP TO OPEN-SOURCE LICENSES
-
-Nexgile Code is a derivative work of permissively-licensed open-source software, and this Agreement is **layered on top of** — and does **not** override or revoke — the rights you receive under those upstream licenses for the upstream code itself.
-
-### 3.1 Microsoft VS Code (MIT License)
-Portions of the Nexgile Code IDE are derived from Microsoft Visual Studio Code, Copyright (c) 2015 — present Microsoft Corporation, used under the MIT License. The complete MIT License text is reproduced in the file `LICENSE.txt` at the root of this distribution. Your rights under the MIT License with respect to the unmodified upstream Microsoft VS Code source code are not diminished by this Agreement.
-
-### 3.2 Roo Code (Apache License 2.0)
-The Nexgile Code AI Extension is a derivative work of Roo Code, Copyright (c) Roo Code, Inc., used under the Apache License, Version 2.0. The complete Apache 2.0 license text and modification notice are included with the AI extension distribution (see `LICENSE` and `NOTICE` shipped inside the `nexgile.nexgile-code` extension). Your rights under the Apache 2.0 License with respect to the upstream Roo Code source code are not diminished by this Agreement, including the rights to copy, modify, sublicense, and distribute the upstream code subject to the Apache 2.0 terms.
-
-### 3.3 Nexgile Additions
-The **Nexgile Additions** (defined in Section 1) are licensed to you on the terms of this EULA. Nexgile retains ownership of the Nexgile Additions and the trademarks "Nexgile" and "Nexgile Code". To the extent the Nexgile Additions constitute Nexgile's "modifications" to the Apache-2.0-licensed upstream, the Apache 2.0 License (Section 4) expressly permits Nexgile to apply additional terms to such modifications, which Nexgile does through this EULA. Nothing in this Agreement is intended to or shall restrict the rights granted to you under the Apache 2.0 License or the MIT License with respect to the upstream code.
-
-### 3.4 Other Third-Party Components
-The Software bundles and depends on additional open-source components, each under its own license (including, without limitation, the Microsoft built-in extensions for JavaScript debugging — `ms-vscode.js-debug`, `ms-vscode.js-debug-companion`, and `ms-vscode.vscode-js-profile-table` — and numerous npm packages listed in the project `package.json` and `node_modules` directory). Use of those components is governed by their respective licenses, copies of which are distributed with the Software or are available from the upstream sources.
-
-### 3.5 Conflict
-If any term of this EULA conflicts with a term of an applicable open-source license **as it applies to the corresponding upstream code**, the open-source license controls for that upstream code. This EULA controls for the Nexgile Additions and for the integrated, branded distribution as a whole.
-
----
-
-## 4. RESTRICTIONS
-
-You shall not, and shall not permit any third party to:
-
-1. Remove, alter, or obscure any copyright, trademark, attribution, or other proprietary notice in the Software, the `LICENSE.txt`, the `NOTICE` file, or the in-product "About" dialog;
-2. Use the Nexgile name, "Nexgile", "Nexgile Code", logos, icons, or trade dress to falsely imply endorsement, sponsorship, or affiliation, or in any way that violates Section 11 (Trademarks);
-3. Re-distribute the Software in a manner that strips, replaces, or otherwise misrepresents the attribution to Microsoft Corporation (for the MIT-licensed VS Code basis) or to Roo Code, Inc. (for the Apache-2.0-licensed Roo Code basis);
-4. Use the Software in any application or environment where failure of the Software could reasonably be expected to lead to death, personal injury, or severe physical or environmental damage, including without limitation life-support systems, nuclear facility operation, aircraft navigation or communication, weapons systems, or real-time control of safety-critical industrial processes;
-5. Use the Software in violation of any applicable law, regulation, sanctions program, or third-party right; or
-6. Use the AI features of the Software to generate, transmit, or knowingly facilitate the generation of malware, code intended for unauthorized intrusion, child sexual abuse material, illegal harassment, or other content prohibited by applicable law or by the relevant AI provider's terms of service.
-
----
-
-## 5. UPDATES, VERSIONS, AND RELEASE QUALITY
-
-5.1 The Software is currently distributed without an automatic update channel (the IDE's `updateUrl` is configured as empty). New versions are made available through the official Nexgile download channel at https://nexgile.com/download. You are responsible for installing updates.
-
-5.2 Some features may be marked as preview, beta, or experimental (including, by way of example, the structurally-bounded **Workflow Mode** that orchestrates Implementer, Tester, Reviewer, and Shipper sub-agents). Preview features may be changed or removed without notice and are provided AS IS for evaluation purposes.
-
----
-
-## 6. ARTIFICIAL INTELLIGENCE FEATURES
-
-The Software includes AI-powered features that interact with third-party Large Language Model ("LLM") providers. **You must read and understand this Section 6 before enabling AI features.**
-
-### 6.1 Bring Your Own Key (BYOK)
-Nexgile Code does **not** bundle an AI subscription. To use AI features you must configure credentials for one or more supported third-party LLM providers, which include without limitation: OpenAI, Anthropic, Google Vertex AI, xAI, MiniMax, Poe, OpenRouter, Qwen, and Ollama (for locally-hosted models). Your contractual relationship with each provider — including pricing, usage limits, acceptable use policies, and data handling — is governed by **that provider's own agreements**, not this EULA.
-
-### 6.2 Local Storage of Credentials
-API keys and similar credentials that you enter into the Software are stored locally on your device (typically in the operating system's secret store or in user configuration files). Nexgile does not collect, transmit, or store your credentials.
-
-### 6.3 What Is Sent to AI Providers
-When you invoke an AI feature, the Software transmits to your configured AI provider, **directly from your machine**, the input necessary to fulfill your request, which may include: your prompt, selected files or excerpts, surrounding code context, command output, project metadata, custom mode definitions, and prior chat turns within the current session. **Nexgile does not operate a proxy and does not receive, log, or store this content.**
-
-### 6.4 Output Is Provided AS IS — No Warranty of Correctness, Originality, or Safety
-AI outputs (including generated code, refactorings, translations, tests, documentation, security recommendations, dependency upgrade plans, commit messages, and explanations) are statistical and probabilistic in nature. They may be **incorrect, incomplete, biased, insecure, non-performant, non-compilable, or infringing on third-party intellectual property rights**. You are solely responsible for:
-
-- Reviewing every AI output before relying on it;
-- Verifying functional correctness through compilation, testing, and human review appropriate to the risk;
-- Determining the legal, security, licensing, and ethical appropriateness of using any AI output, especially before incorporation into production systems or distribution to third parties; and
-- Independently confirming that any code, library, snippet, or pattern produced by the AI does not infringe third-party intellectual property rights and complies with the licenses of any code your AI provider may have learned from.
-
-The disclaimers in this Section 6.4 are in addition to, and not in lieu of, the broader disclaimers in Sections 12 and 13.
-
-### 6.5 Agentic Behavior, Tool Use, and Auto-Approval
-The AI Extension can be configured to autonomously execute tools that have side effects, including: reading and writing files in your workspace, running shell commands, invoking MCP (Model Context Protocol) servers, staging Git changes, creating commits, and pushing branches. The Workflow Mode "Shipper" role, when enabled, may stage listed files, commit, and push to a feature branch — by design it never pushes to `main` or `master`. **You are responsible for reviewing the auto-approval and permission settings in the AI Extension before enabling them**, and for ensuring that the workspace, repositories, and credentials made accessible to the AI are appropriately scoped. Nexgile is not liable for losses arising from agentic actions you have authorized the Software to perform.
-
-### 6.6 Custom Modes, Custom Agents, and MCP Servers
-The Software allows you to install Custom Modes, Custom Agents (defined in `.nexgile/agents/*.md`), and to connect to third-party MCP servers. Such third-party content is **not provided, vetted, or supported by Nexgile**. You assume all risk of installing and running third-party agent definitions, mode definitions, and MCP servers, including the risk of prompt injection, malicious tool calls, and exposure of workspace data.
-
-### 6.7 Optional Nexgile FastAPI Backend
-Some advanced features may, at your option, require running an optional self-hosted Nexgile FastAPI orchestration backend (which may proxy LLM calls via LiteLLM and persist transformation jobs in SQLite or PostgreSQL). This backend is **deployed and operated by you**, on infrastructure you control. Nexgile does not host this backend on your behalf unless covered by a separate written agreement.
-
----
-
-## 7. PRIVACY AND TELEMETRY
-
-### 7.1 Privacy Policy
-Nexgile's Privacy Policy is incorporated by reference and is available at https://nexgile.com/privacy and (for the AI Extension) in the `PRIVACY.md` file shipped with the extension.
-
-### 7.2 Telemetry — Off by Default in the IDE
-Telemetry in the Nexgile Code IDE is **disabled by default** (`product.json` sets `enableTelemetry: false`). The Software is configured to suppress the upstream Microsoft VS Code telemetry endpoints. You may verify this in the Software's settings.
-
-### 7.3 AI Extension Telemetry — Opt-In
-Telemetry collection in the AI Extension, if any, is opt-in and may be disabled at any time in the extension's settings. When enabled, telemetry collects anonymous feature-usage and error data and explicitly **does not collect** personally identifiable information, your source code, or your AI prompts.
-
-### 7.4 Local Data
-The Software stores configuration, chat history, task history, custom modes, and similar working data in user-data directories on your device (e.g., `.nexgile-code` for the IDE, and `.nexgile/` and per-user extension storage for the AI Extension). Nexgile does not have access to this data.
-
-### 7.5 Code Sent to AI Providers
-For clarity and consistency with Section 6.3: when you use AI features, content is sent **directly from your device to the AI provider you configured**, not to Nexgile.
-
----
-
-## 8. NEXGILE EXTENSIONS MARKETPLACE AND THIRD-PARTY EXTENSIONS
-
-The Software is configured to retrieve extensions from a third-party extensions gallery service (currently the Microsoft Visual Studio Marketplace endpoint, as configured in `product.json` `extensionsGallery`). Use of that gallery and any extension you install from it is subject to the terms of the gallery operator and of the extension publisher. Nexgile does not author, vet, or warrant third-party extensions, including those installed from `.vsix` files. You assume all risk of installing third-party extensions.
-
----
-
-## 9. OWNERSHIP AND INTELLECTUAL PROPERTY
-
-9.1 The Software (including the Nexgile Additions) is **licensed, not sold**.
-
-9.2 As between you and Nexgile, **Nexgile owns** all right, title, and interest in and to the Nexgile Additions, the Nexgile name, the Nexgile Code product name, the Nexgile logos, icons, themes, and trade dress. Microsoft Corporation owns all right, title, and interest in and to the unmodified Microsoft VS Code source code; Roo Code, Inc. owns all right, title, and interest in and to the unmodified Roo Code source code. Other open-source components are owned by their respective contributors.
-
-9.3 As between you and Nexgile, **you own** the source code, configuration files, prompts, custom modes, custom agents, and other inputs you author and provide to the Software, and you own the AI outputs the Software returns to you (subject to the rights of the underlying AI providers and any third-party rights that may apply to the output content). Nexgile claims no ownership over your code or your AI-generated outputs.
-
-9.4 You may submit feedback, suggestions, or bug reports to Nexgile via the channels in Section 17. You grant Nexgile a perpetual, irrevocable, worldwide, royalty-free license to use such feedback for any purpose, with no obligation of confidentiality, attribution, or compensation.
-
----
-
-## 10. THIRD-PARTY OBLIGATIONS PASSED THROUGH
-
-Because the Software is a derivative of MIT-licensed and Apache-2.0-licensed upstreams, certain notices must be preserved when you redistribute the Software:
-
-10.1 You must retain a copy of the MIT License (in `LICENSE.txt`) and the copyright notice "Copyright (c) 2015 — present Microsoft Corporation" with any redistribution that includes Microsoft VS Code-derived code.
-
-10.2 You must retain a copy of the Apache License 2.0 and the `NOTICE` file shipped with the AI Extension with any redistribution that includes Roo Code-derived code, and you must give recipients a copy of the Apache 2.0 License as required by Apache 2.0 §4.
-
-10.3 If you distribute a modified version of the Software, you must comply with the modification-marking and notice-preservation requirements of the applicable upstream license (Apache 2.0 §4(b)–(d) and the MIT notice retention requirement).
-
-10.4 Re-distribution of the **integrated branded "Nexgile Code" product** as a whole — including the Nexgile name, logos, installer, and Nexgile Additions — requires Nexgile's prior written permission. Nothing in this Section 10 is a permission to use the Nexgile trademarks; see Section 11.
-
----
-
-## 11. TRADEMARKS
-
-"Nexgile" and "Nexgile Code" are trademarks of Nexgile. This Agreement does not grant you any right to use the Nexgile trademarks, except for fair, nominative use to identify the Software (for example, in a true statement that your project uses Nexgile Code). The MIT and Apache 2.0 licenses do not grant trademark rights, and nothing in those licenses or in this Agreement permits you to use the Microsoft, Visual Studio Code, or Roo Code trademarks except as permitted under the trademark policies of their respective owners.
-
----
-
-## 12. DISCLAIMER OF WARRANTIES
-
-THE SOFTWARE AND ALL AI OUTPUTS, MODELS, AND TOOLS PROVIDED OR MADE AVAILABLE THROUGH OR IN CONNECTION WITH THE SOFTWARE ARE PROVIDED **"AS IS"** AND **"AS AVAILABLE"**, WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NEXGILE AND ITS LICENSORS, CONTRIBUTORS, AND SUPPLIERS EXPRESSLY DISCLAIM ALL WARRANTIES, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTY OF:
-
-- MERCHANTABILITY,
-- FITNESS FOR A PARTICULAR PURPOSE,
-- TITLE,
-- NON-INFRINGEMENT,
-- ACCURACY, COMPLETENESS, OR CORRECTNESS OF AI OUTPUT,
-- UNINTERRUPTED, SECURE, OR ERROR-FREE OPERATION, AND
-- THAT DEFECTS WILL BE CORRECTED.
-
-YOU ASSUME ALL RISK OF USING THE SOFTWARE, INCLUDING WITHOUT LIMITATION THE RISK OF INTELLECTUAL PROPERTY INFRINGEMENT, CYBER VULNERABILITIES OR ATTACKS, BIAS, INACCURACIES, ERRORS, DEFECTS, MALWARE, DOWNTIME, PROPERTY LOSS OR DAMAGE, AND/OR PERSONAL INJURY ARISING FROM YOUR USE OF THE SOFTWARE OR ITS OUTPUTS. THE SOFTWARE IS NOT DESIGNED OR INTENDED FOR USE IN HAZARDOUS ENVIRONMENTS REQUIRING FAIL-SAFE PERFORMANCE.
-
----
-
-## 13. LIMITATION OF LIABILITY
-
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL NEXGILE, ITS AFFILIATES, OFFICERS, EMPLOYEES, AGENTS, CONTRIBUTORS, OR LICENSORS BE LIABLE FOR ANY:
-
-(A) INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES;
-(B) LOSS OF PROFITS, REVENUE, GOODWILL, BUSINESS, USE, DATA, CODE, OR OTHER INTANGIBLE LOSSES;
-(C) COST OF SUBSTITUTE GOODS OR SERVICES;
-(D) DAMAGES FOR PERSONAL INJURY OR PROPERTY DAMAGE;
-(E) DAMAGES ARISING FROM AI-GENERATED OUTPUTS, INCLUDING DAMAGES ARISING FROM THE USE, MISUSE, INACCURACY, OR INSECURITY OF SUCH OUTPUTS; OR
-(F) DAMAGES ARISING FROM AGENTIC ACTIONS THE SOFTWARE TAKES ON YOUR BEHALF (INCLUDING, WITHOUT LIMITATION, FILE WRITES, SHELL COMMANDS, GIT OPERATIONS, MCP TOOL CALLS, AND OTHER AUTHORIZED TOOL USE);
-
-ARISING OUT OF OR IN CONNECTION WITH THIS AGREEMENT OR THE SOFTWARE, EVEN IF NEXGILE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, AND REGARDLESS OF THE LEGAL THEORY (CONTRACT, TORT INCLUDING NEGLIGENCE, STATUTE, OR OTHERWISE).
-
-NOTWITHSTANDING ANYTHING TO THE CONTRARY, NEXGILE'S AGGREGATE LIABILITY ARISING OUT OF OR IN CONNECTION WITH THIS AGREEMENT OR THE SOFTWARE SHALL NOT EXCEED THE GREATER OF (I) THE FEES YOU PAID TO NEXGILE FOR THE SOFTWARE IN THE TWELVE (12) MONTHS PRECEDING THE EVENT GIVING RISE TO THE CLAIM, OR (II) ONE HUNDRED U.S. DOLLARS (USD $100).
-
-THE LIMITATIONS IN THIS SECTION 13 ARE FUNDAMENTAL ELEMENTS OF THE BARGAIN BETWEEN YOU AND NEXGILE AND APPLY EVEN IF ANY LIMITED REMEDY FAILS OF ITS ESSENTIAL PURPOSE. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES; IN SUCH JURISDICTIONS, THE LIABILITY OF NEXGILE IS LIMITED TO THE MAXIMUM EXTENT PERMITTED BY LAW.
-
----
-
-## 14. INDEMNIFICATION
-
-You agree to defend, indemnify, and hold harmless Nexgile and its affiliates, officers, employees, agents, contributors, and licensors from and against any and all claims, damages, liabilities, losses, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to: (a) your use of the Software in violation of this Agreement or applicable law; (b) your use of, or reliance on, AI-generated outputs; (c) any agentic actions you authorized the Software to perform on your behalf; (d) your violation of any third party's rights, including any intellectual property right or privacy right; or (e) content, custom modes, custom agents, MCP servers, or extensions you introduce into the Software.
-
----
-
-## 15. EXPORT CONTROLS AND SANCTIONS
-
-You may not use, export, re-export, transfer, or download the Software in violation of U.S., Indian, EU, U.K., or other applicable export control laws or sanctions programs. You represent that you are not located in, under the control of, or a national or resident of any country, or on any list of restricted parties, to which such export is prohibited.
-
----
-
-## 16. TERM AND TERMINATION
-
-16.1 This Agreement is effective from the moment you first install or use the Software and continues until terminated.
-
-16.2 This Agreement terminates automatically and immediately if you breach any of its terms, without notice from Nexgile.
-
-16.3 Upon termination, you must cease all use of the Software and destroy all copies in your possession or control. Sections 3 (to the extent of preserving upstream rights you continue to enjoy under MIT/Apache 2.0), 4, 9, 10, 11, 12, 13, 14, 15, 16.3, 17, and 18 survive termination.
-
-16.4 Termination of this Agreement does not terminate your separate rights under the upstream MIT and Apache 2.0 licenses with respect to the upstream code, which continue per their own terms.
-
----
-
-## 17. SUPPORT, NOTICES, AND CONTACT
-
-The Software is provided without an obligation of support except as Nexgile may separately agree in writing. Best-effort community support is available via:
-
-- Website: https://nexgile.com
-- Documentation: https://docs.nexgile.com
-- Support email: support@nexgile.com
-- IDE issue tracker: https://github.com/nexgileweb/Nexgile-VS-IDE/issues
-- AI Extension issue tracker: https://github.com/nexgileweb/Nexgile-RC-CodingAgent/issues
-- Security disclosure: https://github.com/nexgileweb/Nexgile-RC-CodingAgent/security/advisories/new (preferred) or support@nexgile.com
-
-Notices to Nexgile under this Agreement shall be sent to **support@nexgile.com**.
-
----
-
-## 18. GENERAL
-
-**18.1 Governing Law.** This Agreement is governed by and construed in accordance with the laws of the State of Delaware, United States of America, without regard to its conflict-of-laws principles. The U.N. Convention on Contracts for the International Sale of Goods does not apply.
-
-**18.2 Venue.** The parties consent to the exclusive jurisdiction of the state and federal courts located in New Castle County, Delaware, United States of America, for any dispute arising out of or relating to this Agreement, and waive any objection to such venue on the grounds of inconvenient forum or otherwise; provided, however, that Nexgile may seek injunctive or other equitable relief in any court of competent jurisdiction to protect its intellectual property or confidential information.
-
-**18.3 Severability.** If any provision of this Agreement is held to be invalid or unenforceable, the remaining provisions remain in full force and effect, and the invalid provision shall be replaced by an enforceable provision that most closely approximates the original intent.
-
-**18.4 No Waiver.** No failure or delay by Nexgile in exercising any right under this Agreement constitutes a waiver of that right.
-
-**18.5 Assignment.** You may not assign this Agreement, by operation of law or otherwise, without Nexgile's prior written consent. Nexgile may freely assign this Agreement. Any prohibited assignment is void.
-
-**18.6 Entire Agreement.** This Agreement, together with the upstream open-source license texts referenced herein, the `NOTICE` file, and the Privacy Policy, constitutes the entire agreement between you and Nexgile concerning the Software, and supersedes all prior or contemporaneous communications, proposals, and representations on its subject matter. In the event of a conflict between this Agreement and any non-disclosure agreement, master subscription agreement, or order form separately executed in writing between you and Nexgile, the separately executed agreement controls for its subject matter.
-
-**18.7 Modifications.** Nexgile may revise this Agreement from time to time. Material changes will be reflected by an updated **Effective Date** at the top of this document and, where practical, an in-product notice. Your continued use of the Software after the Effective Date of a revised Agreement constitutes your acceptance of the revised terms.
-
-**18.8 Headings.** Section headings are for convenience only and have no legal effect.
-
-**18.9 No Third-Party Beneficiaries.** Other than Nexgile's affiliates, contributors, and licensors as expressly named in Sections 12, 13, and 14, this Agreement does not create any third-party beneficiary rights.
-
----
-
-## ATTRIBUTION SUMMARY
-
-Nexgile Code includes software developed by:
-
-- **Microsoft Corporation** — Visual Studio Code (MIT License). Copyright © 2015 — present Microsoft Corporation. https://github.com/microsoft/vscode
-- **Roo Code, Inc.** — Roo Code (Apache License 2.0). Copyright © 2025 Roo Code, Inc. https://github.com/RooCodeInc/Roo-Code
-- The numerous individual and corporate contributors of the third-party open-source dependencies bundled with the Software, each retaining their respective copyrights and licenses.
-
-The use of the names "Microsoft", "Visual Studio Code", and "Roo Code" is solely to identify the upstream projects from which Nexgile Code is derived and does not imply endorsement, sponsorship, or affiliation by their respective owners.
-
----
-
-**© 2026 Nexgile. All rights reserved (subject to the open-source rights described above).**
-
----
+NEXGILE CODE UNLIMITED SOFTWARE LICENSE TERMS
+NEXGILE CODE – UNLIMITED VERSION
+This license applies to the Nexgile Code product. Additional information about third-party components included in the Software can be found in the THIRDPARTYNOTICES, LICENSE, and NOTICE files accompanying the Software, and information about Nexgile's data practices can be found in Nexgile's Privacy Policy.
+________________________________________
+Product: Nexgile Code (the "Software")
+Licensor: Nexgile Inc, a Delaware corporation ("Nexgile")
+Effective Date: 2026-05-06
+Version: 1.0
+________________________________________
+These license terms are an agreement between you and Nexgile Inc (or, based on where you live, one of its affiliates) (collectively, "Nexgile"). They apply to the software named above. The terms also apply to any Nexgile services or updates for the Software, except to the extent those have different terms.
+These terms apply only to the unlimited version of the Software made available by Nexgile (the "Unlimited Version"). They do not apply to any free, trial, developer, beta, professional services, support, hosting, or separately licensed version of the Software unless Nexgile expressly states otherwise in writing.
+If you are entering into this agreement on behalf of an entity, you represent that you have the authority to bind that entity. References to "you" or "Licensee" mean the entity accepting these terms and its authorized users, as applicable.
+If you access or use the Software under a separately signed agreement with Nexgile, including an order form, master subscription agreement, enterprise agreement, government contract, data processing agreement, statement of work, or other written agreement signed by Nexgile, that signed agreement controls over these terms for the subject matter it covers. These terms supplement, and do not replace, any such signed agreement unless the signed agreement expressly states otherwise.
+IF YOU COMPLY WITH THESE LICENSE TERMS, YOU HAVE THE RIGHTS BELOW.
+________________________________________
+1. PARTIES AND DEFINITIONS
+
+"Licensee" means the entity that has entered into the applicable order form or signed agreement with Nexgile for the Software. Where the Software is acquired by a contractor, reseller, systems integrator, or other intermediary on behalf of a U.S. Government customer, "Licensee" means the U.S. Government customer — i.e., the government entity, program, or agency identified in the applicable order form, procurement document, or other signed agreement — and not the intermediary, unless the order form or signed agreement expressly identifies the intermediary as the Licensee.
+
+" Acquiring Contractor" means any contractor, reseller, systems integrator, or other intermediary that acquires the Software on behalf of a U.S. Government customer. The Acquiring Contractor does not itself become the Licensee solely by virtue of acquiring or facilitating access to the Software on the government customer's behalf, unless expressly stated otherwise in a signed agreement with Nexgile. Notwithstanding the foregoing, the Acquiring Contractor remains solely responsible for all payment obligations to Nexgile under the applicable order form or signed agreement.
+
+
+"Authorized Users" means the employees, contractors, and personnel of the Licensee who are authorized to use the Software under the applicable order form or signed agreement.
+
+References to "you" in these terms mean the Licensee, as defined above. Where context requires, references to "you" also encompass the Acquiring Contractor acting within the scope of its role on behalf of the Licensee.
+
+2. LICENSE TERM
+The license granted under these terms is valid for the term specified in the applicable order form or signed agreement. If no term is specified, the license is valid for one (1) year from the Effective Date. Upon expiration of the license term, Nexgile shall provide Licensee with no less than ninety (90) days' written notice prior to expiration, and shall negotiate in good faith with Licensee regarding renewal. Nexgile shall provide 180 day advanced notice of non-renewal. Nexgile has no obligation to renew unless expressly agreed in writing.
+
+3. INSTALLATION AND USE RIGHTS
+2.1 Unlimited License Grant. Subject to your compliance with these terms and any applicable order form or other signed agreement with Nexgile, you may install and use the Unlimited Version of the Software for your internal business, evaluation, development, testing, application-building, and production deployment purposes, by the authorized users, devices, and entities covered by your applicable order form or agreement with Nexgile during the applicable license term. "Unlimited" means that the Software may be used by the authorized users, employees, contractors, devices, projects, repositories, applications, and environments permitted under the applicable order form or other signed agreement, without a fixed per-seat limit unless the order form or signed agreement states otherwise. "Unlimited" does not mean unrestricted use outside your organization, sublicensing, resale, public hosting, white-labeling, managed services, service-bureau use, or use for the benefit of third parties, except as expressly permitted in a signed writing by Nexgile.
+2.2 Authorized Users and Contractors. Your authorized employees and contractors may use the Software solely for your internal benefit and only within the scope of these terms and any applicable order form or signed agreement. You are responsible for all acts and omissions of your authorized users, employees, contractors, agents, and representatives. You must ensure that all such users comply with these terms.
+2.3 Output. You may use the output of the Software (including code generated, transformed, or produced by the Software's AI features) for any lawful purpose, subject to the rights of any applicable third-party AI provider and any third-party rights that may apply to the output content. Subject to your compliance with these terms and any applicable third-party terms, Nexgile does not claim ownership of the output generated by the Software for you. You are responsible for reviewing, testing, validating, securing, and determining whether any output is suitable for your intended use, including production use. Nexgile does not represent or warrant that any output is accurate, complete, secure, unique, non-infringing, free from open-source licensing obligations, or suitable for any particular use. Your use of output may be subject to third-party rights, third-party AI provider terms, open-source licenses, and applicable law.
+2.4 Applications Built Using the Unlimited Version. Subject to these terms and any applicable order form or other signed agreement with Nexgile, you may use the Unlimited Version to build, test, and deploy applications in production for your internal business purposes during the applicable license term. This right does not include the right to sell, license, sublicense, host, commercialize, white-label, or provide those applications or the Software for the benefit of third parties, except as expressly permitted in a signed writing by Nexgile.
+2.5 Third Party Components. The Software may include third-party components with separate legal notices or governed by other agreements, as may be described in the THIRDPARTYNOTICES, LICENSE, and NOTICE files accompanying the Software. Your rights with respect to those components under their respective licenses are not diminished by this agreement.
+2.6 Extensions. The Software gives you the option to download third-party extension packages from an extension gallery. The Software is configured to use the Open VSX Registry by default. Extension packages are under their own licenses and not this agreement. Nexgile does not author, license, or warrant any third-party extension packages. By accessing any extension gallery, you agree to that gallery's terms of use. Use of any extension gallery other than the default is at your sole risk.
+________________________________________
+3. AI AND AGENTIC FEATURES
+The Software includes AI-powered features that interact with third-party AI providers using credentials Licensee supplies.
+The Software includes agentic and autonomous capabilities that, when enabled, selected, or configured by Licensee, may perform actions in Licensee's environment, including reading and writing files, executing commands, and interacting with local and remote services. Unless such capabilities are enabled, selected, or configured by Licensee, the Software may require human review, approval, or confirmation before performing certain actions. Nexgile shall provide Licensee with commercially reasonable documentation regarding material agentic capabilities, default configurations, and recommended security controls. Licensee is responsible for: (a) reviewing AI-generated output before relying on it in production or sensitive environments; (b) configuring permissions, auto-approval, and access controls appropriately for their environment; (c) determining whether the Software may process confidential, personal, or regulated data in consultation with Nexgile's provided guidance; and (d) the actions the Software performs on Licensee's behalf with Licensee's authorization. Nexgile remains responsible for claims directly caused by defects or vulnerabilities in the Software itself, subject to Section 16. Licensee remains responsible for actions, outputs, or results arising from Licensee's configurations, credentials, prompts, approvals, instructions, selected modes of operation, including autonomous mode, integrations, environments, or third-party services or models.
+Licensee is responsible for selecting, approving, contracting with, configuring, and authorizing any third-party AI provider, model, API, cloud provider, or customer-hosted model used with the Software. Nexgile does not control and is not responsible for the acts, omissions, performance, availability, security, terms, data practices, outputs, hallucinations, inaccuracies, errors, defects, vulnerabilities, or behavior of any third-party AI provider, model, API, cloud provider, or customer-hosted model selected, approved, or configured by Licensee. Licensee's use of any third-party AI provider, model, API, cloud provider, or customer-hosted model is subject to the applicable terms, policies, and technical limitations of that third party or environment. Nexgile is responsible only for the Software as provided by Nexgile, and not for errors, defects, vulnerabilities, outputs, or behavior attributable to third-party AI providers, third-party models, customer-hosted models, or Licensee-selected environments.
+Licensee is responsible for maintaining appropriate human review, approval workflows, access controls, security controls, backups, and testing procedures for Licensee's use of the Software, including any use in production or sensitive environments. Nexgile is not responsible for unauthorized, unintended, or harmful actions taken by Software where those actions result from Licensee's credentials, permissions, configurations, prompts, approvals, integrations, environments, or third-party services.
+________________________________________
+4. DATA
+Nexgile may provide information regarding supported third-party AI providers, models, APIs, cloud providers, customer-hosted models, deployment environments, and configuration options. Licensee remains responsible for selecting, approving, contracting with, configuring, and authorizing any third-party AI provider, model, API, cloud provider, customer-hosted model, or deployment environment used with the Software. Licensee acknowledges that its choice of third-party AI provider, model, API, cloud provider, customer-hosted model, or deployment environment may affect data processing, data flows, logging, retention, confidentiality, security controls, regulatory treatment, and allocation of responsibility. Nexgile is not responsible for liabilities, obligations, or requirements arising from Licensee's selected third-party AI providers, models, APIs, cloud providers, customer-hosted models, or deployment environments, except to the extent directly caused by Nexgile's breach of this agreement. Telemetry and usage data collection shall be disabled by default for all government deployments. Nexgile shall not collect, transmit, store, or use any data from government deployments for product improvement, model training, or any other purpose without the prior written consent of the government customer. Any consent to data collection shall be specific, revocable, and documented in a signed agreement. Nexgile's Privacy Policy shall not serve as a substitute for a government-specific data processing agreement, and Licensee's use of the Software shall not constitute consent to data practices that conflict with applicable government data protection requirements..
+For U.S. Government customers or contractors acquiring the Software on behalf of a U.S. Government entity, Nexgile shall provide documentation, data-flow information, telemetry disclosures, deployment guidance, and available administrative controls to assist Licensee's security review. Licensee remains responsible for determining, implementing, maintaining, and complying with any applicable government standards, data protection requirements, security frameworks, authorization requirements, agency requirements, program-specific requirements, procurement requirements, and legal or regulatory obligations applicable to Licensee's use of the Software and selected deployment environment, including, as applicable and without limitation, requirements relating to ATO, FedRAMP, NIST, CMMC, CUI, PII, export-controlled data, ITAR/EAR, data residency, data retention, data classification, system security plans, and agency approval processes. Nexgile may provide documentation, data-flow information, telemetry disclosures, security documentation, deployment guidance, available administrative controls, and other commercially reasonable information to assist Licensee's review, but Nexgile does not own, perform, or guarantee Licensee's ATO, FedRAMP authorization, NIST compliance, CMMC compliance, CUI handling determination, data classification, agency approval process, or other government authorization or compliance decision. Licensee is also responsible for obtaining all rights, permissions, notices, and consents necessary for any data, code, files, prompts, credentials, or other materials that Licensee provides to, accesses through, or processes using the Software.
+Licensee is responsible for its systems, devices, repositories, environments, access credentials, API keys, tokens, permissions, configurations, and integrations used with the Software. Licensee is responsible for securing and managing all credentials and access rights used with the Software, including credentials used to access third-party AI providers, code repositories, cloud services, development tools, extensions, APIs, and other services.
+________________________________________
+5. UPDATES
+Nexgile may make updates available for the Software. You are responsible for installing updates unless your organization manages updates centrally. Failure to install updates may increase security and operational risk.
+________________________________________
+6. FEEDBACK
+
+If Licensee provides feedback about the Software to Nexgile, Licensee grants Nexgile a non-exclusive, royalty-free license to use such feedback solely for the purpose of improving the Software, subject to the following conditions: (a) Nexgile shall not commercialize, sell, or share Licensee's feedback with third parties without Licensee's prior written consent; (b) Nexgile shall not use feedback provided by a U.S. Government customer or a contractor acting on behalf of a U.S. Government customer in any manner that would disclose government operational details, sensitive information, or information subject to government data protection requirements; (c) feedback that contains or is derived from government data, CUI, or export-controlled information shall be governed by the applicable government contract and data processing agreement, not this Section; and (d) Licensee retains all rights in any feedback it provides and this license does not constitute a transfer of ownership. These rights do not survive termination of this agreement with respect to feedback provided by U.S. Government customers. Notwithstanding the foregoing, Nexgile may use general, non-confidential feedback to improve its products and services, provided Nexgile does not use or disclose Licensee confidential information, government data, CUI, export-controlled information, or agency-specific sensitive information.
+________________________________________
+7. SCOPE OF LICENSE
+The Software is licensed, not sold. This agreement only gives you some rights to use the Software. Nexgile reserves all other rights. Unless applicable law gives you more rights despite this limitation, you may use the Software only as expressly permitted in this agreement, and you must comply with any technical limitations in the Software. You may not:
+•    reverse engineer, decompile, or disassemble the Software, except and only to the extent required by third-party licensing terms governing open-source components included in the Software;
+•    remove, minimize, block, or modify any notices of Nexgile, its licensors, or third-party contributors in the Software;
+•    use the Software in any way that is against the law, in violation of any third party's terms of service, or to evade rate limits, bot-detection, or anti-abuse controls of any service;
+•    use the Software in life-support, nuclear, aircraft, weapons, or other safety-critical applications;
+•    use the AI or agentic features of the Software to generate malware, conduct unauthorized intrusion, perform unauthorized scraping, or generate content prohibited by applicable law or by the relevant AI provider's terms;
+•    circumvent license keys, seat limits, authentication, or other technical or administrative controls;
+•    redistribute, resell, sublicense, host, time-share, white-label, or provide the Software as a managed service for third parties, except as expressly permitted in writing by Nexgile;
+•    use the Unlimited Version outside the entities, users, contractors, projects, repositories, environments, or other scope permitted by the applicable order form or signed agreement;
+•    sell, license, sublicense, commercialize, host, white-label, or otherwise make available applications built using or on top of the Unlimited Version for the benefit of third parties, except as expressly permitted in a signed writing by Nexgile;
+•    share license keys, access credentials, authentication tokens, accounts, or other access controls with unauthorized users;
+•    use the Software to train, fine-tune, improve, or develop any competing product, model, system, or service;
+•    use the Software as a public-facing hosted service, managed service, outsourcing platform, service-bureau offering, white-label product, or other service for third parties, except as expressly permitted in a signed writing by Nexgile.
+________________________________________
+8. SUPPORT SERVICES
+This Software is provided "as is." Nexgile shall provide support, maintenance, service levels, professional services, training, onboarding, or other services only to the extent expressly stated in an applicable order form, support policy, statement of work, or other written agreement signed by Nexgile. Any support or services provided by Nexgile are subject to the applicable support terms, service terms, or statement of work. Nexgile has no obligation to provide any support, maintenance, service levels, professional services, or other services except as expressly agreed in writing.
+________________________________________
+9. INTELLECTUAL PROPERTY AND TRADEMARKS
+As between you and Nexgile, Nexgile owns all right, title, and interest in the Software, except for third-party components, which are owned by their respective contributors. You retain ownership of the inputs you author and provide to the Software and the AI outputs the Software returns to you, subject to any rights of the underlying AI providers.
+"Nexgile" and "Nexgile Code" are trademarks of Nexgile Inc. This agreement does not grant you any right to use the Nexgile trademarks except for fair, nominative use to identify the Software. Third-party trademarks remain the property of their respective owners; nothing in this agreement or in the licenses governing third-party components grants you any right to use those trademarks.
+________________________________________
+10. EXPORT RESTRICTIONS
+You must comply with all domestic and international export laws and regulations that apply to the Software, including restrictions on destinations, end users, and end use.
+________________________________________
+11. INDEMNIFICATION
+Each party agrees to defend, indemnify, and hold harmless the other party and its affiliates, officers, directors, employees, contractors, licensors, suppliers, and representatives from and against any claims, damages, liabilities, losses, costs, and expenses (including reasonable attorneys' fees) to the extent arising out of or relating to such party's own gross negligence, willful misconduct, fraud, or material breach of this agreement.
+Licensee's indemnification obligations are limited to claims directly and proximately caused by: (a) Licensee's material violation of this agreement or applicable law;  (b) Licensee's knowing use of AI-generated outputs in a manner that infringes third-party rights; and (c) Licensee's failure to implement and maintain appropriate security controls, configurations, guardrails, credentials management, and data-handling procedures within the environment in which the Nexgile IDE is deployed and operated, including compliance with applicable federal security standards such as FedRAMP and NIST 800-53 and other applicable agency-specific data handling requirements.
+Nexgile's indemnification obligations include: (a) claims that the Software, as provided by Nexgile and used in accordance with this agreement, infringes any third-party intellectual property right; (b) claims arising from Nexgile's gross negligence, willful misconduct, or fraud; (c) claims arising from defects or vulnerabilities in the Software that cause unauthorized actions or data breaches to the extent directly caused by Nexgile's gross negligence, willful misconduct, or material breach of its express security obligations under this agreement or an applicable signed security addendum;  (d) claims arising from Nexgile's breach of any data processing agreement or security addendum; and (e) claims, penalties, or regulatory actions arising from Nexgile's unauthorized processing, disclosure, or failure to protect personally identifiable information or personal data ("PII") actually received or processed by Nexgile from Licensee in connection with this agreement, to the extent Nexgile had written notice that such data constituted PII and such claims are caused by Nexgile's gross negligence, willful misconduct, or material breach of its express data protection obligations under this agreement or applicable law. For clarity, Nexgile is not responsible under this Section for PII or other sensitive data introduced, stored, processed, or transmitted through Licensee's environment, selected LLM, configurations, credentials, prompts, integrations, or user actions, except to the extent directly caused by Nexgile's gross negligence, willful misconduct, or material breach of its express obligations under this agreement
+For U.S. Government customers, Licensee's indemnification obligations are further subject to applicable government law, including the Anti-Deficiency Act (31 U.S.C. § 1341) and applicable appropriations law. Nothing in this Section shall be construed to require a government entity to indemnify a private party in a manner inconsistent with applicable government law or to obligate funds in advance of appropriations.
+________________________________________
+12. TERMINATION; SURVIVAL
+This agreement is effective until terminated. This agreement may be terminated by either party upon material breach, subject to the following conditions: (a) the non-breaching party shall provide the breaching party with written notice specifying the nature of the breach in reasonable detail; (b) the breaching party shall have thirty (30) days from receipt of such notice to cure the breach, or such longer period as may be reasonably necessary if the breach cannot be cured within thirty (30) days and the breaching party is diligently pursuing cure; and (c) termination shall only take effect if the breach remains uncured at the end of the cure period.
+For U.S. Government customers or contractors acquiring the Software on behalf of a U.S. Government entity: (a) Nexgile shall not suspend or terminate access to the Software during any active government contract period of performance without providing at least sixty (60) days prior written notice to both the Licensee and the applicable Contracting Officer; (b) Nexgile shall not suspend access based solely on a good-faith dispute regarding scope of use or fees; (c) in the event of a security concern, Nexgile shall notify Licensee and work collaboratively to address the concern before suspending access, except where immediate suspension is required to prevent imminent harm; and (d) upon expiration or termination, Nexgile shall provide a reasonable transition assistance period of no less than sixty (60) days to allow the government customer to migrate to an alternative solution.
+Upon termination, Licensee must cease all use of the Software and destroy all copies. Sections 2.3, 2.4 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, and 17 survive termination. Termination of this agreement does not affect Licensee's separate rights under any third-party license that governs a corresponding third-party component included in the Software. If Nexgile reasonably believes that Licensee's use of the Software creates an imminent security, legal, operational, infringement, misuse, or third-party risk, Nexgile may provide written notice to Licensee identifying the concern and may request that Licensee suspend, disable, limit, or remediate the affected use. Nexgile will reasonably cooperate with Licensee regarding such notice, but nothing in this agreement requires Nexgile to continue providing support, updates, assistance, or other services for use that Nexgile reasonably believes creates such risk. Nothing in this section gives Nexgile any right to access, control, disable, or modify Licensee's systems or deployment environment except as expressly agreed in a signed writing.
+________________________________________
+13. ENTIRE AGREEMENT; ORDER OF PRECEDENCE
+This agreement, together with the Privacy Policy and the THIRDPARTYNOTICES, LICENSE, and NOTICE files accompanying the Software, is the entire agreement for the Software, except to the extent you and Nexgile have entered into a separately signed agreement. If you have a separately signed agreement with Nexgile, that signed agreement controls for its subject matter. Any additional or conflicting terms in a purchase order, procurement document, vendor portal, onboarding document, invoice, email, click-through, online form, or other document submitted by you are rejected and have no effect unless expressly agreed to in a signed writing by Nexgile.
+________________________________________
+14. APPLICABLE LAW
+This agreement is governed by the laws of the State of Delaware, United States of America, without regard to its conflict-of-laws principles. The U.N. Convention on Contracts for the International Sale of Goods does not apply.
+The parties consent to the exclusive jurisdiction of the state and federal courts located in New Castle County, Delaware for any dispute arising out of or relating to this agreement; provided, however, that Nexgile may seek injunctive or equitable relief in any court of competent jurisdiction to protect its intellectual property or proprietary rights.
+If you acquired the Software outside the United States, mandatory local consumer-protection laws may apply to the extent they cannot be waived by agreement.
+________________________________________
+15. DISCLAIMER OF WARRANTY
+Notwithstanding the general disclaimer below, Nexgile warrants that: (a) the Software will perform materially in accordance with its published documentation during the applicable license term; (b) Nexgile will employ commercially reasonable and industry-standard security measures to protect the Software from known vulnerabilities; (c) Nexgile will notify Licensee within forty-eight (48) hours of discovering any security breach, vulnerability, or incident that may affect Licensee's data, systems, or operations; (d) the Software does not, to Nexgile's knowledge as of the Effective Date, infringe any third-party intellectual property rights; and (e) Nexgile will provide Licensee with reasonable advance notice of any material changes to the Software's functionality, AI features, or supported third-party AI providers.
+Except for the express warranties stated above, the Software is provided without additional warranties. Nexgile excludes implied warranties of merchantability, fitness for a particular purpose, and accuracy only to the extent permitted by applicable law. Nothing in this Section limits Nexgile's liability for gross negligence, willful misconduct, or fraud. For U.S. Government customers, this disclaimer is subject to applicable government procurement law and shall be interpreted consistently with FAR 12.212 and DFARS 227.7202.
+________________________________________
+16. LIMITATION ON AND EXCLUSION OF DAMAGES
+LICENSEE CAN RECOVER FROM NEXGILE AND ITS SUPPLIERS, AFFILIATES, AND LICENSORS, IN CONNECTION WITH THE UNLIMITED VERSION, DIRECT DAMAGES UP TO THE GREATER OF: (A) THE TOTAL FEES PAID OR PAYABLE BY LICENSEE TO NEXGILE UNDER THE APPLICABLE ORDER FORM OR SIGNED AGREEMENT DURING THE TWELVE (12) MONTHS IMMEDIATELY PRECEDING THE CLAIM; OR (B) ONE HUNDRED THOUSAND U.S. DOLLARS (USD $100,000.00).
+LICENSEE IS RESPONSIBLE FOR LICENSEE'S DATA, SYSTEMS, CLOUD ENVIRONMENTS, REPOSITORIES, CREDENTIALS, API KEYS, TOKENS, SECRETS, CONFIGURATIONS, PROMPTS, PERMISSIONS, APPROVALS, INTEGRATIONS, LOGS, DEPLOYMENT DECISIONS, SELECTED MODES OF OPERATION, INCLUDING AUTONOMOUS MODE, AND SELECTED THIRD-PARTY AI PROVIDERS, MODELS, APIS, CLOUD PROVIDERS, CUSTOMER-HOSTED MODELS, OR OTHER THIRD-PARTY SERVICES USED WITH THE SOFTWARE. NEXGILE WILL NOT BE LIABLE FOR DAMAGES ARISING OUT OF OR RELATING TO AI-GENERATED OUTPUTS, MODEL HALLUCINATIONS, MODEL INACCURACIES, MODEL BEHAVIOR, GENERATED CODE OR APPLICATIONS REVIEWED, APPROVED, TESTED, DEPLOYED, OR USED BY LICENSEE, USER-APPROVED OR USER-AUTHORIZED ACTIONS, LICENSEE'S DATA CLASSIFICATION DECISIONS, ATO DECISIONS, FEDRAMP DECISIONS, CUI HANDLING DECISIONS, OR OTHER GOVERNMENT AUTHORIZATION, COMPLIANCE, OR AGENCY APPROVAL PROCESSES, EXCEPT TO THE EXTENT DIRECTLY CAUSED BY NEXGILE'S FRAUD OR WILLFUL MISCONDUCT.
+YOU CANNOT RECOVER ANY OTHER DAMAGES, INCLUDING CONSEQUENTIAL, LOST PROFITS, LOST REVENUE, LOSS OF GOODWILL, SPECIAL, INDIRECT, INCIDENTAL, EXEMPLARY, PUNITIVE, OR ENHANCED DAMAGES, OR DAMAGES FOR BUSINESS INTERRUPTION, LOSS OF USE, LOSS OF DATA, PROCUREMENT DELAY, MISSION FAILURE, OR FAILURE OF OPERATIONAL OBJECTIVES, EVEN IF NEXGILE KNEW OR SHOULD HAVE KNOWN ABOUT THE POSSIBILITY OF THE DAMAGES.
+THE FOREGOING CAP SHALL NOT APPLY TO: (A) FRAUD OR WILLFUL MISCONDUCT; (B) LICENSEE'S OR THE ACQUIRING CONTRACTOR'S PAYMENT OBLIGATIONS; OR (C) EITHER PARTY'S EXPRESS INDEMNIFICATION OBLIGATIONS FOR THIRD-PARTY INTELLECTUAL PROPERTY INFRINGEMENT CLAIMS UNDER SECTION 11.
+FOR U.S. GOVERNMENT CUSTOMERS, THIS LIMITATION OF LIABILITY IS SUBJECT TO APPLICABLE GOVERNMENT CONTRACTING LAW AND SHALL NOT BE CONSTRUED TO LIMIT THE GOVERNMENT'S RIGHTS UNDER APPLICABLE LAW, INCLUDING RIGHTS UNDER THE CONTRACT DISPUTES ACT OR OTHER APPLICABLE STATUTES.
+________________________________________
+17. U.S. GOVERNMENT RIGHTS
+The Software is "commercial computer software" and related documentation is "commercial computer software documentation." If the Software is acquired by or on behalf of the U.S. Government, the Software and documentation are provided only with the rights customarily provided to the public under this agreement and any applicable order form, consistent with FAR 12.212, DFARS 227.7202, and similar regulations. No additional rights, including unlimited rights, government purpose rights, or rights to source code, are granted unless expressly agreed in a written agreement signed by Nexgile.
+________________________________________
+© 2026 Nexgile Inc. All rights reserved (subject to the third-party rights described in the accompanying notice files).
