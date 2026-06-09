@@ -219,10 +219,18 @@ export abstract class AbstractExtensionsScannerService extends Disposable implem
 		const [defaultSystemExtensions, devSystemExtensions] = await Promise.all(promises);
 		let allSystemExtensions = [...defaultSystemExtensions, ...devSystemExtensions];
 
-		if (this.environmentService.skipBuiltinExtensions?.length) {
-			const skipSet = new Set(this.environmentService.skipBuiltinExtensions.map(id => id.toLowerCase()));
-			allSystemExtensions = allSystemExtensions.filter(ext => !skipSet.has(ext.identifier.id.toLowerCase()));
-		}
+		// Nexgile: never load VS Code's built-in GitHub Copilot Chat extension in ANY mode
+		// (dev-from-source, packaged, server, or web). It activates on startup and registers the
+		// github.copilot.default chat participant + language-model providers, which re-enable
+		// VS Code's native chat / "Agents window" UI even with chat.disableAIFeatures set. All AI
+		// in this product is provided by the bundled nexgile-code extension. Packaged builds also
+		// drop it from the build (packageCopilotExtensionStream); this scanner skip makes
+		// dev-from-source match the shipped product. Only built-in (system) scans are filtered, so
+		// a user who explicitly installs Copilot is unaffected.
+		const skipSet = new Set((this.environmentService.skipBuiltinExtensions ?? []).map(id => id.toLowerCase()));
+		skipSet.add('github.copilot-chat');
+		skipSet.add('github.copilot');
+		allSystemExtensions = allSystemExtensions.filter(ext => !skipSet.has(ext.identifier.id.toLowerCase()));
 
 		return this.applyScanOptions(allSystemExtensions, ExtensionType.System, { pickLatest: false });
 	}
