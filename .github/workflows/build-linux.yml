@@ -20,7 +20,7 @@ on:
           - standard
           - taa
           - both
-        default: standard
+        default: both
       branch:
         description: "Branch to build (defaults to the branch you run from)"
         required: false
