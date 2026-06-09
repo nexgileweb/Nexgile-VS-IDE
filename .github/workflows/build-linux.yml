@@ -12,6 +12,15 @@ on:
           - arm64
           - both
         default: x64
+      edition:
+        description: "Bundled coding-agent edition (taa = no Chinese providers/models)"
+        required: true
+        type: choice
+        options:
+          - standard
+          - taa
+          - both
+        default: standard
       branch:
         description: "Branch to build (defaults to the branch you run from)"
         required: false
@@ -20,12 +29,16 @@ on:
 jobs:
   build-x64:
     if: ${{ inputs.arch == 'x64' || inputs.arch == 'both' }}
-    name: Linux x64
+    strategy:
+      matrix:
+        edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
+    name: Linux x64 (${{ matrix.edition }})
     runs-on: ubuntu-22.04
     timeout-minutes: 90
     env:
       VSCODE_ARCH: x64
       NPM_ARCH: x64
+      EDITION_SUFFIX: ${{ matrix.edition == 'taa' && '-taa' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -82,6 +95,9 @@ jobs:
           mkdir -p .build/node_modules_cache
           tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
 
+      - name: Select coding-agent edition
+        run: node scripts/select-nexgile-edition.mjs ${{ matrix.edition }}
+
       - name: Download built-in extensions
         run: node build/lib/builtInExtensions.ts
         env:
@@ -96,13 +112,13 @@ jobs:
         run: |
           set -e
           mkdir -p .build
-          tar -czf "$GITHUB_WORKSPACE/.build/NexgileCode-linux-x64.tar.gz" -C .. VSCode-linux-x64
+          tar -czf "$GITHUB_WORKSPACE/.build/NexgileCode-linux-x64$EDITION_SUFFIX.tar.gz" -C .. VSCode-linux-x64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCode-linux-x64
-          path: .build/NexgileCode-linux-x64.tar.gz
+          name: NexgileCode-linux-x64${{ env.EDITION_SUFFIX }}
+          path: .build/NexgileCode-linux-x64${{ env.EDITION_SUFFIX }}.tar.gz
           retention-days: 30
 
       - name: Build .deb and .rpm installers
@@ -116,7 +132,7 @@ jobs:
       - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCodeSetup-linux-x64
+          name: NexgileCodeSetup-linux-x64${{ env.EDITION_SUFFIX }}
           path: |
             .build/linux/deb/**/*.deb
             .build/linux/rpm/**/*.rpm
@@ -124,12 +140,16 @@ jobs:
 
   build-arm64:
     if: ${{ inputs.arch == 'arm64' || inputs.arch == 'both' }}
-    name: Linux arm64
+    strategy:
+      matrix:
+        edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
+    name: Linux arm64 (${{ matrix.edition }})
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 90
     env:
       VSCODE_ARCH: arm64
       NPM_ARCH: arm64
+      EDITION_SUFFIX: ${{ matrix.edition == 'taa' && '-taa' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -184,6 +204,9 @@ jobs:
           mkdir -p .build/node_modules_cache
           tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
 
+      - name: Select coding-agent edition
+        run: node scripts/select-nexgile-edition.mjs ${{ matrix.edition }}
+
       - name: Download built-in extensions
         run: node build/lib/builtInExtensions.ts
         env:
@@ -198,13 +221,13 @@ jobs:
         run: |
           set -e
           mkdir -p .build
-          tar -czf "$GITHUB_WORKSPACE/.build/NexgileCode-linux-arm64.tar.gz" -C .. VSCode-linux-arm64
+          tar -czf "$GITHUB_WORKSPACE/.build/NexgileCode-linux-arm64$EDITION_SUFFIX.tar.gz" -C .. VSCode-linux-arm64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCode-linux-arm64
-          path: .build/NexgileCode-linux-arm64.tar.gz
+          name: NexgileCode-linux-arm64${{ env.EDITION_SUFFIX }}
+          path: .build/NexgileCode-linux-arm64${{ env.EDITION_SUFFIX }}.tar.gz
           retention-days: 30
 
       - name: Build .deb and .rpm installers
@@ -218,7 +241,7 @@ jobs:
       - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCodeSetup-linux-arm64
+          name: NexgileCodeSetup-linux-arm64${{ env.EDITION_SUFFIX }}
           path: |
             .build/linux/deb/**/*.deb
             .build/linux/rpm/**/*.rpm

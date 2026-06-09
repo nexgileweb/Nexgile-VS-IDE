@@ -12,6 +12,15 @@ on:
           - x64
           - both
         default: arm64
+      edition:
+        description: "Bundled coding-agent edition (taa = no Chinese providers/models)"
+        required: true
+        type: choice
+        options:
+          - standard
+          - taa
+          - both
+        default: standard
       branch:
         description: "Branch to build (defaults to the branch you run from)"
         required: false
@@ -20,12 +29,16 @@ on:
 jobs:
   build-arm64:
     if: ${{ inputs.arch == 'arm64' || inputs.arch == 'both' }}
-    name: macOS arm64 (Apple Silicon)
+    strategy:
+      matrix:
+        edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
+    name: macOS arm64 (Apple Silicon, ${{ matrix.edition }})
     runs-on: macos-14
     timeout-minutes: 60
     env:
       VSCODE_ARCH: arm64
       NPM_ARCH: arm64
+      EDITION_SUFFIX: ${{ matrix.edition == 'taa' && '-taa' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,6 +89,9 @@ jobs:
           mkdir -p .build/node_modules_cache
           tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
 
+      - name: Select coding-agent edition
+        run: node scripts/select-nexgile-edition.mjs ${{ matrix.edition }}
+
       - name: Download built-in extensions
         run: node build/lib/builtInExtensions.ts
         env:
@@ -91,13 +107,13 @@ jobs:
           set -e
           cd ../VSCode-darwin-arm64
           APP_NAME="$(ls | head -n 1)"
-          zip -Xry "$GITHUB_WORKSPACE/.build/NexgileCode-darwin-arm64.zip" "$APP_NAME"
+          zip -Xry "$GITHUB_WORKSPACE/.build/NexgileCode-darwin-arm64$EDITION_SUFFIX.zip" "$APP_NAME"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCode-darwin-arm64
-          path: .build/NexgileCode-darwin-arm64.zip
+          name: NexgileCode-darwin-arm64${{ env.EDITION_SUFFIX }}
+          path: .build/NexgileCode-darwin-arm64${{ env.EDITION_SUFFIX }}.zip
           retention-days: 30
 
       - name: Install dmgbuild
@@ -115,18 +131,22 @@ jobs:
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCodeSetup-darwin-arm64
+          name: NexgileCodeSetup-darwin-arm64${{ env.EDITION_SUFFIX }}
           path: .build/darwin/VSCode-darwin-arm64.dmg
           retention-days: 30
 
   build-x64:
     if: ${{ inputs.arch == 'x64' || inputs.arch == 'both' }}
-    name: macOS x64 (Intel)
+    strategy:
+      matrix:
+        edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
+    name: macOS x64 (Intel, ${{ matrix.edition }})
     runs-on: macos-13
     timeout-minutes: 60
     env:
       VSCODE_ARCH: x64
       NPM_ARCH: x64
+      EDITION_SUFFIX: ${{ matrix.edition == 'taa' && '-taa' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -177,6 +197,9 @@ jobs:
           mkdir -p .build/node_modules_cache
           tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
 
+      - name: Select coding-agent edition
+        run: node scripts/select-nexgile-edition.mjs ${{ matrix.edition }}
+
       - name: Download built-in extensions
         run: node build/lib/builtInExtensions.ts
         env:
@@ -192,13 +215,13 @@ jobs:
           set -e
           cd ../VSCode-darwin-x64
           APP_NAME="$(ls | head -n 1)"
-          zip -Xry "$GITHUB_WORKSPACE/.build/NexgileCode-darwin-x64.zip" "$APP_NAME"
+          zip -Xry "$GITHUB_WORKSPACE/.build/NexgileCode-darwin-x64$EDITION_SUFFIX.zip" "$APP_NAME"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCode-darwin-x64
-          path: .build/NexgileCode-darwin-x64.zip
+          name: NexgileCode-darwin-x64${{ env.EDITION_SUFFIX }}
+          path: .build/NexgileCode-darwin-x64${{ env.EDITION_SUFFIX }}.zip
           retention-days: 30
 
       - name: Install dmgbuild
@@ -216,6 +239,6 @@ jobs:
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCodeSetup-darwin-x64
+          name: NexgileCodeSetup-darwin-x64${{ env.EDITION_SUFFIX }}
           path: .build/darwin/VSCode-darwin-x64.dmg
           retention-days: 30

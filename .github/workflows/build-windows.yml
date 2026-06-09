@@ -12,6 +12,15 @@ on:
           - arm64
           - both
         default: x64
+      edition:
+        description: "Bundled coding-agent edition (taa = no Chinese providers/models)"
+        required: true
+        type: choice
+        options:
+          - standard
+          - taa
+          - both
+        default: standard
       branch:
         description: "Branch to build (defaults to the branch you run from)"
         required: false
@@ -20,11 +29,15 @@ on:
 jobs:
   build-x64:
     if: ${{ inputs.arch == 'x64' || inputs.arch == 'both' }}
-    name: Windows x64
+    strategy:
+      matrix:
+        edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
+    name: Windows x64 (${{ matrix.edition }})
     runs-on: windows-2022
     timeout-minutes: 90
     env:
       VSCODE_ARCH: x64
+      EDITION_SUFFIX: ${{ matrix.edition == 'taa' && '-taa' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -74,6 +87,10 @@ jobs:
           mkdir -p .build/node_modules_cache
           tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
 
+      - name: Select coding-agent edition
+        shell: bash
+        run: node scripts/select-nexgile-edition.mjs ${{ matrix.edition }}
+
       - name: Download built-in extensions
         shell: bash
         run: node build/lib/builtInExtensions.ts
@@ -103,13 +120,13 @@ jobs:
         run: |
           set -e
           cd ../VSCode-win32-x64
-          7z a "$GITHUB_WORKSPACE/.build/NexgileCode-win32-x64.zip" .
+          7z a "$GITHUB_WORKSPACE/.build/NexgileCode-win32-x64$EDITION_SUFFIX.zip" .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCode-win32-x64
-          path: .build/NexgileCode-win32-x64.zip
+          name: NexgileCode-win32-x64${{ env.EDITION_SUFFIX }}
+          path: .build/NexgileCode-win32-x64${{ env.EDITION_SUFFIX }}.zip
           retention-days: 30
 
       - name: Build setup installer
@@ -121,17 +138,21 @@ jobs:
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCodeSetup-win32-x64
+          name: NexgileCodeSetup-win32-x64${{ env.EDITION_SUFFIX }}
           path: .build/win32-x64/user-setup/*.exe
           retention-days: 30
 
   build-arm64:
     if: ${{ inputs.arch == 'arm64' || inputs.arch == 'both' }}
-    name: Windows arm64
+    strategy:
+      matrix:
+        edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
+    name: Windows arm64 (${{ matrix.edition }})
     runs-on: windows-2022
     timeout-minutes: 90
     env:
       VSCODE_ARCH: arm64
+      EDITION_SUFFIX: ${{ matrix.edition == 'taa' && '-taa' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -181,6 +202,10 @@ jobs:
           mkdir -p .build/node_modules_cache
           tar -czf .build/node_modules_cache/cache.tgz --files-from .build/node_modules_list.txt
 
+      - name: Select coding-agent edition
+        shell: bash
+        run: node scripts/select-nexgile-edition.mjs ${{ matrix.edition }}
+
       - name: Download built-in extensions
         shell: bash
         run: node build/lib/builtInExtensions.ts
@@ -210,13 +235,13 @@ jobs:
         run: |
           set -e
           cd ../VSCode-win32-arm64
-          7z a "$GITHUB_WORKSPACE/.build/NexgileCode-win32-arm64.zip" .
+          7z a "$GITHUB_WORKSPACE/.build/NexgileCode-win32-arm64$EDITION_SUFFIX.zip" .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCode-win32-arm64
-          path: .build/NexgileCode-win32-arm64.zip
+          name: NexgileCode-win32-arm64${{ env.EDITION_SUFFIX }}
+          path: .build/NexgileCode-win32-arm64${{ env.EDITION_SUFFIX }}.zip
           retention-days: 30
 
       - name: Build setup installer
@@ -228,6 +253,6 @@ jobs:
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: NexgileCodeSetup-win32-arm64
+          name: NexgileCodeSetup-win32-arm64${{ env.EDITION_SUFFIX }}
           path: .build/win32-arm64/user-setup/*.exe
           retention-days: 30
