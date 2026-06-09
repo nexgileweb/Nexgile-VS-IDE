@@ -9,6 +9,7 @@ import { ServicesAccessor } from '../../../../platform/instantiation/common/inst
 import { ContextKeyExpr, RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
 import { ChatEntitlementContextKeys } from '../../../services/chat/common/chatEntitlementService.js';
 import { IsAuxiliaryWindowContext, IsSessionsWindowContext } from '../../../common/contextkeys.js';
+import product from '../../../../platform/product/common/product.js';
 
 export enum ChatConfiguration {
 	AIDisabled = 'chat.disableAIFeatures',
@@ -210,13 +211,18 @@ export const MANAGE_CHAT_COMMAND_ID = 'workbench.action.chat.manage';
 
 export const OPEN_WORKSPACE_IN_AGENTS_WINDOW_COMMAND_ID = 'workbench.action.openWorkspaceInAgentsWindow';
 export const OPEN_AGENTS_WINDOW_COMMAND_ID = 'workbench.action.openAgentsWindow';
-export const OPEN_AGENTS_WINDOW_PRECONDITION = ContextKeyExpr.and(
+// Nexgile: the "Agents window" / "Open in Agents" surfaces (the title-bar button, the Open Agents
+// Window command + keybinding, the chat-title-bar menu entries, and the handoff input tip) all key
+// off this shared precondition. This product ships no `defaultChatAgent` — AI is provided by the
+// bundled nexgile-code extension — so gate the precondition to always-false. (Setup.hidden alone is
+// unreliable at runtime, the same reason the native chat view is gated structurally on the product.)
+export const OPEN_AGENTS_WINDOW_PRECONDITION = product.defaultChatAgent ? ContextKeyExpr.and(
 	ChatEntitlementContextKeys.Setup.hidden.negate(),
 	ChatEntitlementContextKeys.Setup.disabledInWorkspace.negate(),
 	IsSessionsWindowContext.negate(),
 	ContextKeyExpr.has(`config.${ChatConfiguration.AgentEnabled}`),
 	IsAuxiliaryWindowContext.negate()
-);
+) : ContextKeyExpr.false();
 
 export const ChatEditorTitleMaxLength = 30;
 

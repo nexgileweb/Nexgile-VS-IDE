@@ -26,6 +26,7 @@ import { IChatEditingService, ModifiedFileEntryState } from '../../../common/edi
 import { isSessionInProgressStatus } from '../agentSessionsModel.js';
 import { URI } from '../../../../../../base/common/uri.js';
 import { autorun } from '../../../../../../base/common/observable.js';
+import product from '../../../../../../platform/product/common/product.js';
 
 import './unifiedQuickAccessActions.js'; // Register unified quick access actions
 
@@ -247,8 +248,12 @@ registerAction2(ToggleUnifiedAgentsBarAction);
 registerSingleton(IAgentSessionProjectionService, AgentSessionProjectionService, InstantiationType.Delayed);
 registerSingleton(IAgentTitleBarStatusService, AgentTitleBarStatusService, InstantiationType.Delayed);
 
-registerWorkbenchContribution2(AgentTitleBarStatusRendering.ID, AgentTitleBarStatusRendering, WorkbenchPhase.AfterRestored);
-registerWorkbenchContribution2(AgentSessionReadyContribution.ID, AgentSessionReadyContribution, WorkbenchPhase.AfterRestored);
+// Nexgile: the title-bar agent-status control (the command-center "Agents" sparkle pill) belongs to
+// VS Code's native chat agent, which this product does not ship. Gate its rendering on product.defaultChatAgent.
+if (product.defaultChatAgent) {
+	registerWorkbenchContribution2(AgentTitleBarStatusRendering.ID, AgentTitleBarStatusRendering, WorkbenchPhase.AfterRestored);
+	registerWorkbenchContribution2(AgentSessionReadyContribution.ID, AgentSessionReadyContribution, WorkbenchPhase.AfterRestored);
+}
 
 // Register Agent Status as a menu item in the command center (alongside the search box, not replacing it)
 MenuRegistry.appendMenuItem(MenuId.CommandCenter, {

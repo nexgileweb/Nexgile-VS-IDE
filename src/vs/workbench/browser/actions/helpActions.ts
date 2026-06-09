@@ -355,15 +355,18 @@ class AskVSCodeCopilot extends Action2 {
 	}
 }
 
-MenuRegistry.appendMenuItem(MenuId.MenubarHelpMenu, {
-	command: {
-		id: AskVSCodeCopilot.ID,
-		title: localize2('askVScode', 'Ask @vscode'),
-	},
-	order: 7,
-	group: '1_welcome',
-	when: ContextKeyExpr.and(ContextKeyExpr.equals('chatSetupHidden', false), ContextKeyExpr.equals('chatSetupDisabledInWorkspace', false), IsSessionsWindowContext.negate())
-});
+// Nexgile: the "Ask @vscode" Help-menu entry is a native chat surface. Gate on product.defaultChatAgent.
+if (product.defaultChatAgent) {
+	MenuRegistry.appendMenuItem(MenuId.MenubarHelpMenu, {
+		command: {
+			id: AskVSCodeCopilot.ID,
+			title: localize2('askVScode', 'Ask @vscode'),
+		},
+		order: 7,
+		group: '1_welcome',
+		when: ContextKeyExpr.and(ContextKeyExpr.equals('chatSetupHidden', false), ContextKeyExpr.equals('chatSetupDisabledInWorkspace', false), IsSessionsWindowContext.negate())
+	});
+}
 
 // --- Actions Registration
 
