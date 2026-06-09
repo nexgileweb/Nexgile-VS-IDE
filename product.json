@@ -121,12 +121,16 @@
 			}
 		}
 	],
+	"builtInExtensionsEnabledWithAutoUpdates": [],
 	"extensionEnabledApiProposals": {
 		"nexgile.nexgile-theme": ["css"]
 	},
 	"configurationDefaults": {
 		"chat.disableAIFeatures": true,
 		"chat.growthNotification.enabled": false,
+		"disableAICustomizations": true,
+		"workbench.disableAICustomizations": true,
+		"chat.agentsControl.enabled": "hidden",
 		"workbench.colorTheme": "Nexgile Teal Dark",
 		"workbench.preferredDarkColorTheme": "Nexgile Teal Dark",
 		"workbench.preferredLightColorTheme": "Nexgile Light Enterprise",

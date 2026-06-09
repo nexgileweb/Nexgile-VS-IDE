@@ -28,6 +28,7 @@ import { DefaultConfiguration as BaseDefaultConfiguration } from '../../../../pl
 import { IJSONEditingService } from '../common/jsonEditing.js';
 import { IUserDataProfilesService } from '../../../../platform/userDataProfile/common/userDataProfile.js';
 import { IBrowserWorkbenchEnvironmentService } from '../../environment/browser/environmentService.js';
+import product from '../../../../platform/product/common/product.js';
 
 export class DefaultConfiguration extends BaseDefaultConfiguration {
 
@@ -45,6 +46,13 @@ export class DefaultConfiguration extends BaseDefaultConfiguration {
 	) {
 		super(logService);
 		this.cacheKey = { type: 'defaults', key: `${cacheScope}-configurationDefaultsOverrides` };
+		// Nexgile: apply product.json `configurationDefaults` (e.g. chat.disableAIFeatures and the
+		// default color theme). Desktop builds do not populate
+		// environmentService.options.configurationDefaults from product.json, so without this the
+		// product's configuration defaults are silently ignored at runtime.
+		if (product.configurationDefaults) {
+			this.configurationRegistry.registerDefaultConfigurations([{ overrides: product.configurationDefaults as IStringDictionary<IStringDictionary<unknown>> }]);
+		}
 		if (environmentService.options?.configurationDefaults) {
 			this.configurationRegistry.registerDefaultConfigurations([{ overrides: environmentService.options.configurationDefaults as IStringDictionary<IStringDictionary<unknown>> }]);
 		}

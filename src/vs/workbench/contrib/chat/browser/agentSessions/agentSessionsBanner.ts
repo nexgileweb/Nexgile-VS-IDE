@@ -11,6 +11,7 @@ import { ITelemetryService } from '../../../../../platform/telemetry/common/tele
 import { IChatEntitlementService } from '../../../../services/chat/common/chatEntitlementService.js';
 
 import { OPEN_WORKSPACE_IN_AGENTS_WINDOW_COMMAND_ID } from '../../common/constants.js';
+import product from '../../../../../platform/product/common/product.js';
 
 
 type AgentsBannerClickedEvent = {
@@ -37,6 +38,10 @@ export interface IAgentsBannerResult {
  * It is also hidden when AI features are disabled.
  */
 export function canShowAgentsBanner(chatEntitlementService: IChatEntitlementService): boolean {
+	// Nexgile: never show the "Agents window" banner in this product (no native chat agent).
+	if (!product.defaultChatAgent) {
+		return false;
+	}
 	const sentiment = chatEntitlementService.sentiment;
 	if (sentiment.hidden || sentiment.disabled) {
 		return false;

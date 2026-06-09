@@ -32,55 +32,62 @@ import { IRawChatParticipantContribution } from '../common/participants/chatPart
 import { ChatAgentLocation, ChatModeKind } from '../common/constants.js';
 import { ChatViewId, ChatViewContainerId } from './chat.js';
 import { ChatViewPane } from './widgetHosts/viewPane/chatViewPane.js';
+import product from '../../../../platform/product/common/product.js';
 
 // --- Chat Container &  View Registration
 
 const chatViewIcon = registerIcon('chat-view-icon', Codicon.chatSparkle, localize('chatViewIcon', 'View icon of the chat view.'));
 
-const chatViewContainer: ViewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer({
-	id: ChatViewContainerId,
-	title: localize2('chat.viewContainer.label', "Chat"),
-	icon: chatViewIcon,
-	ctorDescriptor: new SyncDescriptor(ViewPaneContainer, [ChatViewContainerId, { mergeViewWithContainerWhenSingleView: true }]),
-	storageId: ChatViewContainerId,
-	hideIfEmpty: true,
-	order: 1,
-}, ViewContainerLocation.AuxiliaryBar, { isDefault: true, doNotRegisterOpenCommand: true });
-
-const chatViewDescriptor: IViewDescriptor = {
-	id: ChatViewId,
-	containerIcon: chatViewContainer.icon,
-	containerTitle: chatViewContainer.title.value,
-	singleViewPaneContainerTitle: chatViewContainer.title.value,
-	name: localize2('chat.viewContainer.label', "Chat"),
-	canToggleVisibility: false,
-	canMoveView: true,
-	openCommandActionDescriptor: {
+// Nexgile: only register VS Code's native chat view + its AuxiliaryBar container when the
+// product ships a default chat agent. This product has none (AI is provided by the bundled
+// nexgile-code extension), so the native "Build with Agent" chat panel is never registered.
+// This is a deterministic module-load gate; it does not rely on the chatSetupHidden context key.
+if (product.defaultChatAgent) {
+	const chatViewContainer: ViewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer({
 		id: ChatViewContainerId,
-		title: chatViewContainer.title,
-		mnemonicTitle: localize({ key: 'miToggleChat', comment: ['&& denotes a mnemonic'] }, "&&Chat"),
-		keybindings: {
-			primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyCode.KeyI,
-			mac: {
-				primary: KeyMod.CtrlCmd | KeyMod.WinCtrl | KeyCode.KeyI
-			}
+		title: localize2('chat.viewContainer.label', "Chat"),
+		icon: chatViewIcon,
+		ctorDescriptor: new SyncDescriptor(ViewPaneContainer, [ChatViewContainerId, { mergeViewWithContainerWhenSingleView: true }]),
+		storageId: ChatViewContainerId,
+		hideIfEmpty: true,
+		order: 1,
+	}, ViewContainerLocation.AuxiliaryBar, { isDefault: true, doNotRegisterOpenCommand: true });
+
+	const chatViewDescriptor: IViewDescriptor = {
+		id: ChatViewId,
+		containerIcon: chatViewContainer.icon,
+		containerTitle: chatViewContainer.title.value,
+		singleViewPaneContainerTitle: chatViewContainer.title.value,
+		name: localize2('chat.viewContainer.label', "Chat"),
+		canToggleVisibility: false,
+		canMoveView: true,
+		openCommandActionDescriptor: {
+			id: ChatViewContainerId,
+			title: chatViewContainer.title,
+			mnemonicTitle: localize({ key: 'miToggleChat', comment: ['&& denotes a mnemonic'] }, "&&Chat"),
+			keybindings: {
+				primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyCode.KeyI,
+				mac: {
+					primary: KeyMod.CtrlCmd | KeyMod.WinCtrl | KeyCode.KeyI
+				}
+			},
+			order: 1
 		},
-		order: 1
-	},
-	ctorDescriptor: new SyncDescriptor(ChatViewPane),
-	when: ContextKeyExpr.and(
-		ChatContextKeys.accountPolicyGateActive.negate(),
-		ContextKeyExpr.or(
-			ContextKeyExpr.and(
-				ChatContextKeys.Setup.hidden.negate(),
-				ChatContextKeys.Setup.disabledInWorkspace.negate(),
-			),
-			ChatContextKeys.panelParticipantRegistered,
-			ChatContextKeys.extensionInvalid
+		ctorDescriptor: new SyncDescriptor(ChatViewPane),
+		when: ContextKeyExpr.and(
+			ChatContextKeys.accountPolicyGateActive.negate(),
+			ContextKeyExpr.or(
+				ContextKeyExpr.and(
+					ChatContextKeys.Setup.hidden.negate(),
+					ChatContextKeys.Setup.disabledInWorkspace.negate(),
+				),
+				ChatContextKeys.panelParticipantRegistered,
+				ChatContextKeys.extensionInvalid
+			)
 		)
-	)
-};
-Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([chatViewDescriptor], chatViewContainer);
+	};
+	Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([chatViewDescriptor], chatViewContainer);
+}
 
 const chatParticipantExtensionPoint = extensionsRegistry.ExtensionsRegistry.registerExtensionPoint<IRawChatParticipantContribution[]>({
 	extensionPoint: 'chatParticipants',
