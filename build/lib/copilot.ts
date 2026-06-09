@@ -124,6 +124,13 @@ export function getCopilotRuntimePrebuildFiles(platform: string, arch: string, n
  * this artifact is present.
  */
 export function prepareBuiltInCopilotRipgrepShim(platform: string, arch: string, builtInCopilotExtensionDir: string, appNodeModulesDir: string): void {
+	// Nexgile: the built-in Copilot extension is not shipped in this product (see
+	// packageCopilotExtensionStream). When it is absent there is no ripgrep shim to
+	// materialize, so skip silently instead of throwing on the missing SDK directory.
+	if (!fs.existsSync(builtInCopilotExtensionDir)) {
+		return;
+	}
+
 	const { nodePlatform, nodeArch } = toNodePlatformArch(platform, arch);
 	const platformArch = `${nodePlatform}-${nodeArch}`;
 

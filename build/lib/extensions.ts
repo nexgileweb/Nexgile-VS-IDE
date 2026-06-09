@@ -461,26 +461,15 @@ function doPackageLocalExtensionsStream(forWeb: boolean, disableMangle: boolean,
  * This is used by non-CI local builds where copilot is not downloaded as a VSIX
  * but must be compiled from source and included in the build.
  */
-export function packageCopilotExtensionStream(disableMangle: boolean): Stream {
-	const extensionPath = path.join(root, 'extensions', 'copilot');
-	if (!fs.existsSync(extensionPath)) {
-		return es.readArray([]);
-	}
-
-	const localExtensionsStream = minifyExtensionResources(
-		fromLocal(extensionPath, false, disableMangle)
-			.pipe(rename(p => p.dirname = `extensions/copilot/${p.dirname}`))
-	);
-
-	const productionDependencies = getProductionDependencies('extensions/copilot');
-	const dependenciesSrc = productionDependencies.map(d => path.relative(root, d)).map(d => [`${d}/**`, `!${d}/**/{test,tests}/**`]).flat();
-
-	return es.merge(
-		localExtensionsStream,
-		gulp.src(dependenciesSrc, { base: '.' })
-			.pipe(util2.cleanNodeModules(path.join(root, 'build', '.moduleignore')))
-			.pipe(util2.cleanNodeModules(path.join(root, 'build', `.moduleignore.${process.platform}`)))
-	).pipe(util2.setExecutableBit(['**/*.sh']));
+export function packageCopilotExtensionStream(_disableMangle: boolean): Stream {
+	// Nexgile: never ship VS Code's built-in GitHub Copilot extension. It activates on
+	// startup (onStartupFinished) and registers the github.copilot.default chat participant
+	// plus language-model providers, which would re-enable VS Code's native chat UI even
+	// when chat.disableAIFeatures is set. It also bundles multi-platform native binaries
+	// (@anthropic-ai/claude-agent-sdk) that break the win32 rcedit version-stamping step.
+	// All AI in this product is provided by the bundled nexgile-code extension, so the
+	// upstream packaging of extensions/copilot is intentionally skipped entirely.
+	return es.readArray([]);
 }
 
 export function packageMarketplaceExtensionsStream(forWeb: boolean): Stream {

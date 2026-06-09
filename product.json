@@ -126,6 +126,7 @@
 	},
 	"configurationDefaults": {
 		"chat.disableAIFeatures": true,
+		"chat.growthNotification.enabled": false,
 		"workbench.colorTheme": "Nexgile Teal Dark",
 		"workbench.preferredDarkColorTheme": "Nexgile Teal Dark",
 		"workbench.preferredLightColorTheme": "Nexgile Light Enterprise",

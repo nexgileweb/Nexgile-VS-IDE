@@ -229,13 +229,19 @@ export class ChatSetupContribution extends Disposable implements IWorkbenchContr
 					id: CHAT_SETUP_ACTION_ID,
 					title: ChatSetupTriggerAction.CHAT_SETUP_ACTION_LABEL,
 					category: CHAT_CATEGORY,
-					f1: true,
-					precondition: ContextKeyExpr.or(
-						ChatContextKeys.Setup.hidden,
-						ChatContextKeys.Setup.disabledInWorkspace,
-						ChatContextKeys.Setup.untrusted,
-						ChatContextKeys.Setup.completed.negate(),
-						ChatContextKeys.Entitlement.canSignUp
+					// Nexgile: this command surfaces GitHub Copilot setup ("Use AI Features with Copilot
+					// for free...") and its run() re-enables AI by setting chat.disableAIFeatures=false.
+					// This product never uses native Copilot, so keep it out of the Command Palette
+					// (f1:false) and require Setup.hidden to be false so it stays disabled while AI is off.
+					f1: false,
+					precondition: ContextKeyExpr.and(
+						ChatContextKeys.Setup.hidden.negate(),
+						ChatContextKeys.Setup.disabledInWorkspace.negate(),
+						ContextKeyExpr.or(
+							ChatContextKeys.Setup.untrusted,
+							ChatContextKeys.Setup.completed.negate(),
+							ChatContextKeys.Entitlement.canSignUp
+						)
 					)
 				});
 			}
