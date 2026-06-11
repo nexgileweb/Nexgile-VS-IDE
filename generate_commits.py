@@ -50,12 +50,17 @@ def generate_commits(num_commits=800):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     # Stage all files
     subprocess.run(["git", "add", "-A"], cwd=REPO_PATH)
 =======
     # Stage files once
     subprocess.run(['git', 'add', '-A'], cwd=REPO_PATH, capture_output=True)
 >>>>>>> 2b6cee5d (Added support for live share)
+=======
+    # Stage all files first
+    subprocess.run(['git', 'add', '-A'], cwd=REPO_PATH, capture_output=True)
+>>>>>>> d289d24a (Applied patch for linter)
 =======
     # Stage all files first
     subprocess.run(['git', 'add', '-A'], cwd=REPO_PATH, capture_output=True)
@@ -73,7 +78,10 @@ def generate_commits(num_commits=800):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         date_str = commit_date.strftime('%Y-%m-%dT%H:%M:%S')
+=======
+>>>>>>> d289d24a (Applied patch for linter)
 =======
 >>>>>>> d289d24a (Applied patch for linter)
 =======
@@ -91,6 +99,7 @@ def generate_commits(num_commits=800):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         if result.returncode != 0 and "nothing to commit" not in result.stderr:
             print(f"Error: {result.stderr}")
 =======
@@ -106,6 +115,8 @@ def generate_commits(num_commits=800):
 =======
 =======
 >>>>>>> d289d24a (Applied patch for linter)
+=======
+>>>>>>> d289d24a (Applied patch for linter)
         # Use cmd /c to run the command with environment variables
         cmd = f'set GIT_AUTHOR_NAME={name}&& set GIT_AUTHOR_EMAIL={email}&& set GIT_COMMITTER_NAME={name}&& set GIT_COMMITTER_EMAIL={email}&& set GIT_AUTHOR_DATE={date_str}&& set GIT_COMMITTER_DATE={date_str}&& git commit -m "{message}"'
 
@@ -114,6 +125,9 @@ def generate_commits(num_commits=800):
         if result.returncode != 0 and 'nothing to commit' not in result.stderr:
             print(f"Error: {result.stderr[:100]}")
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> d289d24a (Applied patch for linter)
+=======
 >>>>>>> d289d24a (Applied patch for linter)
 =======
 >>>>>>> d289d24a (Applied patch for linter)
