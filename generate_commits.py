@@ -2,6 +2,7 @@
 import os
 import random
 import subprocess
+import sys
 from datetime import datetime, timedelta
 
 # Authors configuration
@@ -13,12 +14,10 @@ AUTHORS = [
     ("Krishna", "krishna@nexgile.com"),
 ]
 
-# Realistic commit message templates
-COMPONENTS = ["editor", "syntax highlighter", "file explorer", "debugger", "terminal", "IntelliSense", "completion", "formatter", "linter", "build system", "search", "git integration", "theme", "settings", "toolbar", "status bar", "output panel", "problems view", "extensions manager", "workspace"]
-ACTIONS = ["opening a file", "saving changes", "building project", "running tests", "debugging", "closing editor", "switching tabs", "searching files", "applying changes", "loading workspace"]
-SYPTOMS = ["slow performance", "incorrect output", "crash", "freeze", "error", "timeout", "memory leak", "blank screen", "incorrect rendering", "data loss"]
-FEATURES = ["new file wizard", "remote debugging", "code snippets", "multi-cursor editing", "live share", "gitLens integration", "AI assistance", "keyboard macros", "custom themes", "webSocket support"]
-USE_CASES = ["remote development", "containerized builds", "cloud deployment", "team collaboration", "CI/CD integration", "code review", "pair programming"]
+COMPONENTS = ["editor", "syntax highlighter", "file explorer", "debugger", "terminal", "IntelliSense", "completion", "formatter", "linter", "build system", "search", "git integration", "theme", "settings", "toolbar", "status bar"]
+ACTIONS = ["opening a file", "saving changes", "building project", "running tests", "debugging", "closing editor", "switching tabs", "searching files"]
+SYPTOMS = ["slow performance", "incorrect output", "crash", "freeze", "error", "timeout", "memory leak"]
+FEATURES = ["new file wizard", "remote debugging", "code snippets", "multi-cursor editing", "live share", "gitLens integration"]
 
 def get_random_message():
     templates = [
@@ -40,15 +39,6 @@ def generate_random_date(start_date, end_date):
     random_seconds = random.randint(0, int(time_diff.total_seconds()))
     return start_date + timedelta(seconds=random_seconds)
 
-def run_git(env_vars, *args):
-    """Run git command with custom environment."""
-    env = os.environ.copy()
-    env.update(env_vars)
-    result = subprocess.run(["git"] + list(args), cwd=REPO_PATH, env=env, capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"Git error: {result.stderr}")
-    return result
-
 REPO_PATH = r"C:\Users\User\Desktop\Nexgile-VS-IDE-USA"
 
 def generate_commits(num_commits=800):
@@ -58,12 +48,17 @@ def generate_commits(num_commits=800):
     end_date = datetime(2026, 6, 11, 23, 59, 59)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     # Stage all files
     subprocess.run(["git", "add", "-A"], cwd=REPO_PATH)
 =======
     # Stage files once
     subprocess.run(['git', 'add', '-A'], cwd=REPO_PATH, capture_output=True)
 >>>>>>> 2b6cee5d (Added support for live share)
+=======
+    # Stage all files first
+    subprocess.run(['git', 'add', '-A'], cwd=REPO_PATH, capture_output=True)
+>>>>>>> d289d24a (Applied patch for linter)
 
     print(f"Generating {num_commits} commits...")
 
@@ -71,29 +66,22 @@ def generate_commits(num_commits=800):
         name, email = random.choice(AUTHORS)
         commit_date = generate_random_date(start_date, end_date)
 <<<<<<< HEAD
+<<<<<<< HEAD
         date_str = commit_date.strftime('%Y-%m-%dT%H:%M:%S')
+=======
+>>>>>>> d289d24a (Applied patch for linter)
 
         # Generate commit message
         message = get_random_message()
 
-        # Create commit with specific date and author using environment variables
-        env = {
-            'GIT_AUTHOR_NAME': name,
-            'GIT_AUTHOR_EMAIL': email,
-            'GIT_COMMITTER_NAME': name,
-            'GIT_COMMITTER_EMAIL': email,
-            'GIT_AUTHOR_DATE': date_str,
-            'GIT_COMMITTER_DATE': date_str,
-        }
+        # Set git config for author
+        subprocess.run(['git', 'config', 'user.name', name], cwd=REPO_PATH, capture_output=True)
+        subprocess.run(['git', 'config', 'user.email', email], cwd=REPO_PATH, capture_output=True)
 
-        result = subprocess.run(
-            ["git", "commit", "-m", message],
-            cwd=REPO_PATH,
-            env={**os.environ, **env},
-            capture_output=True,
-            text=True
-        )
+        # Format date for git
+        date_str = commit_date.strftime('%Y-%m-%d %H:%M:%S')
 
+<<<<<<< HEAD
         if result.returncode != 0 and "nothing to commit" not in result.stderr:
             print(f"Error: {result.stderr}")
 =======
@@ -106,6 +94,15 @@ def generate_commits(num_commits=800):
         # Explicitly use bash -c
         subprocess.run(['bash', '-c', env_cmd], cwd=REPO_PATH, capture_output=True)
 >>>>>>> 2b6cee5d (Added support for live share)
+=======
+        # Use cmd /c to run the command with environment variables
+        cmd = f'set GIT_AUTHOR_NAME={name}&& set GIT_AUTHOR_EMAIL={email}&& set GIT_COMMITTER_NAME={name}&& set GIT_COMMITTER_EMAIL={email}&& set GIT_AUTHOR_DATE={date_str}&& set GIT_COMMITTER_DATE={date_str}&& git commit -m "{message}"'
+
+        result = subprocess.run(cmd, cwd=REPO_PATH, shell=True, capture_output=True, text=True)
+
+        if result.returncode != 0 and 'nothing to commit' not in result.stderr:
+            print(f"Error: {result.stderr[:100]}")
+>>>>>>> d289d24a (Applied patch for linter)
 
         if (i + 1) % 100 == 0:
             print(f"  Created {i + 1}/{num_commits} commits...")
@@ -114,12 +111,11 @@ def generate_commits(num_commits=800):
 
 <<<<<<< HEAD
     # Show summary
-    subprocess.run(["git", "shortlog", "-sn"], cwd=REPO_PATH)
+    subprocess.run(['git', 'shortlog', '-sn'], cwd=REPO_PATH)
 
 =======
 >>>>>>> 2b6cee5d (Added support for live share)
 if __name__ == "__main__":
-    import sys
     num_commits = 850
     if len(sys.argv) > 1:
         num_commits = int(sys.argv[1])
