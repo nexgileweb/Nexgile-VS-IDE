@@ -21,7 +21,6 @@ FEATURES = ["new file wizard", "remote debugging", "code snippets", "multi-curso
 USE_CASES = ["remote development", "containerized builds", "cloud deployment", "team collaboration", "CI/CD integration", "code review", "pair programming"]
 
 def get_random_message():
-    """Generate a random realistic commit message."""
     templates = [
         f"Fixed issue with {random.choice(COMPONENTS)} not responding",
         f"Fixed crash when {random.choice(ACTIONS)}",
@@ -37,7 +36,6 @@ def get_random_message():
     return random.choice(templates)
 
 def generate_random_date(start_date, end_date):
-    """Generate a random datetime between start and end dates."""
     time_diff = end_date - start_date
     random_seconds = random.randint(0, int(time_diff.total_seconds()))
     return start_date + timedelta(seconds=random_seconds)
@@ -54,23 +52,25 @@ def run_git(env_vars, *args):
 REPO_PATH = r"C:\Users\User\Desktop\Nexgile-VS-IDE-USA"
 
 def generate_commits(num_commits=800):
-    """Generate commits in the repository."""
     os.chdir(REPO_PATH)
 
     start_date = datetime(2025, 11, 1, 0, 0, 0)
     end_date = datetime(2026, 6, 11, 23, 59, 59)
 
+<<<<<<< HEAD
     # Stage all files
     subprocess.run(["git", "add", "-A"], cwd=REPO_PATH)
+=======
+    # Stage files once
+    subprocess.run(['git', 'add', '-A'], cwd=REPO_PATH, capture_output=True)
+>>>>>>> 2b6cee5d (Added support for live share)
 
     print(f"Generating {num_commits} commits...")
 
     for i in range(num_commits):
-        # Pick random author
         name, email = random.choice(AUTHORS)
-
-        # Generate random date
         commit_date = generate_random_date(start_date, end_date)
+<<<<<<< HEAD
         date_str = commit_date.strftime('%Y-%m-%dT%H:%M:%S')
 
         # Generate commit message
@@ -96,15 +96,28 @@ def generate_commits(num_commits=800):
 
         if result.returncode != 0 and "nothing to commit" not in result.stderr:
             print(f"Error: {result.stderr}")
+=======
+        message = get_random_message()
+        date_str = commit_date.strftime('%Y-%m-%d %H:%M:%S')
+
+        # Use bash -c to run the command with environment variables
+        env_cmd = f'GIT_AUTHOR_NAME="{name}" GIT_AUTHOR_EMAIL="{email}" GIT_COMMITTER_NAME="{name}" GIT_COMMITTER_EMAIL="{email}" GIT_AUTHOR_DATE="{date_str}" GIT_COMMITTER_DATE="{date_str}" git commit -m "{message}"'
+
+        # Explicitly use bash -c
+        subprocess.run(['bash', '-c', env_cmd], cwd=REPO_PATH, capture_output=True)
+>>>>>>> 2b6cee5d (Added support for live share)
 
         if (i + 1) % 100 == 0:
             print(f"  Created {i + 1}/{num_commits} commits...")
 
     print(f"Done! Created {num_commits} commits.")
 
+<<<<<<< HEAD
     # Show summary
     subprocess.run(["git", "shortlog", "-sn"], cwd=REPO_PATH)
 
+=======
+>>>>>>> 2b6cee5d (Added support for live share)
 if __name__ == "__main__":
     import sys
     num_commits = 850
