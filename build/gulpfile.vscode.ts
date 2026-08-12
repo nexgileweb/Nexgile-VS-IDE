@@ -561,6 +561,21 @@ async function stripAuthenticodeSignature(filePath: string): Promise<void> {
 	});
 }
 
+async function isPortableExecutable(filePath: string): Promise<boolean> {
+	// rcedit writes Win32 version resources, which only exist in PE binaries. Built-in
+	// extensions ship prebuilt natives for every platform they support, so `**/*.node`
+	// also matches ELF and Mach-O objects, and rcedit fails the whole task on the first
+	// one. Detect by PE magic ("MZ") rather than filename, since each native toolchain
+	// names its artifacts differently.
+	const handle = await fs.promises.open(filePath, 'r');
+	try {
+		const { bytesRead, buffer } = await handle.read(Buffer.alloc(2), 0, 2, 0);
+		return bytesRead === 2 && buffer[0] === 0x4d && buffer[1] === 0x5a;
+	} finally {
+		await handle.close();
+	}
+}
+
 function patchWin32DependenciesTask(destinationFolderName: string) {
 	const cwd = path.join(path.dirname(root), destinationFolderName);
 
@@ -578,6 +593,10 @@ function patchWin32DependenciesTask(destinationFolderName: string) {
 		const patchPromises = deps.map<Promise<unknown>>(async dep => {
 			const basename = path.basename(dep);
 			const fullPath = path.join(cwd, dep);
+
+			if (!await isPortableExecutable(fullPath)) {
+				return;
+			}
 
 			await stripAuthenticodeSignature(fullPath);
 			await rcedit(fullPath, {
