@@ -1,0 +1,197 @@
+{
+	"$schema": "./languageExtensions.schema.json",
+	"$doc": [
+		"Curated language-support extensions shipped as built-ins.",
+		"",
+		"This file is the source of truth; product.json's builtInExtensions entries for these are GENERATED.",
+		"Run `npm run sync-language-extensions` after editing, which resolves versions against Open VSX,",
+		"downloads each vsix, records its sha256, and rewrites the managed block in product.json.",
+		"Never hand-edit a generated entry -- it will be overwritten and the sha256 will be wrong.",
+		"",
+		"Fields:",
+		"  name        publisher.extension, exactly as Open VSX namespaces it",
+		"  language    what this exists to support; for the docs and the coverage report",
+		"  license     the license you VERIFIED, not the one the API claims; the sync fails if they disagree",
+		"  repo        upstream source, recorded in product.json for the attribution manifest",
+		"  version     optional hard pin. Omit to track the newest stable release",
+		"  allowPreRelease  set only when upstream publishes NOTHING but pre-releases to Open VSX",
+		"  serverDelivery   bundled | download | external -- 'bundled' is the only air-gap-safe value",
+		"  notes       why this pick, or what is compromised about it"
+	],
+	"extensions": [
+		{
+			"name": "cosven.easy-groovy",
+			"language": "Groovy",
+			"license": "Apache-2.0",
+			"repo": "https://github.com/cosven/easy-groovy",
+			"publisherDisplayName": "cosven",
+			"serverDelivery": "bundled",
+			"notes": "The only Groovy extension on Open VSX that bundles a language server. GroovyLanguageServer.groovy-language-server does not exist there."
+		},
+		{
+			"name": "crystal-lang-tools.crystal-lang",
+			"language": "Crystal",
+			"license": "MIT",
+			"repo": "https://github.com/crystal-lang-tools/vscode-crystal-lang",
+			"publisherDisplayName": "Crystal Lang Tools",
+			"serverDelivery": "external",
+			"notes": "Requires crystalline or scry on PATH."
+		},
+		{
+			"name": "denoland.vscode-deno",
+			"language": "Deno",
+			"license": "MIT",
+			"repo": "https://github.com/denoland/vscode_deno",
+			"publisherDisplayName": "Deno Land",
+			"serverDelivery": "external",
+			"notes": "Uses `deno lsp` from the installed Deno binary. Inert without it."
+		},
+		{
+			"name": "detachhead.basedpyright",
+			"language": "Python",
+			"license": "MIT",
+			"repo": "https://github.com/detachhead/basedpyright",
+			"publisherDisplayName": "detachhead",
+			"serverDelivery": "bundled",
+			"bundledLicensesReviewed": true,
+			"notes": "Pyright fork, MIT with Microsoft's copyright retained. Carries dist/server.js plus typeshed-fallback and zero native binaries, so it runs on the editor's own Node. Registers callHierarchy but not typeHierarchy. Vendored licenses: extension/dist/typeshed-fallback/LICENSE, extracted and read -- Apache-2.0 for typeshed itself with some MIT stubs noted in its appendix, no copyleft; the file ships inside the vsix so its notice travels with the binary. Needs two defaults set in the fork: basedpyright.importStrategy = useBundled (the default reads ms-python.python's API and throws when absent) and python.languageServer = None (otherwise it opens a modal on first Python file)."
+		},
+		{
+			"name": "erlang-ls.erlang-ls",
+			"language": "Erlang",
+			"license": "Apache-2.0",
+			"repo": "https://github.com/erlang-ls/vscode",
+			"publisherDisplayName": "Erlang LS",
+			"serverDelivery": "bundled",
+			"notes": "erlang_ls and els_dap binaries ship inside the vsix. STALE: 0.0.39 dates from 2022-10 and is the only published version."
+		},
+		{
+			"name": "gleam.gleam",
+			"language": "Gleam",
+			"license": "Apache-2.0",
+			"repo": "https://github.com/gleam-lang/vscode-gleam",
+			"publisherDisplayName": "Gleam",
+			"serverDelivery": "external",
+			"notes": "Open VSX license field is null; Apache-2.0 established from the packaged LICENSE and the repo. Uses `gleam lsp` from the installed toolchain."
+		},
+		{
+			"name": "GraphQL.vscode-graphql",
+			"language": "GraphQL",
+			"license": "MIT",
+			"repo": "https://github.com/graphql/graphiql",
+			"publisherDisplayName": "GraphQL Foundation",
+			"serverDelivery": "bundled",
+			"notes": "Hard extensionDependency on GraphQL.vscode-graphql-syntax, which is shipped alongside. Do not pin the newest version: 0.13.6-alpha.0 is published with preRelease=false despite the semver tag."
+		},
+		{
+			"name": "GraphQL.vscode-graphql-syntax",
+			"language": "GraphQL (grammar)",
+			"license": "MIT",
+			"repo": "https://github.com/graphql/graphiql",
+			"publisherDisplayName": "GraphQL Foundation",
+			"serverDelivery": "bundled",
+			"notes": "Grammar only. Present solely because GraphQL.vscode-graphql declares it as a hard extensionDependency and will not activate without it."
+		},
+		{
+			"name": "Ionide.Ionide-fsharp",
+			"language": "F#",
+			"license": "MIT",
+			"repo": "https://github.com/ionide/ionide-vscode-fsharp",
+			"publisherDisplayName": "Ionide",
+			"serverDelivery": "bundled",
+			"notes": "FsAutoComplete ships complete in the vsix (~53 MB: fsautocomplete.dll, FSharp.Compiler.Service, Roslyn, plus native SQLite for every OS, which is why one universal package covers all platforms). Server is Apache-2.0, bundled Roslyn/FCS are MIT. Framework-dependent, not self-contained: needs a .NET 8/9 runtime on the machine. CAVEAT: the published manifest has extensionPack listing muhammad-sammy.csharp (non-redistributable, see notes there) and anysphere.csharp (absent from Open VSX). extensionPack members are recommendations, not hard dependencies, so F# works without them and nothing non-redistributable is shipped -- but the recommendation is visible to users."
+		},
+		{
+			"name": "jnoortheen.nix-ide",
+			"language": "Nix",
+			"license": "MIT",
+			"repo": "https://github.com/nix-community/vscode-nix-ide",
+			"publisherDisplayName": "jnoortheen",
+			"serverDelivery": "external",
+			"notes": "Requires nixd or nil on PATH."
+		},
+		{
+			"name": "julialang.language-julia",
+			"language": "Julia",
+			"license": "MIT",
+			"repo": "https://github.com/julia-vscode/julia-vscode",
+			"publisherDisplayName": "Julia",
+			"serverDelivery": "bundled",
+			"notes": "LanguageServer.jl ships in the vsix, but needs a Julia runtime on the machine to execute."
+		},
+		{
+			"name": "mads-hartmann.bash-ide-vscode",
+			"language": "Bash",
+			"license": "MIT",
+			"repo": "https://github.com/bash-lsp/bash-language-server",
+			"publisherDisplayName": "Mads Hartmann",
+			"serverDelivery": "bundled",
+			"notes": "bash-language-server bundled as JS. Shellcheck integration is optional and degrades to no-op when absent."
+		},
+		{
+			"name": "ms-vscode.powershell",
+			"language": "PowerShell",
+			"license": "MIT",
+			"repo": "https://github.com/PowerShell/vscode-powershell",
+			"publisherDisplayName": "Microsoft",
+			"serverDelivery": "bundled",
+			"notes": "PowerShell Editor Services bundled. Open VSX metadata says \"SEE LICENSE IN LICENSE.txt\"; the packaged text is verbatim MIT, (c) Microsoft."
+		},
+		{
+			"name": "mshr-h.veriloghdl",
+			"language": "Verilog/SystemVerilog",
+			"license": "MIT",
+			"repo": "https://github.com/mshr-h/vscode-verilog-hdl-support",
+			"publisherDisplayName": "mshr-h",
+			"serverDelivery": "external",
+			"notes": "Open VSX license field is absent (upstream package.json carries none); MIT established from the packaged LICENSE.txt and the repo. Requires an external HDL language server such as svls or veridian."
+		},
+		{
+			"name": "NomicFoundation.hardhat-solidity",
+			"language": "Solidity",
+			"license": "MIT",
+			"repo": "https://github.com/NomicFoundation/hardhat-vscode",
+			"publisherDisplayName": "Nomic Foundation",
+			"serverDelivery": "bundled",
+			"notes": "Language server fully bundled including slang WASM and prebuilt solidity-analyzer. Chosen over JuanBlanco.solidity, which vendors 499 third-party licenses with several needing manual review."
+		},
+		{
+			"name": "ocamllabs.ocaml-platform",
+			"language": "OCaml",
+			"license": "ISC",
+			"repo": "https://github.com/ocamllabs/vscode-ocaml-platform",
+			"publisherDisplayName": "OCaml Labs",
+			"serverDelivery": "external",
+			"notes": "LICENCE IS ISC, NOT MIT. Open VSX metadata claims MIT and is wrong; the packaged LICENSE.txt is ISC, (c) 2019 OCaml Labs, and the attribution file must say ISC. Requires ocamllsp from the user's opam switch."
+		},
+		{
+			"name": "redhat.java",
+			"language": "Java",
+			"license": "EPL-2.0",
+			"repo": "https://github.com/redhat-developer/vscode-java",
+			"publisherDisplayName": "Red Hat",
+			"serverDelivery": "bundled",
+			"allowPreRelease": true,
+			"sourceOfferAcknowledged": true,
+			"notes": "Eclipse JDT.LS ships inside the vsix (~54 MB of OSGi jars, universal, with equinox launchers for every platform). EPL-2.0 source offer is discharged by the repo URL in the notices file, since we redistribute unmodified. Red Hat publishes only CI builds to Open VSX, hence allowPreRelease. NOTE: no JRE is bundled -- the machine needs a JDK, resolved via java.jdt.ls.java.home / JAVA_HOME / the Windows registry."
+		},
+		{
+			"name": "redhat.vscode-yaml",
+			"language": "YAML",
+			"license": "MIT",
+			"repo": "https://github.com/redhat-developer/vscode-yaml",
+			"publisherDisplayName": "Red Hat",
+			"serverDelivery": "bundled",
+			"notes": "yaml-language-server ships inside the vsix as JS; no native binary, no runtime download."
+		},
+		{
+			"name": "svelte.svelte-vscode",
+			"language": "Svelte",
+			"license": "MIT",
+			"repo": "https://github.com/sveltejs/language-tools",
+			"publisherDisplayName": "Svelte",
+			"serverDelivery": "bundled",
+			"notes": "svelte-language-server bundled as JS."
+		}
+	]
+}

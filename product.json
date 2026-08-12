@@ -46,13 +46,17 @@
 	"updateUrl": "",
 	"downloadUrl": "https://nexgile.com/download",
 	"extensionsGallery": {
-		"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery",
-		"itemUrl": "https://marketplace.visualstudio.com/items",
-		"resourceUrlTemplate": "https://{publisher}.vscode-unpkg.net/{publisher}/{name}/{version}/{path}",
+		"serviceUrl": "https://open-vsx.org/vscode/gallery",
+		"itemUrl": "https://open-vsx.org/vscode/item",
+		"resourceUrlTemplate": "https://open-vsx.org/vscode/unpkg/{publisher}/{name}/{version}/{path}",
+		"extensionUrlTemplate": "https://open-vsx.org/vscode/gallery/{publisher}/{name}/latest",
 		"controlUrl": "",
 		"nlsBaseUrl": "",
 		"publisherUrl": ""
 	},
+	"linkProtectionTrustedDomains": [
+		"https://open-vsx.org"
+	],
 	"webviewContentExternalBaseUrlTemplate": "https://{{uuid}}.vscode-cdn.net/insider/ef65ac1ba57f57f2a3961bfe94aa20481caca4c6/out/vs/workbench/contrib/webview/browser/pre/",
 	"builtInExtensions": [
 		{
@@ -105,10 +109,10 @@
 		},
 		{
 			"name": "nexgile.nexgile-code",
-			"version": "3.6.27",
-			"sha256": "91e3be13e08bc9103df0dd000f0283fbc311ed1a9e271c6687dd0032389daaec",
+			"version": "3.6.81",
+			"sha256": "ed7ef5d56fa72917a3b3fb352e919b2a159a431f1fbc2fe06bef03dd870a4f90",
 			"repo": "https://github.com/nexgileweb/Nexgile-RC-CodingAgent",
-			"vsix": "build/extensions/nexgile-code-3.6.27.vsix",
+			"vsix": "build/extensions/nexgile-code-3.6.81.vsix",
 			"metadata": {
 				"id": "nexgile-code-builtin-001",
 				"publisherId": {
@@ -119,9 +123,409 @@
 				},
 				"publisherDisplayName": "Nexgile"
 			}
+		},
+		{
+			"name": "cosven.easy-groovy",
+			"version": "0.1.3",
+			"sha256": "0edeaaef0c2147c20e6c1d18373aa54d81378d08fdb35411819f9e0317351d23",
+			"repo": "https://github.com/cosven/easy-groovy",
+			"metadata": {
+				"id": "09b62bdf-50b6-50cc-84a0-05398db943f6",
+				"publisherId": {
+					"publisherId": "3ae8d466-1953-54e3-a771-63137122ec44",
+					"publisherName": "cosven",
+					"displayName": "cosven",
+					"flags": "none"
+				},
+				"publisherDisplayName": "cosven"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Groovy",
+			"nexgileLicense": "Apache-2.0",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "crystal-lang-tools.crystal-lang",
+			"version": "0.9.8",
+			"sha256": "5f3ff02e41879b93d196521062f69991b50b928e3d209d58782dd1f7a9cd3476",
+			"repo": "https://github.com/crystal-lang-tools/vscode-crystal-lang",
+			"metadata": {
+				"id": "5ad8bdb7-a352-54e1-a735-9cad83f08d49",
+				"publisherId": {
+					"publisherId": "b8feb973-aa9c-5fb5-beca-0d08bcac548f",
+					"publisherName": "crystal-lang-tools",
+					"displayName": "Crystal Lang Tools",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Crystal Lang Tools"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Crystal",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "external"
+		},
+		{
+			"name": "denoland.vscode-deno",
+			"version": "3.53.0",
+			"sha256": "15308dbcd735174727c18294f7e2ada254623a78addc77c26f37d602887876c5",
+			"repo": "https://github.com/denoland/vscode_deno",
+			"metadata": {
+				"id": "acce87df-b38d-55c4-8cfd-3d9b448b624c",
+				"publisherId": {
+					"publisherId": "1c8f0225-277b-5d10-b47f-cb7e15f35e94",
+					"publisherName": "denoland",
+					"displayName": "Deno Land",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Deno Land"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Deno",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "external"
+		},
+		{
+			"name": "detachhead.basedpyright",
+			"version": "1.39.9",
+			"sha256": "23272e8fb117cd1c1582fa64d0a5daddd370dab2f6d439c6e2886a204c52e86a",
+			"repo": "https://github.com/detachhead/basedpyright",
+			"metadata": {
+				"id": "0a1675c6-5c26-5a0b-880f-12128a73b2b4",
+				"publisherId": {
+					"publisherId": "f6c27961-7e8c-521a-9a72-0c05d716eff5",
+					"publisherName": "detachhead",
+					"displayName": "detachhead",
+					"flags": "none"
+				},
+				"publisherDisplayName": "detachhead"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Python",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "erlang-ls.erlang-ls",
+			"version": "0.0.39",
+			"sha256": "fc4ff6c25f561b835493461576b7e6e24add82ff1f15997ec8e2410c8e1112c5",
+			"repo": "https://github.com/erlang-ls/vscode",
+			"metadata": {
+				"id": "f0835c96-1c21-5a9e-b036-665a6731af69",
+				"publisherId": {
+					"publisherId": "689d9a61-e85b-5240-9ac3-9f5d82ea0a4d",
+					"publisherName": "erlang-ls",
+					"displayName": "Erlang LS",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Erlang LS"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Erlang",
+			"nexgileLicense": "Apache-2.0",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "gleam.gleam",
+			"version": "2.13.0",
+			"sha256": "a609e3c045380743977287b7f10f6c36474bce20906f890e49add2d598572732",
+			"repo": "https://github.com/gleam-lang/vscode-gleam",
+			"metadata": {
+				"id": "abe27fd7-b7fb-55ed-9fb4-ccf18b5c855e",
+				"publisherId": {
+					"publisherId": "f32a8f62-6e5f-568e-84ea-fe509ca994c3",
+					"publisherName": "gleam",
+					"displayName": "Gleam",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Gleam"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Gleam",
+			"nexgileLicense": "Apache-2.0",
+			"nexgileServerDelivery": "external"
+		},
+		{
+			"name": "GraphQL.vscode-graphql",
+			"version": "0.13.5",
+			"sha256": "ecf443fb3103129646a2fbd94683c0b20b95592687092e5fa5669d1fbb43a4a0",
+			"repo": "https://github.com/graphql/graphiql",
+			"metadata": {
+				"id": "cacedbff-3ad8-5b74-91bf-8aefd47d01b9",
+				"publisherId": {
+					"publisherId": "b414a37d-a302-5f68-85d7-c89f50c2f953",
+					"publisherName": "GraphQL",
+					"displayName": "GraphQL Foundation",
+					"flags": "none"
+				},
+				"publisherDisplayName": "GraphQL Foundation"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "GraphQL",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "GraphQL.vscode-graphql-syntax",
+			"version": "1.3.11",
+			"sha256": "978e8c8adef8d4fb875014d69268a430d78be356a8120db9947d9f6919edaf41",
+			"repo": "https://github.com/graphql/graphiql",
+			"metadata": {
+				"id": "ebf915fb-0c69-56b8-a811-45a0068117ec",
+				"publisherId": {
+					"publisherId": "b414a37d-a302-5f68-85d7-c89f50c2f953",
+					"publisherName": "GraphQL",
+					"displayName": "GraphQL Foundation",
+					"flags": "none"
+				},
+				"publisherDisplayName": "GraphQL Foundation"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "GraphQL (grammar)",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "Ionide.Ionide-fsharp",
+			"version": "7.31.1",
+			"sha256": "b8d7b73c9ab4f540b9df3216789bcdf84d73af9c7d61a359d60648c9d225bb5e",
+			"repo": "https://github.com/ionide/ionide-vscode-fsharp",
+			"metadata": {
+				"id": "3db73ee6-5c0e-515f-a907-2b015949274f",
+				"publisherId": {
+					"publisherId": "1610dcb7-fb0c-58e3-8be7-fa7eeea71606",
+					"publisherName": "Ionide",
+					"displayName": "Ionide",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Ionide"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "F#",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "jnoortheen.nix-ide",
+			"version": "0.5.13",
+			"sha256": "e49a78b25c0815499bbac4d994ec3cb435cb1339e45574bb6f3671991a22b58d",
+			"repo": "https://github.com/nix-community/vscode-nix-ide",
+			"metadata": {
+				"id": "056055cc-42dd-576e-bb7c-6f0a536e8045",
+				"publisherId": {
+					"publisherId": "aa13844e-f0e2-54f3-8d4e-76f9c00e6e88",
+					"publisherName": "jnoortheen",
+					"displayName": "jnoortheen",
+					"flags": "none"
+				},
+				"publisherDisplayName": "jnoortheen"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Nix",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "external"
+		},
+		{
+			"name": "julialang.language-julia",
+			"version": "1.219.2",
+			"sha256": "2d0ed42fefc5b734719ff33ce5fbf7a21f20eb6d8a10f4b7e65aae7b792a6f2f",
+			"repo": "https://github.com/julia-vscode/julia-vscode",
+			"metadata": {
+				"id": "e34e6250-5224-5d8a-b6b9-db39f9580a79",
+				"publisherId": {
+					"publisherId": "3e90924f-f5a8-57ab-813d-034da053a09c",
+					"publisherName": "julialang",
+					"displayName": "Julia",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Julia"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Julia",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "mads-hartmann.bash-ide-vscode",
+			"version": "1.43.0",
+			"sha256": "ac27482c24be963787b536389b94e8514d24d04e79b941c4a97339181b82acc6",
+			"repo": "https://github.com/bash-lsp/bash-language-server",
+			"metadata": {
+				"id": "847efb84-94c4-5940-bcdc-4456b8f67421",
+				"publisherId": {
+					"publisherId": "302994e2-8385-5851-b217-2dcb19adfcaf",
+					"publisherName": "mads-hartmann",
+					"displayName": "Mads Hartmann",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Mads Hartmann"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Bash",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "ms-vscode.powershell",
+			"version": "2025.4.0",
+			"sha256": "458eef45b6110e3d9867d23943b843ca4a9d0d96d1672db5ad156bc178f6b283",
+			"repo": "https://github.com/PowerShell/vscode-powershell",
+			"metadata": {
+				"id": "1fdaac7f-1b64-58dc-9638-20812dfe4e94",
+				"publisherId": {
+					"publisherId": "e5330913-a5f1-592e-9267-8f9cde15ff2c",
+					"publisherName": "ms-vscode",
+					"displayName": "Microsoft",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Microsoft"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "PowerShell",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "mshr-h.veriloghdl",
+			"version": "1.29.0",
+			"sha256": "fd52004fd9e70c6e7627387e8f4134dfc3528e82c25d9495452bc659739ebae6",
+			"repo": "https://github.com/mshr-h/vscode-verilog-hdl-support",
+			"metadata": {
+				"id": "67261efd-cf21-5e3f-87ff-6974a6b7da42",
+				"publisherId": {
+					"publisherId": "ba69c72e-1725-5436-b311-a49ec95e0699",
+					"publisherName": "mshr-h",
+					"displayName": "mshr-h",
+					"flags": "none"
+				},
+				"publisherDisplayName": "mshr-h"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Verilog/SystemVerilog",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "external"
+		},
+		{
+			"name": "NomicFoundation.hardhat-solidity",
+			"version": "0.8.29",
+			"sha256": "d160b83010a36364f2666781b620ac283f7976e76d09fa361f3bcc5a8ad66ce6",
+			"repo": "https://github.com/NomicFoundation/hardhat-vscode",
+			"metadata": {
+				"id": "78a357b7-a462-5bbe-b08e-9888e0607642",
+				"publisherId": {
+					"publisherId": "336a5bd0-048d-5f87-9ca9-3e9faf61d624",
+					"publisherName": "NomicFoundation",
+					"displayName": "Nomic Foundation",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Nomic Foundation"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Solidity",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "ocamllabs.ocaml-platform",
+			"version": "2.3.0",
+			"sha256": "bdbdad4ed747466945fd3651a9416364d804fb98e2cd7fe4cbe360cc962f5d48",
+			"repo": "https://github.com/ocamllabs/vscode-ocaml-platform",
+			"metadata": {
+				"id": "512857af-3843-53d8-8671-a010c2868ada",
+				"publisherId": {
+					"publisherId": "00a80e92-4b04-5043-8a40-8ab1125a28d2",
+					"publisherName": "ocamllabs",
+					"displayName": "OCaml Labs",
+					"flags": "none"
+				},
+				"publisherDisplayName": "OCaml Labs"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "OCaml",
+			"nexgileLicense": "ISC",
+			"nexgileServerDelivery": "external"
+		},
+		{
+			"name": "redhat.java",
+			"version": "1.55.0",
+			"sha256": "011639c3ee347b9591895bfc77d8cf28f836c053d0a49ae4a83efe9dc473a603",
+			"repo": "https://github.com/redhat-developer/vscode-java",
+			"metadata": {
+				"id": "bb3595cb-6047-5066-89fd-8107a422d2f0",
+				"publisherId": {
+					"publisherId": "08b0c4c7-dbc5-547c-ae66-b6fd07917ca5",
+					"publisherName": "redhat",
+					"displayName": "Red Hat",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Red Hat"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Java",
+			"nexgileLicense": "EPL-2.0",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "redhat.vscode-yaml",
+			"version": "1.24.0",
+			"sha256": "0668758312a7fa6beda259ca5a6849d90c5d519df6415edbe246c135e06d7168",
+			"repo": "https://github.com/redhat-developer/vscode-yaml",
+			"metadata": {
+				"id": "74ced737-b621-5ebd-8965-d8afa9547f7e",
+				"publisherId": {
+					"publisherId": "08b0c4c7-dbc5-547c-ae66-b6fd07917ca5",
+					"publisherName": "redhat",
+					"displayName": "Red Hat",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Red Hat"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "YAML",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
+		},
+		{
+			"name": "svelte.svelte-vscode",
+			"version": "110.3.0",
+			"sha256": "94f0e488c4ea7784b29c4616b1c13ce60989df59bdfcd53dfaf6ad9acfe07a57",
+			"repo": "https://github.com/sveltejs/language-tools",
+			"metadata": {
+				"id": "fe640491-e27a-5df6-8ab4-8a187c9e97ae",
+				"publisherId": {
+					"publisherId": "a00565f0-0957-5f2d-8d48-39d33f03eda3",
+					"publisherName": "svelte",
+					"displayName": "Svelte",
+					"flags": "none"
+				},
+				"publisherDisplayName": "Svelte"
+			},
+			"nexgileManagedLanguageExtension": true,
+			"nexgileLanguage": "Svelte",
+			"nexgileLicense": "MIT",
+			"nexgileServerDelivery": "bundled"
 		}
 	],
-	"builtInExtensionsEnabledWithAutoUpdates": [],
+	"builtInExtensionsEnabledWithAutoUpdates": [
+		"cosven.easy-groovy",
+		"crystal-lang-tools.crystal-lang",
+		"denoland.vscode-deno",
+		"detachhead.basedpyright",
+		"erlang-ls.erlang-ls",
+		"gleam.gleam",
+		"GraphQL.vscode-graphql",
+		"GraphQL.vscode-graphql-syntax",
+		"Ionide.Ionide-fsharp",
+		"jnoortheen.nix-ide",
+		"julialang.language-julia",
+		"mads-hartmann.bash-ide-vscode",
+		"ms-vscode.powershell",
+		"mshr-h.veriloghdl",
+		"NomicFoundation.hardhat-solidity",
+		"ocamllabs.ocaml-platform",
+		"redhat.java",
+		"redhat.vscode-yaml",
+		"svelte.svelte-vscode"
+	],
 	"extensionEnabledApiProposals": {
 		"nexgile.nexgile-theme": ["css"]
 	},

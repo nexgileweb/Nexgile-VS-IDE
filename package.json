@@ -54,6 +54,8 @@
     "smoketest-no-compile": "cd test/smoke && node test/index.js",
     "download-builtin-extensions": "node build/lib/builtInExtensions.ts",
     "download-builtin-extensions-cg": "node build/lib/builtInExtensionsCG.ts",
+    "sync-language-extensions": "node build/nexgile/syncLanguageExtensions.ts --write",
+    "check-language-extensions": "node build/nexgile/syncLanguageExtensions.ts",
     "monaco-compile-check": "tsgo --project src/tsconfig.monaco.json --noEmit",
     "tsec-compile-check": "node node_modules/tsec/bin/tsec -p src/tsconfig.tsec.json",
     "vscode-dts-compile-check": "tsgo --project src/tsconfig.vscode-dts.json && tsgo --project src/tsconfig.vscode-proposed-dts.json",
