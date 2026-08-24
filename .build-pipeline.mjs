@@ -142,12 +142,24 @@ if (noInstaller) {
 	gulp(`vscode-win32-${arch}-${target}-setup`);
 	Log(`Installer: ${join(root, '.build', `win32-${arch}`, `${target}-setup`)}`);
 } else if (platform === 'linux') {
+	// prepare-* stages the tree under .build/linux that build-* then packages.
+	// Skipping it leaves build-deb with a cwd that does not exist, which Node
+	// reports as the thoroughly misleading `spawn /bin/sh ENOENT`.
+	gulp(`vscode-linux-${arch}-prepare-deb`);
 	gulp(`vscode-linux-${arch}-build-deb`);
+	gulp(`vscode-linux-${arch}-prepare-rpm`);
 	gulp(`vscode-linux-${arch}-build-rpm`);
 	Log(`Packages (.deb/.rpm): ${join(root, '.build', 'linux')}`);
 } else if (platform === 'darwin') {
-	// No darwin gulp installer task; the .dmg is a standalone script. Code signing /
-	// notarization (build/darwin/sign.ts) needs Apple certs and is NOT run here.
+	// No darwin gulp installer task; the .dmg is a standalone script. Developer ID
+	// signing / notarization (build/darwin/sign.ts) needs Apple certs and is NOT
+	// run here.
+	//
+	// The ad-hoc pass below is a different thing and is NOT optional: without a
+	// valid signature of some kind the app is killed at launch on Apple Silicon.
+	// It needs no certificates. Runs before create-dmg, which only copies the app.
+	run('adhoc-sign', 'bash', ['build/darwin/adhoc-sign.sh', join(dirname(root), `VSCode-darwin-${arch}`)]);
+
 	const dmgOut = join(root, '.build', 'darwin');
 	run('create-dmg (unsigned)', 'node', ['build/darwin/create-dmg.ts', dirname(root), dmgOut], { VSCODE_ARCH: arch, VSCODE_QUALITY: 'stable' });
 	Log(`DMG (unsigned): ${join(dmgOut, `NexgileCodeSetup-darwin-${arch}.dmg`)}`);

@@ -102,11 +102,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Ad-hoc code sign
+        run: |
+          set -e
+          # Must run BEFORE the .zip and the .dmg, which both just copy the app.
+          # Without a valid signature the app is killed at launch on Apple
+          # Silicon — no Apple certificate is involved, see the script header.
+          bash build/darwin/adhoc-sign.sh "$(dirname "$GITHUB_WORKSPACE")/VSCode-darwin-arm64"
+
       - name: Package .zip
         run: |
           set -e
           cd ../VSCode-darwin-arm64
           APP_NAME="$(ls | head -n 1)"
+          # -y keeps the framework symlinks as symlinks; unpacking them as real
+          # directories would break the signature that was just applied.
           zip -Xry "$GITHUB_WORKSPACE/.build/NexgileCode-darwin-arm64$EDITION_SUFFIX.zip" "$APP_NAME"
 
       - name: Upload artifact
@@ -210,11 +220,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Ad-hoc code sign
+        run: |
+          set -e
+          # Must run BEFORE the .zip and the .dmg, which both just copy the app.
+          # Without a valid signature the app is killed at launch on Apple
+          # Silicon — no Apple certificate is involved, see the script header.
+          bash build/darwin/adhoc-sign.sh "$(dirname "$GITHUB_WORKSPACE")/VSCode-darwin-x64"
+
       - name: Package .zip
         run: |
           set -e
           cd ../VSCode-darwin-x64
           APP_NAME="$(ls | head -n 1)"
+          # -y keeps the framework symlinks as symlinks; unpacking them as real
+          # directories would break the signature that was just applied.
           zip -Xry "$GITHUB_WORKSPACE/.build/NexgileCode-darwin-x64$EDITION_SUFFIX.zip" "$APP_NAME"
 
       - name: Upload artifact
