@@ -21,6 +21,29 @@ export const recommendedDeps = [
 	'socat', // agent command sandboxing
 ];
 
+// NOTE (Nexgile fork): the x86_64 list below is re-baselined against what THIS
+// repo's CI actually produces, and no longer matches upstream's. Same cause as
+// the Debian list — see build/linux/debian/dep-lists.ts for the full write-up:
+// upstream compiles native modules in an old-glibc container, this fork
+// compiles them on the ubuntu-22.04 runner with libkrb5-dev installed.
+//
+// READ THIS BEFORE SHIPPING THE .rpm — the floor it implies is much tighter
+// than the .deb's:
+//
+//   libstdc++.so.6(GLIBCXX_3.4.30)  needs libstdc++ from GCC 12 or newer
+//   libc.so.6(GLIBC_2.34)           needs glibc 2.34 or newer
+//
+// GLIBCXX_3.4.30 is the binding one. RHEL 9 (and Rocky 9 / AlmaLinux 9) ship
+// GCC 11, whose libstdc++ tops out at GLIBCXX_3.4.29, so this package will NOT
+// install there — even though their glibc 2.34 satisfies the other constraint.
+// In practice that leaves Fedora 36+ and comparably new distros.
+//
+// If RHEL 9 support is wanted, the fix is to compile the native modules against
+// an older toolchain (a container, or an older runner image), NOT to delete
+// entries here — the package would go on requiring GLIBCXX_3.4.30 either way,
+// and rpm would simply fail at install time instead of at build time.
+//
+// armv7hl and aarch64 below are still upstream's, unverified against this CI.
 export const referenceGeneratedDepsByArch = {
 	'x86_64': [
 		'ca-certificates',
@@ -50,18 +73,20 @@ export const referenceGeneratedDepsByArch = {
 		'libc.so.6(GLIBC_2.18)(64bit)',
 		'libc.so.6(GLIBC_2.2.5)(64bit)',
 		'libc.so.6(GLIBC_2.25)(64bit)',
-		'libc.so.6(GLIBC_2.27)(64bit)',
 		'libc.so.6(GLIBC_2.28)(64bit)',
 		'libc.so.6(GLIBC_2.3)(64bit)',
 		'libc.so.6(GLIBC_2.3.2)(64bit)',
 		'libc.so.6(GLIBC_2.3.4)(64bit)',
+		'libc.so.6(GLIBC_2.32)(64bit)',
+		'libc.so.6(GLIBC_2.33)(64bit)',
+		'libc.so.6(GLIBC_2.34)(64bit)',
 		'libc.so.6(GLIBC_2.4)(64bit)',
-		'libc.so.6(GLIBC_2.5)(64bit)',
 		'libc.so.6(GLIBC_2.6)(64bit)',
 		'libc.so.6(GLIBC_2.7)(64bit)',
 		'libc.so.6(GLIBC_2.8)(64bit)',
 		'libc.so.6(GLIBC_2.9)(64bit)',
 		'libcairo.so.2()(64bit)',
+		'libcups.so.2()(64bit)',
 		'libcurl.so.4()(64bit)',
 		'libdbus-1.so.3()(64bit)',
 		'libdbus-1.so.3(LIBDBUS_1_3)(64bit)',
@@ -77,9 +102,14 @@ export const referenceGeneratedDepsByArch = {
 		'libgio-2.0.so.0()(64bit)',
 		'libglib-2.0.so.0()(64bit)',
 		'libgobject-2.0.so.0()(64bit)',
+		'libgssapi_krb5.so.2()(64bit)',
+		'libgssapi_krb5.so.2(gssapi_krb5_2_MIT)(64bit)',
 		'libgtk-3.so.0()(64bit)',
+		'libkrb5.so.3()(64bit)',
+		'libkrb5.so.3(krb5_3_MIT)(64bit)',
 		'libm.so.6()(64bit)',
 		'libm.so.6(GLIBC_2.2.5)(64bit)',
+		'libm.so.6(GLIBC_2.29)(64bit)',
 		'libnspr4.so()(64bit)',
 		'libnss3.so()(64bit)',
 		'libnss3.so(NSS_3.11)(64bit)',
@@ -108,10 +138,27 @@ export const referenceGeneratedDepsByArch = {
 		'libsmime3.so(NSS_3.10)(64bit)',
 		'libsmime3.so(NSS_3.2)(64bit)',
 		'libssl3.so(NSS_3.28)(64bit)',
+		'libstdc++.so.6()(64bit)',
+		'libstdc++.so.6(CXXABI_1.3)(64bit)',
+		'libstdc++.so.6(CXXABI_1.3.5)(64bit)',
+		'libstdc++.so.6(CXXABI_1.3.8)(64bit)',
+		'libstdc++.so.6(CXXABI_1.3.9)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.11)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.14)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.15)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.18)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.19)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.20)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.21)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.22)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.26)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.29)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.30)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.5)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.9)(64bit)',
 		'libudev.so.1()(64bit)',
 		'libudev.so.1(LIBUDEV_183)(64bit)',
-		'libutil.so.1()(64bit)',
-		'libutil.so.1(GLIBC_2.2.5)(64bit)',
 		'libxcb.so.1()(64bit)',
 		'libxkbcommon.so.0()(64bit)',
 		'libxkbcommon.so.0(V_0.5.0)(64bit)',
