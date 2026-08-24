@@ -47,7 +47,12 @@ export const recommendedDeps = [
 // are filtered out; they are not — that filter only drops libgcc-s1. The
 // comment is stale upstream, not fork drift.
 //
-// armhf and arm64 below are still upstream's, unverified against this CI.
+// arm64 is likewise re-baselined, from the ubuntu-24.04-arm runner. It needed
+// fewer changes than amd64 because upstream's arm64 list already carried
+// libstdc++6 (>= 9); it gained the same libc6 (>= 2.29), cups and Kerberos
+// entries, and dropped two libstdc++6 constraints subsumed by the rest.
+//
+// armhf below is still upstream's, unverified against this CI.
 export const referenceGeneratedDepsByArch = {
 	'amd64': [
 		'ca-certificates',
@@ -144,21 +149,23 @@ export const referenceGeneratedDepsByArch = {
 		'libc6 (>= 2.17)',
 		'libc6 (>= 2.25)',
 		'libc6 (>= 2.28)',
+		'libc6 (>= 2.29)',
 		'libcairo2 (>= 1.6.0)',
+		'libcups2 (>= 1.6.0)',
 		'libcurl3-gnutls | libcurl3-nss | libcurl4 | libcurl3',
 		'libdbus-1-3 (>= 1.9.14)',
 		'libexpat1 (>= 2.1~beta3)',
 		'libgbm1 (>= 17.1.0~rc2)',
 		'libglib2.0-0 (>= 2.39.4)',
+		'libgssapi-krb5-2 (>= 1.17)',
 		'libgtk-3-0 (>= 3.9.10)',
 		'libgtk-3-0 (>= 3.9.10) | libgtk-4-1',
+		'libkrb5-3 (>= 1.6.dfsg.2)',
 		'libnspr4 (>= 2:4.9-2~)',
 		'libnss3 (>= 2:3.30)',
 		'libnss3 (>= 3.26)',
 		'libpango-1.0-0 (>= 1.14.0)',
-		'libstdc++6 (>= 4.1.1)',
 		'libstdc++6 (>= 5)',
-		'libstdc++6 (>= 5.2)',
 		'libstdc++6 (>= 6)',
 		'libstdc++6 (>= 9)',
 		'libudev1 (>= 183)',
