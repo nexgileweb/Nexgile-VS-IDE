@@ -150,7 +150,7 @@ if (noInstaller) {
 	// notarization (build/darwin/sign.ts) needs Apple certs and is NOT run here.
 	const dmgOut = join(root, '.build', 'darwin');
 	run('create-dmg (unsigned)', 'node', ['build/darwin/create-dmg.ts', dirname(root), dmgOut], { VSCODE_ARCH: arch, VSCODE_QUALITY: 'stable' });
-	Log(`DMG (unsigned): ${join(dmgOut, `VSCode-darwin-${arch}.dmg`)}`);
+	Log(`DMG (unsigned): ${join(dmgOut, `NexgileCodeSetup-darwin-${arch}.dmg`)}`);
 }
 
 Log(`=== DONE ${new Date().toISOString()} ===`);

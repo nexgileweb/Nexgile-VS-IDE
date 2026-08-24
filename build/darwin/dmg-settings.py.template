@@ -6,8 +6,11 @@ format = 'ULMO'
 badge_icon = {{BADGE_ICON}}
 background = {{BACKGROUND}}
 
-# Volume size
-size = '1.5g'
+# Volume size. Computed from the actual .app at build time (see
+# create-dmg.ts) rather than hard-coded: this was '1.5g', and once the
+# bundled built-in extensions grew past it dmgbuild's ditto failed with
+# "No space left on device" partway through copying the app.
+size = {{SIZE}}
 shrink = False
 
 # Files and symlinks

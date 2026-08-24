@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { spawn } from '@malept/cross-spawn-promise';
 
@@ -130,6 +131,72 @@ async function ensureDmgBuild(): Promise<void> {
 	console.log('dmgbuild setup complete');
 }
 
+/** Size of a directory tree in KiB, as `du` reports it. */
+async function duKilobytes(target: string): Promise<number> {
+	const output = await spawn('du', ['-sk', target]);
+	const kb = parseInt(output.trim().split(/\s+/)[0], 10);
+	if (!Number.isFinite(kb) || kb <= 0) {
+		throw new Error(`Could not determine size of ${target} (du said: ${output.trim()})`);
+	}
+	return kb;
+}
+
+/**
+ * Mount the finished DMG and check the app inside is whole.
+ *
+ * dmgbuild copies the app with `ditto` and does NOT propagate a ditto failure:
+ * it has exited 0 after printing e.g.
+ *
+ *   ditto: /Volumes/.../Electron Framework: No space left on device
+ *
+ * leaving a perfectly valid disk image containing a truncated app that cannot
+ * launch. Because the old check here was only `existsSync` + a size log, that
+ * shipped as "Successfully created DMG". Comparing the mounted app against the
+ * source is what actually catches it.
+ */
+async function verifyDmgContents(artifactPath: string, appPath: string, appName: string): Promise<void> {
+	const mountPoint = path.join(os.tmpdir(), `dmg-verify-${process.pid}-${Date.now()}`);
+	fs.mkdirSync(mountPoint, { recursive: true });
+
+	let attached = false;
+	try {
+		await spawn('hdiutil', ['attach', artifactPath, '-nobrowse', '-readonly', '-mountpoint', mountPoint]);
+		attached = true;
+
+		const mountedApp = path.join(mountPoint, appName);
+		if (!fs.existsSync(mountedApp)) {
+			throw new Error(`DMG does not contain ${appName}`);
+		}
+
+		const [sourceKb, mountedKb] = await Promise.all([duKilobytes(appPath), duKilobytes(mountedApp)]);
+
+		// A whole copy is the same tree; the tolerance only absorbs filesystem
+		// block-size differences between the build volume and HFS+ inside the
+		// image, never a missing framework (tens of MB).
+		const ratio = mountedKb / sourceKb;
+		console.log(
+			`  Verified app size: source ${(sourceKb / 1024).toFixed(1)} MB, in DMG ${(mountedKb / 1024).toFixed(1)} MB`
+		);
+
+		if (ratio < 0.98) {
+			throw new Error(
+				`App inside the DMG is incomplete: ${(mountedKb / 1024).toFixed(1)} MB vs ${(sourceKb / 1024).toFixed(1)} MB ` +
+				`at the source (${(ratio * 100).toFixed(1)}%). This usually means dmgbuild's ditto ran out of space on the ` +
+				`image — check the "size" setting written into .dmg-settings.py.`
+			);
+		}
+	} finally {
+		if (attached) {
+			try {
+				await spawn('hdiutil', ['detach', mountPoint, '-force']);
+			} catch (err) {
+				console.warn(`Warning: could not detach ${mountPoint}:`, err);
+			}
+		}
+		fs.rmSync(mountPoint, { recursive: true, force: true });
+	}
+}
+
 async function runDmgBuild(settingsFile: string, volumeName: string, artifactPath: string): Promise<void> {
 	await ensureDmgBuild();
 
@@ -155,23 +222,33 @@ async function main(buildDir?: string, outDir?: string): Promise<void> {
 		throw new Error('Output directory argument is required');
 	}
 
+	// The gulp output directory is named by upstream's build tasks
+	// (`vscode-darwin-<arch>-min` writes `../VSCode-darwin-<arch>`), so this one
+	// stays as-is. Everything the USER sees is branded below.
 	const appRoot = path.join(buildDir, `VSCode-darwin-${arch}`);
 	const appName = product.nameLong + '.app';
 	const appPath = path.join(appRoot, appName);
-	const dmgName = `VSCode-darwin-${arch}`;
+
+	// Derived from product.json rather than hard-coded, so a rebrand does not
+	// leave the installer named after the old product. Spaces are stripped
+	// because this is a filename: `Nexgile Code` -> `NexgileCode`.
+	const productFileName = product.nameShort.replace(/\s+/g, '');
+	const dmgName = `${productFileName}Setup-darwin-${arch}`;
 	const artifactPath = path.join(outDir, `${dmgName}.dmg`);
 	const backgroundPath = path.join(import.meta.dirname, `dmg-background-${quality}.tiff`);
 	const diskIconPath = path.join(root, 'resources', 'darwin', 'code.icns');
-	let title = 'Code OSS';
+
+	// The volume name is what Finder shows when the DMG is mounted, and it was
+	// hard-coded to upstream's product names — so a Nexgile Code installer
+	// mounted as `/Volumes/VS Code`. `nameLong` is the same string the .app
+	// bundle already uses.
+	let title = product.nameLong;
 	switch (quality) {
-		case 'stable':
-			title = 'VS Code';
-			break;
 		case 'insider':
-			title = 'VS Code Insiders';
+			title = `${product.nameLong} Insiders`;
 			break;
 		case 'exploration':
-			title = 'VS Code Exploration';
+			title = `${product.nameLong} Exploration`;
 			break;
 	}
 
@@ -188,11 +265,25 @@ async function main(buildDir?: string, outDir?: string): Promise<void> {
 		fs.unlinkSync(artifactPath);
 	}
 
+	// Size the image from the app that is actually going into it. The template
+	// used to hard-code 1.5g; when the bundled built-in extensions pushed the
+	// app past that, ditto ran out of room mid-copy and — because dmgbuild
+	// swallows that failure — a truncated DMG was reported as a success.
+	//
+	// The multiplier covers HFS+ metadata and the block-size rounding that makes
+	// the same tree measure larger inside the image than on the build volume;
+	// the flat addition keeps small builds comfortably clear of the floor.
+	const appKb = await duKilobytes(appPath);
+	const volumeKb = Math.ceil(appKb * 1.35) + 256 * 1024;
+	const volumeSize = `${Math.ceil(volumeKb / 1024)}m`;
+	console.log(`  App size: ${(appKb / 1024).toFixed(1)} MB -> volume size: ${volumeSize}`);
+
 	// Copy and process the settings template for dmgbuild
 	const settingsTemplatePath = path.join(import.meta.dirname, 'dmg-settings.py.template');
 	const settingsFile = path.join(outDir, '.dmg-settings.py');
 	let settingsContent = fs.readFileSync(settingsTemplatePath, 'utf8');
 	settingsContent = settingsContent
+		.replace('{{SIZE}}', JSON.stringify(volumeSize))
 		.replace('{{VOLUME_NAME}}', JSON.stringify(title))
 		.replace('{{BADGE_ICON}}', JSON.stringify(diskIconPath))
 		.replace('{{BACKGROUND}}', JSON.stringify(backgroundPath))
@@ -211,6 +302,10 @@ async function main(buildDir?: string, outDir?: string): Promise<void> {
 	if (!fs.existsSync(artifactPath)) {
 		throw new Error(`DMG was not created at expected path: ${artifactPath}`);
 	}
+
+	// The image existing proves nothing about what is inside it — see
+	// verifyDmgContents. Nothing may report success before this passes.
+	await verifyDmgContents(artifactPath, appPath, appName);
 
 	const stats = fs.statSync(artifactPath);
 	console.log(`Successfully created DMG: ${artifactPath} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
