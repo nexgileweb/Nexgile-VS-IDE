@@ -22,6 +22,32 @@ export const recommendedDeps = [
 	'socat', // agent command sandboxing
 ];
 
+// NOTE (Nexgile fork): the amd64 list below is re-baselined against what THIS
+// repo's CI actually produces, and no longer matches upstream's.
+//
+// Upstream compiles the native modules inside a build container pinned to an old
+// glibc/gcc; .github/workflows/build-linux.yml compiles them on the runner
+// (ubuntu-22.04 for x64, ubuntu-24.04-arm for arm64) and installs libkrb5-dev,
+// so the .node files reference newer symbol versions and link Kerberos. That
+// legitimately produces dependencies upstream's build never emits:
+//
+//   libstdc++6 (>= 5|6|9)         native modules built with the runner's gcc
+//   libc6 (>= 2.29)               ditto, raising the floor from upstream's 2.28
+//   libgssapi-krb5-2 (>= 1.17)    the kerberos module against libkrb5-dev
+//   libkrb5-3 (>= 1.6.dfsg.2)     ditto
+//   libcups2 (>= 1.6.0)
+//
+// The effective floor is therefore Ubuntu 20.04 / Debian 11. Debian 10 (glibc
+// 2.28, libstdc++ 8) can no longer install the package. If an older floor is
+// ever required, the fix is to build the native modules in an old-glibc
+// container as upstream does — NOT to trim entries from this list, which only
+// disables the review tripwire while the package keeps requiring them.
+//
+// Upstream's comment in debian/calculate-deps.ts claims Kerberos dependencies
+// are filtered out; they are not — that filter only drops libgcc-s1. The
+// comment is stale upstream, not fork drift.
+//
+// armhf and arm64 below are still upstream's, unverified against this CI.
 export const referenceGeneratedDepsByArch = {
 	'amd64': [
 		'ca-certificates',
@@ -29,25 +55,31 @@ export const referenceGeneratedDepsByArch = {
 		'libatk-bridge2.0-0 (>= 2.5.3)',
 		'libatk1.0-0 (>= 2.11.90)',
 		'libatspi2.0-0 (>= 2.9.90)',
+		'libc6 (>= 2.14)',
 		'libc6 (>= 2.15)',
-		'libc6 (>= 2.16)',
 		'libc6 (>= 2.17)',
-		'libc6 (>= 2.2.5)',
 		'libc6 (>= 2.25)',
 		'libc6 (>= 2.28)',
+		'libc6 (>= 2.29)',
 		'libc6 (>= 2.4)',
 		'libcairo2 (>= 1.6.0)',
+		'libcups2 (>= 1.6.0)',
 		'libcurl3-gnutls | libcurl3-nss | libcurl4 | libcurl3',
 		'libdbus-1-3 (>= 1.9.14)',
 		'libexpat1 (>= 2.1~beta3)',
 		'libgbm1 (>= 17.1.0~rc2)',
 		'libglib2.0-0 (>= 2.39.4)',
+		'libgssapi-krb5-2 (>= 1.17)',
 		'libgtk-3-0 (>= 3.9.10)',
 		'libgtk-3-0 (>= 3.9.10) | libgtk-4-1',
+		'libkrb5-3 (>= 1.6.dfsg.2)',
 		'libnspr4 (>= 2:4.9-2~)',
 		'libnss3 (>= 2:3.30)',
 		'libnss3 (>= 3.26)',
 		'libpango-1.0-0 (>= 1.14.0)',
+		'libstdc++6 (>= 5)',
+		'libstdc++6 (>= 6)',
+		'libstdc++6 (>= 9)',
 		'libudev1 (>= 183)',
 		'libx11-6',
 		'libx11-6 (>= 2:1.4.99.1)',
