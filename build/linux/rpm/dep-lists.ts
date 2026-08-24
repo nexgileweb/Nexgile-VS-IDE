@@ -43,7 +43,24 @@ export const recommendedDeps = [
 // entries here — the package would go on requiring GLIBCXX_3.4.30 either way,
 // and rpm would simply fail at install time instead of at build time.
 //
-// armv7hl and aarch64 below are still upstream's, unverified against this CI.
+// aarch64 is likewise re-baselined, and its floor is the HIGHEST of the four
+// arch/format combinations — high enough to be worth a decision:
+//
+//   libc.so.6(GLIBC_2.38)(64bit)          needs glibc 2.38 or newer
+//   libstdc++.so.6(GLIBCXX_3.4.31)(64bit) needs libstdc++ from GCC 13 or newer
+//
+// GLIBC_2.38 is the binding one: that is Fedora 39 / Ubuntu 23.10 and newer.
+// RHEL 9 and its rebuilds (glibc 2.34) cannot install this package, and neither
+// can Fedora 38. The x86_64 .rpm above at least reaches the RHEL 9 glibc level;
+// this one does not come close.
+//
+// The cause is a plain inconsistency in .github/workflows/build-linux.yml: the
+// x64 job runs on ubuntu-22.04 and the arm64 job on ubuntu-24.04-arm, so the
+// two architectures are compiled against different glibc and gcc. Pinning the
+// arm64 job to an ubuntu-22.04-arm runner would bring this list back in line
+// with x86_64's — and would require re-baselining these entries again.
+//
+// armv7hl below is still upstream's, unverified against this CI.
 export const referenceGeneratedDepsByArch = {
 	'x86_64': [
 		'ca-certificates',
@@ -299,7 +316,12 @@ export const referenceGeneratedDepsByArch = {
 		'libc.so.6(GLIBC_2.25)(64bit)',
 		'libc.so.6(GLIBC_2.27)(64bit)',
 		'libc.so.6(GLIBC_2.28)(64bit)',
+		'libc.so.6(GLIBC_2.32)(64bit)',
+		'libc.so.6(GLIBC_2.33)(64bit)',
+		'libc.so.6(GLIBC_2.34)(64bit)',
+		'libc.so.6(GLIBC_2.38)(64bit)',
 		'libcairo.so.2()(64bit)',
+		'libcups.so.2()(64bit)',
 		'libcurl.so.4()(64bit)',
 		'libdbus-1.so.3()(64bit)',
 		'libdbus-1.so.3(LIBDBUS_1_3)(64bit)',
@@ -316,9 +338,15 @@ export const referenceGeneratedDepsByArch = {
 		'libgio-2.0.so.0()(64bit)',
 		'libglib-2.0.so.0()(64bit)',
 		'libgobject-2.0.so.0()(64bit)',
+		'libgssapi_krb5.so.2()(64bit)',
+		'libgssapi_krb5.so.2(gssapi_krb5_2_MIT)(64bit)',
 		'libgtk-3.so.0()(64bit)',
+		'libkrb5.so.3()(64bit)',
+		'libkrb5.so.3(krb5_3_MIT)(64bit)',
 		'libm.so.6()(64bit)',
 		'libm.so.6(GLIBC_2.17)(64bit)',
+		'libm.so.6(GLIBC_2.29)(64bit)',
+		'libm.so.6(GLIBC_2.38)(64bit)',
 		'libnspr4.so()(64bit)',
 		'libnss3.so()(64bit)',
 		'libnss3.so(NSS_3.11)(64bit)',
@@ -356,12 +384,13 @@ export const referenceGeneratedDepsByArch = {
 		'libstdc++.so.6(GLIBCXX_3.4.21)(64bit)',
 		'libstdc++.so.6(GLIBCXX_3.4.22)(64bit)',
 		'libstdc++.so.6(GLIBCXX_3.4.26)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.29)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.30)(64bit)',
+		'libstdc++.so.6(GLIBCXX_3.4.31)(64bit)',
 		'libstdc++.so.6(GLIBCXX_3.4.5)(64bit)',
 		'libstdc++.so.6(GLIBCXX_3.4.9)(64bit)',
 		'libudev.so.1()(64bit)',
 		'libudev.so.1(LIBUDEV_183)(64bit)',
-		'libutil.so.1()(64bit)',
-		'libutil.so.1(GLIBC_2.17)(64bit)',
 		'libxcb.so.1()(64bit)',
 		'libxkbcommon.so.0()(64bit)',
 		'libxkbcommon.so.0(V_0.5.0)(64bit)',
