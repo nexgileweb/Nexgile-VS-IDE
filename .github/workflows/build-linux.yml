@@ -142,6 +142,9 @@ jobs:
           path: |
             .build/linux/deb/**/*.deb
             .build/linux/rpm/**/*.rpm
+          # Without this a packaging step that runs but produces nothing uploads
+          # an empty artifact and the run still goes green.
+          if-no-files-found: error
           retention-days: 30
 
   build-arm64:
@@ -257,4 +260,7 @@ jobs:
           path: |
             .build/linux/deb/**/*.deb
             .build/linux/rpm/**/*.rpm
+          # Without this a packaging step that runs but produces nothing uploads
+          # an empty artifact and the run still goes green.
+          if-no-files-found: error
           retention-days: 30

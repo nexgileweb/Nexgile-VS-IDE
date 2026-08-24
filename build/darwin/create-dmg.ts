@@ -256,6 +256,12 @@ async function main(buildDir?: string, outDir?: string): Promise<void> {
 		throw new Error(`App path does not exist: ${appPath}`);
 	}
 
+	// Own the output directory rather than relying on the caller. The workflow
+	// happens to mkdir -p it first; .build-pipeline.mjs does not, so a local
+	// macOS build died writing .dmg-settings.py into a directory that was never
+	// created.
+	fs.mkdirSync(outDir, { recursive: true });
+
 	console.log(`Creating DMG for ${product.nameLong}...`);
 	console.log(`  App path: ${appPath}`);
 	console.log(`  Output directory: ${outDir}`);

@@ -143,6 +143,7 @@ jobs:
         with:
           name: NexgileCodeSetup-darwin-arm64${{ env.EDITION_SUFFIX }}
           path: .build/darwin/NexgileCodeSetup-darwin-arm64.dmg
+          if-no-files-found: error
           retention-days: 30
 
   build-x64:
@@ -261,4 +262,5 @@ jobs:
         with:
           name: NexgileCodeSetup-darwin-x64${{ env.EDITION_SUFFIX }}
           path: .build/darwin/NexgileCodeSetup-darwin-x64.dmg
+          if-no-files-found: error
           retention-days: 30

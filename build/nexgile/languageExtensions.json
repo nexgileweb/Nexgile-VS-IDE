@@ -156,15 +156,6 @@
 			"notes": "Language server fully bundled including slang WASM and prebuilt solidity-analyzer. Chosen over JuanBlanco.solidity, which vendors 499 third-party licenses with several needing manual review."
 		},
 		{
-			"name": "ocamllabs.ocaml-platform",
-			"language": "OCaml",
-			"license": "ISC",
-			"repo": "https://github.com/ocamllabs/vscode-ocaml-platform",
-			"publisherDisplayName": "OCaml Labs",
-			"serverDelivery": "external",
-			"notes": "LICENCE IS ISC, NOT MIT. Open VSX metadata claims MIT and is wrong; the packaged LICENSE.txt is ISC, (c) 2019 OCaml Labs, and the attribution file must say ISC. Requires ocamllsp from the user's opam switch."
-		},
-		{
 			"name": "redhat.java",
 			"language": "Java",
 			"license": "EPL-2.0",

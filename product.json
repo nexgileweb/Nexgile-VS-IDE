@@ -425,26 +425,6 @@
 			"nexgileServerDelivery": "bundled"
 		},
 		{
-			"name": "ocamllabs.ocaml-platform",
-			"version": "2.3.0",
-			"sha256": "bdbdad4ed747466945fd3651a9416364d804fb98e2cd7fe4cbe360cc962f5d48",
-			"repo": "https://github.com/ocamllabs/vscode-ocaml-platform",
-			"metadata": {
-				"id": "512857af-3843-53d8-8671-a010c2868ada",
-				"publisherId": {
-					"publisherId": "00a80e92-4b04-5043-8a40-8ab1125a28d2",
-					"publisherName": "ocamllabs",
-					"displayName": "OCaml Labs",
-					"flags": "none"
-				},
-				"publisherDisplayName": "OCaml Labs"
-			},
-			"nexgileManagedLanguageExtension": true,
-			"nexgileLanguage": "OCaml",
-			"nexgileLicense": "ISC",
-			"nexgileServerDelivery": "external"
-		},
-		{
 			"name": "redhat.java",
 			"version": "1.55.0",
 			"sha256": "011639c3ee347b9591895bfc77d8cf28f836c053d0a49ae4a83efe9dc473a603",
@@ -521,7 +501,6 @@
 		"ms-vscode.powershell",
 		"mshr-h.veriloghdl",
 		"NomicFoundation.hardhat-solidity",
-		"ocamllabs.ocaml-platform",
 		"redhat.java",
 		"redhat.vscode-yaml",
 		"svelte.svelte-vscode"

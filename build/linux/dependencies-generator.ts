@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { spawnSync } from 'child_process';
+import { existsSync } from 'fs';
 import path from 'path';
 import { getChromiumSysroot, getVSCodeSysroot } from './debian/install-sysroot.ts';
 import { generatePackageDeps as generatePackageDepsDebian } from './debian/calculate-deps.ts';
@@ -48,16 +49,37 @@ export async function getDependencies(packageType: 'deb' | 'rpm', buildDir: stri
 	const nativeModulesPath = path.join(buildDir, 'resources', 'app', canAsar ? 'node_modules.asar.unpacked' : 'node_modules');
 	const findResult = spawnSync('find', [nativeModulesPath, '-name', '*.node']);
 	if (findResult.status) {
-		console.error('Error finding files:');
-		console.error(findResult.stderr.toString());
-		return [];
+		// Was `return []`, which produced a package with a completely empty
+		// `Depends:` field instead of failing — the early return also skips the
+		// executables added below AND the reference-list check further down. An
+		// empty dependency list is never a correct outcome for this package.
+		throw new Error(`Could not enumerate native modules under ${nativeModulesPath}:
+${findResult.stderr.toString()}`);
 	}
 
 	const appPath = path.join(buildDir, applicationName);
 	// Add the native modules
 	const files = findResult.stdout.toString().trimEnd().split('\n');
-	// Add the tunnel binary.
-	files.push(path.join(buildDir, 'bin', product.tunnelApplicationName));
+	// Add the tunnel binary, if this build produced one.
+	//
+	// It is the Rust CLI under cli/, and nothing in this fork builds it: the only
+	// task that compiles it is `compile-cli` (build/gulpfile.cli.ts), which is not
+	// part of the vscode-linux-<arch>-min chain and is invoked by no workflow.
+	// Upstream gets the binary from a separate Azure stage that downloads a
+	// pre-built CLI artifact and mixes it in; there is no equivalent here.
+	//
+	// Unconditionally, this handed dpkg-shlibdeps a path that does not exist and
+	// failed the whole deb/rpm build. The stat guard in debian/calculate-deps.ts
+	// looks like it tolerates absence, but it only logs and falls through to the
+	// hard failure. Upstream's Windows installer already treats the tunnel as
+	// optional (`skipifsourcedoesntexist`, build/win32/code.iss), so a missing
+	// tunnel binary is a supported state rather than something to force.
+	const tunnelPath = path.join(buildDir, 'bin', product.tunnelApplicationName);
+	if (existsSync(tunnelPath)) {
+		files.push(tunnelPath);
+	} else {
+		console.log(`Skipping absent tunnel binary ${tunnelPath} in dependency calculation.`);
+	}
 	// Add the main executable.
 	files.push(appPath);
 	// Add chrome sandbox and crashpad handler.
