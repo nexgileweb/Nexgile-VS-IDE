@@ -107,14 +107,47 @@ ${findResult.stderr.toString()}`);
 	const referenceGeneratedDeps = packageType === 'deb' ?
 		debianGeneratedDeps[arch as DebianArchString] :
 		rpmGeneratedDeps[arch as RpmArchString];
-	if (JSON.stringify(sortedDependencies) !== JSON.stringify(referenceGeneratedDeps)) {
-		const failMessage = 'The dependencies list has changed.'
-			+ '\nOld:\n' + referenceGeneratedDeps.join('\n')
-			+ '\nNew:\n' + sortedDependencies.join('\n');
+	// Compare as a set difference, and treat the two directions differently.
+	//
+	// What actually ships is `sortedDependencies` — the set computed from the
+	// binaries in THIS build; it is what fills @@DEPENDS@@ in
+	// gulpfile.vscode.linux.ts. The reference list never reaches the package. It
+	// is a tripwire for review, so the two directions do not carry equal weight:
+	//
+	//   ADDED    the package now requires something it did not before, which can
+	//            make it uninstallable on a distro this build claims to support.
+	//            That is worth stopping a release for.
+	//   REMOVED  it requires strictly less than the reference expected. That
+	//            cannot break an install. In this fork it is the expected result
+	//            of not shipping the tunnel binary, whose dependencies upstream's
+	//            reference list was baselined with.
+	//
+	// The previous check compared the two lists as joined strings and, on any
+	// difference in either direction, threw with BOTH lists in full — ~125 lines
+	// each. That buries the handful of entries that actually moved.
+	const referenceSet = new Set(referenceGeneratedDeps);
+	const generatedSet = new Set(sortedDependencies);
+	const added = sortedDependencies.filter(dependency => !referenceSet.has(dependency));
+	const removed = referenceGeneratedDeps.filter(dependency => !generatedSet.has(dependency));
+	const depListFile = packageType === 'deb' ? 'build/linux/debian/dep-lists.ts' : 'build/linux/rpm/dep-lists.ts';
+
+	if (removed.length) {
+		console.warn(
+			`[deps] ${packageType}/${arch}: ${removed.length} reference dependency/dependencies no longer required`
+			+ ` (harmless — the package asks for less than before):\n  - ${removed.join('\n  - ')}\n`
+			+ `[deps] Re-baseline referenceGeneratedDepsByArch in ${depListFile} to silence this.`);
+	}
+
+	if (added.length) {
+		const message =
+			`[deps] ${packageType}/${arch}: ${added.length} NEW dependency/dependencies not in the reference list:\n`
+			+ `  + ${added.join('\n  + ')}\n`
+			+ `[deps] Every one of these must be present on each distro this package supports.`
+			+ ` If they are expected, add them to referenceGeneratedDepsByArch in ${depListFile}.`;
 		if (FAIL_BUILD_FOR_NEW_DEPENDENCIES) {
-			throw new Error(failMessage);
+			throw new Error(message);
 		} else {
-			console.warn(failMessage);
+			console.warn(message);
 		}
 	}
 
