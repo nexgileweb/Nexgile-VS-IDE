@@ -22,7 +22,10 @@ if hash update-mime-database 2>/dev/null; then
 	update-mime-database /usr/share/mime
 fi
 
-if [ "@@NAME@@" != "code-oss" ]; then
+# Nexgile: the block below registers Microsoft's VS Code apt repository and signing key
+# (packages.microsoft.com/repos/code). That only applies to Microsoft's own packages;
+# Nexgile Code is not distributed through that repository.
+if [ "@@NAME@@" = "code" ] || [ "@@NAME@@" = "code-insiders" ] || [ "@@NAME@@" = "code-exploration" ]; then
 	# Remove the legacy bin command if this is the stable build
 	if [ "@@NAME@@" = "code" ]; then
 		rm -f /usr/local/bin/code

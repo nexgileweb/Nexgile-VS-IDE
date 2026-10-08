@@ -5,8 +5,10 @@
 
 import * as sinon from 'sinon';
 import assert from 'assert';
+import { timeout } from '../../../../../base/common/async.js';
 import { generateUuid } from '../../../../../base/common/uuid.js';
-import { ExtensionState, AutoCheckUpdatesConfigurationKey, AutoUpdateConfigurationKey, ExtensionRuntimeActionType, AutoUpdateConfigurationValue } from '../../common/extensions.js';
+import { runWithFakedTimers } from '../../../../../base/test/common/virtualScheduling/index.js';
+import { ExtensionState, AutoCheckUpdatesConfigurationKey, AutoUpdateConfigurationKey, AutoUpdateDelayConfigurationKey, ExtensionRuntimeActionType, AutoUpdateConfigurationValue } from '../../common/extensions.js';
 import { ExtensionsWorkbenchService } from '../../browser/extensionsWorkbenchService.js';
 import {
 	IExtensionManagementService, IExtensionGalleryService, ILocalExtension, IGalleryExtension,
@@ -59,6 +61,7 @@ import { IUserDataProfileService } from '../../../../services/userDataProfile/co
 import { toUserDataProfile } from '../../../../../platform/userDataProfile/common/userDataProfile.js';
 import { IDialogService } from '../../../../../platform/dialogs/common/dialogs.js';
 import { IMeteredConnectionService } from '../../../../../platform/meteredConnection/common/meteredConnection.js';
+import { ExtensionGalleryManifestStatus, IExtensionGalleryManifestService } from '../../../../../platform/extensionManagement/common/extensionGalleryManifest.js';
 
 suite('ExtensionsWorkbenchServiceTest', () => {
 
@@ -86,6 +89,12 @@ suite('ExtensionsWorkbenchServiceTest', () => {
 		instantiationService.stub(IProductService, TestProductService);
 
 		instantiationService.stub(IExtensionGalleryService, ExtensionGalleryService);
+		instantiationService.stub(IExtensionGalleryManifestService, {
+			onDidChangeExtensionGalleryManifest: Event.None,
+			onDidChangeExtensionGalleryManifestStatus: Event.None,
+			extensionGalleryManifestStatus: ExtensionGalleryManifestStatus.Unavailable,
+			async getExtensionGalleryManifest() { return null; }
+		});
 		instantiationService.stub(IURLService, NativeURLService);
 		instantiationService.stub(ISharedProcessService, TestSharedProcessService);
 		instantiationService.stub(IContextKeyService, new MockContextKeyService());
@@ -489,15 +498,40 @@ suite('ExtensionsWorkbenchServiceTest', () => {
 		assert.strictEqual(testObject.isAutoUpdateDelayed(testObject.local[0]), false);
 	});
 
-	test('test getAutoUpdateValue normalizes legacy insiders values', async () => {
+	test('test delayed auto update does not reschedule the marketplace update check', () => runWithFakedTimers({ useFakeTimers: true, startTime: 1000 * 60 * 60 * 3 }, async () => {
+		const local = aLocalExtension('a', { version: '1.0.1' });
+		const gallery = aGalleryExtension(local.manifest.name, {
+			identifier: local.identifier,
+			version: '1.0.2',
+			lastUpdated: Date.now() - (1000 * 60 * 60)
+		});
+		let updateCheckCount = 0;
+		instantiationService.stubPromise(IExtensionManagementService, 'getInstalled', [local]);
+		instantiationService.stub(IExtensionGalleryService, 'getExtensions', async () => {
+			updateCheckCount++;
+			return [gallery];
+		});
+
+		testObject = await aWorkbenchService();
+		await testObject.checkForUpdates();
+		await timeout(1001);
+		const updateCheckCountBeforeQuarantineExpires = updateCheckCount;
+
+		await timeout(1000 * 60 * 60);
+
+		assert.strictEqual(updateCheckCount, updateCheckCountBeforeQuarantineExpires);
+		testObject.dispose();
+	}));
+
+	test('test getAutoUpdateValue normalizes legacy and migrated values', async () => {
 		const expected = new Map<unknown, AutoUpdateConfigurationValue>([
-			['on', true],
-			['delayed', true],
-			['off', false],
-			['onlySelectedExtensions', false],
-			[true, true],
-			[false, false],
-			['onlyEnabledExtensions', 'onlyEnabledExtensions'],
+			['on', 'on'],
+			['off', 'off'],
+			['delayed', 'on'],
+			['onlySelectedExtensions', 'off'],
+			[true, 'on'],
+			[false, 'off'],
+			['onlyEnabledExtensions', 'on'],
 		]);
 		for (const [configured, normalized] of expected) {
 			stubConfiguration(configured);
@@ -1792,6 +1826,7 @@ suite('ExtensionsWorkbenchServiceTest', () => {
 	function stubConfiguration(autoUpdateValue?: any, autoCheckUpdatesValue?: any): void {
 		const values: any = {
 			[AutoUpdateConfigurationKey]: autoUpdateValue ?? true,
+			[AutoUpdateDelayConfigurationKey]: 2,
 			[AutoCheckUpdatesConfigurationKey]: autoCheckUpdatesValue ?? true
 		};
 		const emitter = disposableStore.add(new Emitter<IConfigurationChangeEvent>());

@@ -6,10 +6,11 @@
 import { ChatFetchError } from '../../../platform/chat/common/commonTypes';
 import { isAutoModel } from '../../../platform/endpoint/node/autoChatEndpoint';
 import { getImageTelemetryEventMeasurements, type ImageTelemetryMeasurements } from '../../../platform/image/common/imageTelemetry';
+import { gitHubCopilotRequestTeProperty } from '../../../platform/networking/common/fetch';
 import { FetcherId } from '../../../platform/networking/common/fetcherService';
 import { IChatEndpoint, IChatRequestTelemetryProperties, IEndpointBody } from '../../../platform/networking/common/networking';
 import { ChatCompletion } from '../../../platform/networking/common/openai';
-import { ITelemetryService } from '../../../platform/telemetry/common/telemetry';
+import { ITelemetryService, type TelemetryEventMeasurements, type TelemetryEventProperties } from '../../../platform/telemetry/common/telemetry';
 import { TelemetryData } from '../../../platform/telemetry/common/telemetryData';
 import { isBYOKModel } from '../../byok/node/openAIEndpoint';
 
@@ -37,6 +38,8 @@ export interface IChatMLFetcherSuccessfulData {
 export interface IChatMLFetcherCancellationProperties {
 	source: string;
 	requestId: string;
+	copilotServiceRequestId?: string;
+	gitHubCopilotRequestTe?: string;
 	model: string;
 	apiType: string | undefined;
 	transport: string;
@@ -46,8 +49,10 @@ export interface IChatMLFetcherCancellationProperties {
 	parentRequestId?: string;
 	retryAfterError?: string;
 	retryAfterErrorGitHubRequestId?: string;
+	retryAfterErrorCopilotServiceRequestId?: string;
 	connectivityTestError?: string;
 	connectivityTestErrorGitHubRequestId?: string;
+	connectivityTestErrorCopilotServiceRequestId?: string;
 	retryAfterFilterCategory?: string;
 	fetcher: FetcherId | undefined;
 	suspendEventSeen: boolean | undefined;
@@ -99,6 +104,19 @@ function getTurnFromBaseTelemetry(baseTelemetry: TelemetryData): number | undefi
 	return Number.isFinite(parsedTurnIndex) ? parsedTurnIndex : undefined;
 }
 
+function sendResponseTelemetryEvent(
+	telemetryService: ITelemetryService,
+	eventName: string,
+	properties: TelemetryEventProperties,
+	measurements: TelemetryEventMeasurements,
+	imageTelemetryMeasurements: ImageTelemetryMeasurements,
+): void {
+	telemetryService.sendTelemetryEvent(eventName, { github: true, microsoft: true }, properties, measurements);
+	if (imageTelemetryMeasurements.imageCount > 0) {
+		telemetryService.sendEnhancedGHTelemetryEvent(eventName, properties, measurements);
+	}
+}
+
 export class ChatMLFetcherTelemetrySender {
 
 	public static sendSuccessTelemetry(
@@ -139,6 +157,8 @@ export class ChatMLFetcherTelemetrySender {
 				"conversationId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Id for the current chat conversation." },
 				"requestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Id of the current turn request" },
 				"gitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id if available" },
+				"copilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) if available. Opaque server-minted id used to join with CAPI server-side logs and traces." },
+				"gitHubCopilotRequestTe": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Raw value of the CAPI X-GitHub-Copilot-Request-Te response header for this model call, logged unmodified. Non-user-identifying service metadata; omitted when absent." },
 				"associatedRequestId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Another request ID that this request is associated with (eg, the originating request of a summarization request)." },
 				"turn": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "How many turns have been made in the conversation.", "isMeasurement": true },
 				"reasoningEffort": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Reasoning effort level" },
@@ -184,8 +204,10 @@ export class ChatMLFetcherTelemetrySender {
 				"bytesReceived": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Number of bytes received in the response", "isMeasurement": true },
 				"retryAfterError": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Error of the original request." },
 				"retryAfterErrorGitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id of the original request if available" },
+				"retryAfterErrorCopilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) of the original request if available" },
 				"connectivityTestError": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Error of the connectivity test." },
 				"connectivityTestErrorGitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id of the connectivity test request if available" },
+				"connectivityTestErrorCopilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) of the connectivity test request if available" },
 				"retryAfterFilterCategory": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "If the response was filtered and this is a retry attempt, this contains the original filtered content category." },
 				"suspendEventSeen": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Whether a system suspend event was seen during the request", "isMeasurement": true },
 				"resumeEventSeen": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Whether a system resume event was seen during the request", "isMeasurement": true },
@@ -196,7 +218,7 @@ export class ChatMLFetcherTelemetrySender {
 				"iterationNumber": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Iteration number within the tool calling loop" }
 			}
 		*/
-		telemetryService.sendTelemetryEvent('response.success', { github: true, microsoft: true }, {
+		sendResponseTelemetryEvent(telemetryService, 'response.success', {
 			reason: chatCompletion.finishReason,
 			filterReason: chatCompletion.filterReason,
 			source: baseTelemetry?.properties.messageSource ?? 'unknown',
@@ -208,9 +230,11 @@ export class ChatMLFetcherTelemetrySender {
 			apiType: chatEndpointInfo?.apiType,
 			requestId: chatCompletion.requestId.headerRequestId,
 			gitHubRequestId: chatCompletion.requestId.gitHubRequestId,
+			copilotServiceRequestId: chatCompletion.requestId.copilotServiceRequestId,
+			...gitHubCopilotRequestTeProperty(chatCompletion.requestId.gitHubCopilotRequestTe),
 			associatedRequestId: baseTelemetry?.properties.associatedRequestId,
 			parentRequestId: baseTelemetry?.properties.parentRequestId,
-			reasoningEffort: requestBody.reasoning?.effort ?? requestBody.output_config?.effort,
+			reasoningEffort: requestBody.reasoning?.effort ?? requestBody.output_config?.effort ?? requestBody.reasoning_effort,
 			reasoningSummary: requestBody.reasoning?.summary,
 			modelCallId,
 			...(baseTelemetry?.properties.subType ? { subType: baseTelemetry.properties.subType } : {}),
@@ -220,8 +244,10 @@ export class ChatMLFetcherTelemetrySender {
 			transport,
 			...(baseTelemetry?.properties.retryAfterError ? { retryAfterError: baseTelemetry.properties.retryAfterError } : {}),
 			...(baseTelemetry?.properties.retryAfterErrorGitHubRequestId ? { retryAfterErrorGitHubRequestId: baseTelemetry.properties.retryAfterErrorGitHubRequestId } : {}),
+			...(baseTelemetry?.properties.retryAfterErrorCopilotServiceRequestId ? { retryAfterErrorCopilotServiceRequestId: baseTelemetry.properties.retryAfterErrorCopilotServiceRequestId } : {}),
 			...(baseTelemetry?.properties.connectivityTestError ? { connectivityTestError: baseTelemetry.properties.connectivityTestError } : {}),
 			...(baseTelemetry?.properties.connectivityTestErrorGitHubRequestId ? { connectivityTestErrorGitHubRequestId: baseTelemetry.properties.connectivityTestErrorGitHubRequestId } : {}),
+			...(baseTelemetry?.properties.connectivityTestErrorCopilotServiceRequestId ? { connectivityTestErrorCopilotServiceRequestId: baseTelemetry.properties.connectivityTestErrorCopilotServiceRequestId } : {}),
 			...(baseTelemetry?.properties.retryAfterFilterCategory ? { retryAfterFilterCategory: baseTelemetry.properties.retryAfterFilterCategory } : {}),
 		}, {
 			turn: getTurnFromBaseTelemetry(baseTelemetry),
@@ -248,7 +274,7 @@ export class ChatMLFetcherTelemetrySender {
 			bytesReceived,
 			suspendEventSeen: suspendEventSeen ? 1 : 0,
 			resumeEventSeen: resumeEventSeen ? 1 : 0,
-		});
+		}, imageTelemetryMeasurements);
 	}
 
 	public static sendCancellationTelemetry(
@@ -256,6 +282,8 @@ export class ChatMLFetcherTelemetrySender {
 		{
 			source,
 			requestId,
+			copilotServiceRequestId,
+			gitHubCopilotRequestTe,
 			model,
 			apiType,
 			transport,
@@ -265,8 +293,10 @@ export class ChatMLFetcherTelemetrySender {
 			parentRequestId,
 			retryAfterError,
 			retryAfterErrorGitHubRequestId,
+			retryAfterErrorCopilotServiceRequestId,
 			connectivityTestError,
 			connectivityTestErrorGitHubRequestId,
+			connectivityTestErrorCopilotServiceRequestId,
 			retryAfterFilterCategory,
 			fetcher,
 			suspendEventSeen,
@@ -296,6 +326,8 @@ export class ChatMLFetcherTelemetrySender {
 				"source": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Source for why the request was made" },
 				"requestKind": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Resolved X-Interaction-Type for the request: 'conversation-agent', 'conversation-subagent', 'conversation-background', 'conversation-panel', 'conversation-inline', 'conversation-edits', 'conversation-other', 'conversation-notebook', or 'conversation-terminal'" },
 				"requestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Id of the request" },
+				"copilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) if available. Opaque server-minted id used to join with CAPI server-side logs and traces." },
+				"gitHubCopilotRequestTe": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Raw value of the CAPI X-GitHub-Copilot-Request-Te response header for this model call, logged unmodified. Non-user-identifying service metadata; omitted when absent." },
 				"conversationId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Id for the current chat conversation." },
 				"associatedRequestId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Another request ID that this request is associated with (eg, the originating request of a summarization request)." },
 				"parentRequestId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "For a subagent: the request id of the main agent request that invoked this subagent." },
@@ -332,17 +364,21 @@ export class ChatMLFetcherTelemetrySender {
 				"bytesReceived": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Number of bytes received before cancellation", "isMeasurement": true },
 				"retryAfterError": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Error of the original request." },
 				"retryAfterErrorGitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id of the original request if available" },
+				"retryAfterErrorCopilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) of the original request if available" },
 				"connectivityTestError": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Error of the connectivity test." },
 				"connectivityTestErrorGitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id of the connectivity test request if available" },
+				"connectivityTestErrorCopilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) of the connectivity test request if available" },
 				"retryAfterFilterCategory": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "If the response was filtered and this is a retry attempt, this contains the original filtered content category." },
 				"suspendEventSeen": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Whether a system suspend event was seen during the request", "isMeasurement": true },
 				"resumeEventSeen": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Whether a system resume event was seen during the request", "isMeasurement": true }
 			}
 		*/
-		telemetryService.sendTelemetryEvent('response.cancelled', { github: true, microsoft: true }, {
+		sendResponseTelemetryEvent(telemetryService, 'response.cancelled', {
 			apiType,
 			source,
 			requestId,
+			...(copilotServiceRequestId ? { copilotServiceRequestId } : {}),
+			...gitHubCopilotRequestTeProperty(gitHubCopilotRequestTe),
 			model,
 			requestKind: interactionType,
 			conversationId,
@@ -352,8 +388,10 @@ export class ChatMLFetcherTelemetrySender {
 			transport,
 			...(retryAfterError ? { retryAfterError } : {}),
 			...(retryAfterErrorGitHubRequestId ? { retryAfterErrorGitHubRequestId } : {}),
+			...(retryAfterErrorCopilotServiceRequestId ? { retryAfterErrorCopilotServiceRequestId } : {}),
 			...(connectivityTestError ? { connectivityTestError } : {}),
 			...(connectivityTestErrorGitHubRequestId ? { connectivityTestErrorGitHubRequestId } : {}),
+			...(connectivityTestErrorCopilotServiceRequestId ? { connectivityTestErrorCopilotServiceRequestId } : {}),
 			...(retryAfterFilterCategory ? { retryAfterFilterCategory } : {})
 		}, {
 			totalTokenMax,
@@ -371,7 +409,7 @@ export class ChatMLFetcherTelemetrySender {
 			bytesReceived,
 			suspendEventSeen: suspendEventSeen ? 1 : 0,
 			resumeEventSeen: resumeEventSeen ? 1 : 0,
-		});
+		}, imageTelemetryMeasurements);
 	}
 
 	public static sendResponseErrorTelemetry(
@@ -408,6 +446,8 @@ export class ChatMLFetcherTelemetrySender {
 				"requestKind": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Resolved X-Interaction-Type for the request: 'conversation-agent', 'conversation-subagent', 'conversation-background', 'conversation-panel', 'conversation-inline', 'conversation-edits', 'conversation-other', 'conversation-notebook', or 'conversation-terminal'" },
 				"requestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Id of the request" },
 				"gitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id if available" },
+				"copilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) if available. Opaque server-minted id used to join with CAPI server-side logs and traces." },
+				"gitHubCopilotRequestTe": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Raw value of the CAPI X-GitHub-Copilot-Request-Te response header for this model call, logged unmodified. Non-user-identifying service metadata; omitted when absent." },
 				"conversationId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Id for the current chat conversation." },
 				"associatedRequestId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Another request ID that this request is associated with (eg, the originating request of a summarization request)." },
 				"parentRequestId": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "For a subagent: the request id of the main agent request that invoked this subagent." },
@@ -446,24 +486,28 @@ export class ChatMLFetcherTelemetrySender {
 				"bytesReceived": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Number of bytes received before the error", "isMeasurement": true },
 				"retryAfterError": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Error of the original request." },
 				"retryAfterErrorGitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id of the original request if available" },
+				"retryAfterErrorCopilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) of the original request if available" },
 				"connectivityTestError": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "Error of the connectivity test." },
 				"connectivityTestErrorGitHubRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "GitHub request id of the connectivity test request if available" },
+				"connectivityTestErrorCopilotServiceRequestId": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "CAPI service request id (X-Copilot-Service-Request-Id) of the connectivity test request if available" },
 				"retryAfterFilterCategory": { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "If the response was filtered and this is a retry attempt, this contains the original filtered content category." },
 				"suspendEventSeen": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Whether a system suspend event was seen during the request", "isMeasurement": true },
 				"resumeEventSeen": { "classification": "SystemMetaData", "purpose": "PerformanceAndHealth", "comment": "Whether a system resume event was seen during the request", "isMeasurement": true }
 			}
 		*/
-		telemetryService.sendTelemetryEvent('response.error', { github: true, microsoft: true }, {
+		sendResponseTelemetryEvent(telemetryService, 'response.error', {
 			type: processed.type,
 			reason: processed.reasonDetail || processed.reason,
 			source: telemetryProperties?.messageSource ?? 'unknown',
 			requestKind: interactionType,
 			requestId: processed.requestId,
 			gitHubRequestId: processed.serverRequestId,
+			copilotServiceRequestId: processed.copilotServiceRequestId,
+			...gitHubCopilotRequestTeProperty(processed.gitHubCopilotRequestTe),
 			model: chatEndpointInfo.model,
 			apiType: chatEndpointInfo.apiType,
 			conversationId: telemetryProperties?.conversationId,
-			reasoningEffort: requestBody.reasoning?.effort ?? requestBody.output_config?.effort,
+			reasoningEffort: requestBody.reasoning?.effort ?? requestBody.output_config?.effort ?? requestBody.reasoning_effort,
 			reasoningSummary: requestBody.reasoning?.summary,
 			...(fetcher ? { fetcher } : {}),
 			transport,
@@ -471,8 +515,10 @@ export class ChatMLFetcherTelemetrySender {
 			parentRequestId: telemetryProperties?.parentRequestId,
 			...(telemetryProperties?.retryAfterError ? { retryAfterError: telemetryProperties.retryAfterError } : {}),
 			...(telemetryProperties?.retryAfterErrorGitHubRequestId ? { retryAfterErrorGitHubRequestId: telemetryProperties.retryAfterErrorGitHubRequestId } : {}),
+			...(telemetryProperties?.retryAfterErrorCopilotServiceRequestId ? { retryAfterErrorCopilotServiceRequestId: telemetryProperties.retryAfterErrorCopilotServiceRequestId } : {}),
 			...(telemetryProperties?.connectivityTestError ? { connectivityTestError: telemetryProperties.connectivityTestError } : {}),
 			...(telemetryProperties?.connectivityTestErrorGitHubRequestId ? { connectivityTestErrorGitHubRequestId: telemetryProperties.connectivityTestErrorGitHubRequestId } : {}),
+			...(telemetryProperties?.connectivityTestErrorCopilotServiceRequestId ? { connectivityTestErrorCopilotServiceRequestId: telemetryProperties.connectivityTestErrorCopilotServiceRequestId } : {}),
 			...(telemetryProperties?.retryAfterFilterCategory ? { retryAfterFilterCategory: telemetryProperties.retryAfterFilterCategory } : {})
 		}, {
 			totalTokenMax: chatEndpointInfo.modelMaxPromptTokens ?? -1,
@@ -489,6 +535,6 @@ export class ChatMLFetcherTelemetrySender {
 			bytesReceived,
 			suspendEventSeen: suspendEventSeen ? 1 : 0,
 			resumeEventSeen: resumeEventSeen ? 1 : 0,
-		});
+		}, imageTelemetryMeasurements);
 	}
 }

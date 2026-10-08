@@ -1,6 +1,6 @@
-# Nexgile SAIC Code — IDE Capabilities
+# Nexgile Code — IDE Capabilities
 
-> **Product:** Nexgile SAIC Code
+> **Product:** Nexgile Code
 > **Application identifier:** `nexgile-code`
 > **Data folder:** `~/.nexgile-code`
 > **URL protocol:** `nexgile-code://`
@@ -11,7 +11,7 @@
 
 ## 1. Product Composition
 
-Nexgile SAIC Code ships as a **single installable product** that bundles two co-branded components inside one binary:
+Nexgile Code ships as a **single installable product** that bundles two co-branded components inside one binary:
 
 | # | Component | Role | Upstream basis |
 |---|---|---|---|
@@ -26,7 +26,7 @@ This document treats the IDE + Agent as one product. The IDE shell capabilities 
 
 ## 2. IDE Shell Capabilities (foundation)
 
-These come from the Visual Studio Code base and ship intact in Nexgile SAIC Code.
+These come from the Visual Studio Code base and ship intact in Nexgile Code.
 
 ### 2.1 Editing & Navigation
 - Multi-cursor editing, column selection, smooth scrolling, smooth caret animation, smooth blinking cursor — all enabled by default in the Nexgile preset.
@@ -76,7 +76,7 @@ Built-in extensions ship for: TypeScript / JavaScript, Python, C / C++, C#, Java
 
 ### 2.10 Native Platform Integration (Windows)
 - 64-bit and ARM64 user-setup installers (Inno Setup).
-- "Open with Nexgile SAIC Code" Explorer shell context menu (registered CLSIDs in `product.json`).
+- "Open with Nexgile Code" Explorer shell context menu (registered CLSIDs in `product.json`).
 - Windows AppUserModelId `Nexgile.NexgileCode` for taskbar pinning and jump lists.
 - macOS bundle identifier `com.nexgile.code` (configurable for code-signing).
 - Linux icon name `nexgile-code` (`.desktop` integration).
@@ -402,4 +402,4 @@ Listed here so reviewers don't expect them in the IDE UI:
 
 ---
 
-*This document describes capabilities that are present in Nexgile SAIC Code as built. Internal pricing, costing, and admin parameters are excluded by design — they are not part of the product surface.*
+*This document describes capabilities that are present in Nexgile Code as built. Internal pricing, costing, and admin parameters are excluded by design — they are not part of the product surface.*

@@ -7,9 +7,10 @@ badge_icon = {{BADGE_ICON}}
 background = {{BACKGROUND}}
 
 # Volume size. Computed from the actual .app at build time (see
-# create-dmg.ts) rather than hard-coded: this was '1.5g', and once the
-# bundled built-in extensions grew past it dmgbuild's ditto failed with
-# "No space left on device" partway through copying the app.
+# create-dmg.ts) rather than hard-coded: this was '1.5g' (upstream later
+# raised it to '1800m'), and once the bundled built-in extensions grew past
+# it dmgbuild's ditto failed with "No space left on device" partway through
+# copying the app.
 size = {{SIZE}}
 shrink = False
 

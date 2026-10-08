@@ -4,17 +4,31 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { VSBuffer } from '../../../base/common/buffer.js';
+import { StringSHA1 } from '../../../base/common/hash.js';
 import { Disposable } from '../../../base/common/lifecycle.js';
 import { MarshalledId } from '../../../base/common/marshallingIds.js';
 import { joinPath } from '../../../base/common/resources.js';
 import { isUriComponents, URI, UriComponents } from '../../../base/common/uri.js';
 import { IFileService, IFileStatWithMetadata } from '../../files/common/files.js';
 import { ILogService } from '../../log/common/log.js';
+import { AHP_CANVAS_SCHEME } from './canvasUri.js';
 
 export type AhpLogDirection = 'c2s' | 's2c';
 
+interface IAhpLogMeta {
+	readonly ts: string;
+	readonly dir: AhpLogDirection;
+	readonly connectionId: string;
+	readonly transport: string;
+	readonly byteLength?: number;
+	/** Set when oversized string values in the entry were elided (see {@link stringifyAhpLogEntryTruncated}). */
+	truncated?: boolean;
+}
+
 export interface IAhpJsonlLoggerOptions {
 	readonly logsHome: URI;
+	/** Stable identity shared by every transport connection to the same logical host. */
+	readonly logId: string;
 	readonly connectionId: string;
 	readonly transport: string;
 	readonly maxFileSizeBytes?: number;
@@ -22,6 +36,8 @@ export interface IAhpJsonlLoggerOptions {
 }
 
 const AHP_LOG_DIR = 'ahp';
+const AHP_LOG_FILE_PREFIX = 'ahp';
+const AHP_LOG_FILE_EXTENSION = '.jsonl';
 const DEFAULT_MAX_FILE_SIZE_BYTES = 75 * 1024 * 1024;
 const DEFAULT_MAX_FILES = 5;
 // Cap the size of any single coalesced writeFile to avoid producing huge
@@ -29,6 +45,23 @@ const DEFAULT_MAX_FILES = 5;
 // trying to avoid). 1 MiB strikes a balance between amortizing IPC overhead
 // and keeping per-write allocations modest.
 const MAX_BATCH_BYTES = 1024 * 1024;
+
+// A single AHP protocol message can be enormous (e.g. a `resourceRead` carrying
+// a base64-encoded file, or an `action` carrying a full session snapshot). We
+// don't want to write hundreds of MB on a single JSONL line — it bloats the log
+// directory and, more importantly, building/holding that line creates exactly
+// the GC pressure these logs are meant to help diagnose. When a serialized
+// entry exceeds this size we re-serialize it with oversized string values
+// elided so the line stays well-formed JSONL.
+const MAX_LOG_LINE_LENGTH = 1024 * 1024;
+// When trimming an oversized entry, individual string values are capped to this
+// length. Generous enough to keep messages useful for debugging.
+const MAX_LOGGED_STRING_LENGTH = 16 * 1024;
+const REDACTED_CANVAS_SOURCE = '<redacted canvas source>';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
 
 export class AhpJsonlLogger extends Disposable {
 
@@ -53,7 +86,7 @@ export class AhpJsonlLogger extends Disposable {
 		this._directory = joinPath(this._options.logsHome, AHP_LOG_DIR);
 		// Truncate connectionId to avoid filesystem filename length limits (e.g. 255 on ext4/APFS)
 		const safeConnectionId = sanitizeFilePart(this._options.connectionId).slice(0, 64);
-		this._baseName = `ahp-${toFileTimestamp(new Date())}-${safeConnectionId}.jsonl`;
+		this._baseName = `${getAhpLogFilePrefix(this._options.logId)}${toFileTimestamp(new Date())}-${safeConnectionId}${AHP_LOG_FILE_EXTENSION}`;
 		this._maxFileSizeBytes = this._options.maxFileSizeBytes ?? DEFAULT_MAX_FILE_SIZE_BYTES;
 		this._maxFiles = this._options.maxFiles ?? DEFAULT_MAX_FILES;
 		this._currentFile = joinPath(this._directory, this._baseName);
@@ -64,17 +97,26 @@ export class AhpJsonlLogger extends Disposable {
 	}
 
 	log(message: object, dir: AhpLogDirection, byteLength?: number): void {
-		const entry = {
-			...message,
-			_ahpLog: {
-				ts: new Date().toISOString(),
-				dir,
-				connectionId: this._options.connectionId,
-				transport: this._options.transport,
-				...(typeof byteLength === 'number' ? { byteLength } : {}),
-			}
+		const meta: IAhpLogMeta = {
+			ts: new Date().toISOString(),
+			dir,
+			connectionId: this._options.connectionId,
+			transport: this._options.transport,
+			...(typeof byteLength === 'number' ? { byteLength } : {}),
 		};
-		const line = `${stringifyAhpLogEntry(entry)}\n`;
+		const entry = { ...message, _ahpLog: meta };
+		// Fast path: serialize once. The vast majority of messages are small, so
+		// we only pay a single stringify and use its length to decide whether the
+		// rare oversized-message path below is needed.
+		let body = stringifyAhpLogEntry(entry);
+		if (body.length > MAX_LOG_LINE_LENGTH) {
+			// Slow path (rare): a single message carried very large payloads. Walk
+			// the object via a replacer that elides long string values, keeping the
+			// line valid JSONL instead of writing/holding the full multi-MB payload.
+			meta.truncated = true;
+			body = stringifyAhpLogEntryTruncated(entry, MAX_LOGGED_STRING_LENGTH);
+		}
+		const line = `${body}\n`;
 		this._pending.push(VSBuffer.fromString(line));
 		this._scheduleDrain();
 	}
@@ -163,8 +205,8 @@ export class AhpJsonlLogger extends Disposable {
 		if (segment === 0) {
 			return joinPath(this._directory, this._baseName);
 		}
-		const currentBaseName = this._baseName.slice(0, -'.jsonl'.length);
-		return joinPath(this._directory, `${currentBaseName}.${segment}.jsonl`);
+		const currentBaseName = this._baseName.slice(0, -AHP_LOG_FILE_EXTENSION.length);
+		return joinPath(this._directory, `${currentBaseName}.${segment}${AHP_LOG_FILE_EXTENSION}`);
 	}
 
 	private async _getFileSize(resource: URI): Promise<number> {
@@ -180,8 +222,29 @@ export function getAhpLogByteLength(text: string): number {
 	return VSBuffer.fromString(text).byteLength;
 }
 
+/** Tests whether a JSONL filename belongs to the given logical Agent Host connection. */
+export function isAhpLogFileFor(logId: string, name: string): boolean {
+	return name.startsWith(getAhpLogFilePrefix(logId)) && name.endsWith(AHP_LOG_FILE_EXTENSION);
+}
+
 export function stringifyAhpLogEntry(value: unknown): string {
 	return JSON.stringify(value, _ahpReplacer);
+}
+
+/**
+ * Like {@link stringifyAhpLogEntry} but additionally elides any string value
+ * longer than {@param maxStringLength}, replacing the overflow with a short
+ * marker. The result is still well-formed JSON, so the log remains valid JSONL.
+ * Only used for the rare oversized entry, so the extra per-value work is fine.
+ */
+function stringifyAhpLogEntryTruncated(value: unknown, maxStringLength: number): string {
+	return JSON.stringify(value, function (this: unknown, key: string, val: unknown): unknown {
+		const revived = _ahpReplacer.call(this, key, val);
+		if (typeof revived === 'string' && revived.length > maxStringLength) {
+			return `${revived.slice(0, maxStringLength)}…[${revived.length - maxStringLength} more chars elided]`;
+		}
+		return revived;
+	});
 }
 
 /**
@@ -193,6 +256,17 @@ export function stringifyAhpLogEntry(value: unknown): string {
  * would otherwise be required to find every URI in a message payload.
  */
 function _ahpReplacer(this: unknown, _key: string, value: unknown): unknown {
+	if (isRecord(value)) {
+		if (value.type === 'canvas/stateChanged' && isRecord(value.canvas) && value.canvas.url !== undefined) {
+			return { ...value, canvas: { ...value.canvas, url: REDACTED_CANVAS_SOURCE } };
+		}
+		const isCanvasResource = typeof value.resource === 'string'
+			? value.resource.toLowerCase().startsWith(`${AHP_CANVAS_SCHEME}:`)
+			: URI.isUri(value.resource) && value.resource.scheme === AHP_CANVAS_SCHEME;
+		if (isCanvasResource && isRecord(value.state) && value.state.url !== undefined) {
+			return { ...value, state: { ...value.state, url: REDACTED_CANVAS_SOURCE } };
+		}
+	}
 	if (
 		value
 		&& typeof value === 'object'
@@ -206,6 +280,12 @@ function _ahpReplacer(this: unknown, _key: string, value: unknown): unknown {
 
 function toFileTimestamp(date: Date): string {
 	return date.toISOString().replace(/[:.]/g, '-');
+}
+
+function getAhpLogFilePrefix(logId: string): string {
+	const hash = new StringSHA1();
+	hash.update(logId);
+	return `${AHP_LOG_FILE_PREFIX}-${hash.digest()}-`;
 }
 
 function sanitizeFilePart(value: string): string {

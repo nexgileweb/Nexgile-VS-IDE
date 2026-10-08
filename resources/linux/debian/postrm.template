@@ -20,7 +20,9 @@ if [ -e '/usr/share/debconf/confmodule' ]; then
 	. /usr/share/debconf/confmodule
 	db_get @@NAME@@/add-microsoft-repo || true
 fi
-if [ "$RET" = "true" ]; then
+# Nexgile: only Microsoft's own packages manage the VS Code apt repository and signing key;
+# removing Nexgile Code must not delete them from a system that also has VS Code installed.
+if [ "$RET" = "true" ] && { [ "@@NAME@@" = "code" ] || [ "@@NAME@@" = "code-insiders" ] || [ "@@NAME@@" = "code-exploration" ]; }; then
 	eval $(apt-config shell APT_SOURCE_PARTS Dir::Etc::sourceparts/d)
 	CODE_SOURCE_PART=${APT_SOURCE_PARTS}vscode.sources
 	rm -f $CODE_SOURCE_PART

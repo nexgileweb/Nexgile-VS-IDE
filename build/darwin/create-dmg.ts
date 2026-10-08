@@ -288,6 +288,7 @@ async function main(buildDir?: string, outDir?: string): Promise<void> {
 	const settingsTemplatePath = path.join(import.meta.dirname, 'dmg-settings.py.template');
 	const settingsFile = path.join(outDir, '.dmg-settings.py');
 	let settingsContent = fs.readFileSync(settingsTemplatePath, 'utf8');
+
 	settingsContent = settingsContent
 		.replace('{{SIZE}}', JSON.stringify(volumeSize))
 		.replace('{{VOLUME_NAME}}', JSON.stringify(title))

@@ -887,7 +887,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-ms-vscode.js-debug 1.117.0
+ms-vscode.js-debug 1.140.0
 https://github.com/microsoft/vscode-js-debug
 
 MIT License
@@ -968,7 +968,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-ms-vscode.vscode-js-profile-table 1.0.10
+ms-vscode.vscode-js-profile-table 1.0.11
 https://github.com/microsoft/vscode-js-profile-visualizer
 
 MIT License
