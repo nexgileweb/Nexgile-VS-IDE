@@ -70,6 +70,19 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit == 'true'
         run: tar -xzf .build/node_modules_cache/cache.tgz
 
+      # Install node-gyp and the Electron headers *before* the dependencies, the
+      # way upstream's pipelines do ("Run preinstall script before root
+      # dependencies are installed"). npm runs the root preinstall only after
+      # the dependencies' own build scripts, so without this the native modules
+      # compile against the stock Electron 43 headers, whose V8 deprecation
+      # syntax GCC < 13 rejects ("expected identifier before '__attribute__'").
+      # preinstall overlays upstream's patched headers from
+      # build/npm/gyp/custom-headers, keeping the runner's GCC and therefore the
+      # glibc/libstdc++ floor recorded in build/linux/*/dep-lists.ts.
+      - name: Install Electron headers (patched)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: node build/npm/preinstall.ts
+
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
@@ -187,6 +200,19 @@ jobs:
       - name: Extract node_modules cache
         if: steps.cache-node-modules.outputs.cache-hit == 'true'
         run: tar -xzf .build/node_modules_cache/cache.tgz
+
+      # Install node-gyp and the Electron headers *before* the dependencies, the
+      # way upstream's pipelines do ("Run preinstall script before root
+      # dependencies are installed"). npm runs the root preinstall only after
+      # the dependencies' own build scripts, so without this the native modules
+      # compile against the stock Electron 43 headers, whose V8 deprecation
+      # syntax GCC < 13 rejects ("expected identifier before '__attribute__'").
+      # preinstall overlays upstream's patched headers from
+      # build/npm/gyp/custom-headers, keeping the runner's GCC and therefore the
+      # glibc/libstdc++ floor recorded in build/linux/*/dep-lists.ts.
+      - name: Install Electron headers (patched)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: node build/npm/preinstall.ts
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
