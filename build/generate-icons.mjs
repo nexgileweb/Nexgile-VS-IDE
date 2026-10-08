@@ -3,17 +3,92 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+// Usage: node build/generate-icons.mjs [win32] [darwin] [linux] [server]
+// With no arguments every platform is regenerated. Name platforms to leave the
+// others' committed files untouched.
+
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const sharp = require('C:/Users/User/node_modules/sharp');
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { fileURLToPath } from 'url';
 
-const ROOT = join(import.meta.url.replace('file:///', '').replace(/\//g, '\\'), '..', '..').replace(/\\/g, '/');
-const WIN32 = join(ROOT, 'resources', 'win32').replace(/\\/g, '/');
-const SVG_PATH = join(WIN32, 'nexgile-icon.svg').replace(/\\/g, '/');
+const require = createRequire(import.meta.url);
+
+// sharp is not a dependency of this repo: use whichever copy Node resolves from
+// here (e.g. after `npm i --no-save sharp`), else the original dev-box install.
+function loadSharp() {
+	try {
+		return require('sharp');
+	} catch {
+		return require('C:/Users/User/node_modules/sharp');
+	}
+}
+const sharp = loadSharp();
+
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const WIN32 = join(ROOT, 'resources', 'win32');
+const DARWIN = join(ROOT, 'resources', 'darwin');
+const LINUX = join(ROOT, 'resources', 'linux');
+const SERVER = join(ROOT, 'resources', 'server');
+const SVG_PATH = join(WIN32, 'nexgile-icon.svg');
 
 const svgBuffer = readFileSync(SVG_PATH);
+
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
+
+// sharp rasterizes an SVG at its intrinsic size, so anything larger than that
+// would be an upscaled bitmap. Raise the density to render the vector at size.
+const svgIntrinsicSize = Number(/<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/.exec(svgBuffer.toString('utf8'))?.[1] ?? 256);
+
+function renderSvg(size) {
+	return sharp(svgBuffer, { density: 72 * Math.max(1, size / svgIntrinsicSize) })
+		.resize(size, size, { fit: 'contain', background: TRANSPARENT })
+		.png()
+		.toBuffer();
+}
+
+// macOS app icons follow Apple's grid: the artwork fills an 824x824 square
+// centred on a 1024x1024 canvas. A full-bleed icon looks oversized in the Dock.
+const MACOS_ARTWORK_RATIO = 824 / 1024;
+
+async function renderMacIcon(size) {
+	const inner = Math.round(size * MACOS_ARTWORK_RATIO);
+	const before = Math.floor((size - inner) / 2);
+	const after = size - inner - before;
+	return sharp(await renderSvg(inner))
+		.extend({ top: before, bottom: after, left: before, right: after, background: TRANSPARENT })
+		.png()
+		.toBuffer();
+}
+
+// ICNS format: 'icns' + total length, then one entry per representation:
+// OSType (4 bytes) + entry length including this 8-byte header + PNG data.
+// Every type below takes PNG data on all macOS versions Electron supports.
+const icnsTypes = [
+	['icp4', 16],
+	['icp5', 32],
+	['ic11', 32], // 16@2x
+	['ic12', 64], // 32@2x
+	['ic07', 128],
+	['ic13', 256], // 128@2x
+	['ic08', 256],
+	['ic14', 512], // 256@2x
+	['ic09', 512],
+	['ic10', 1024], // 512@2x
+];
+
+function buildIcns(entries) {
+	const chunks = entries.map(([type, png]) => {
+		const header = Buffer.alloc(8);
+		header.write(type, 0, 'ascii');
+		header.writeUInt32BE(8 + png.length, 4);
+		return Buffer.concat([header, png]);
+	});
+	const header = Buffer.alloc(8);
+	header.write('icns', 0, 'ascii');
+	header.writeUInt32BE(8 + chunks.reduce((total, chunk) => total + chunk.length, 0), 4);
+	return Buffer.concat([header, ...chunks]);
+}
 
 // ICO format: Header (6 bytes) + Directory entries (16 bytes each) + PNG blobs
 function buildIco(pngBuffers) {
@@ -112,9 +187,7 @@ async function buildBmp(svgBuf, width, height) {
 	return bmp;
 }
 
-async function main() {
-	console.log('Generating icons from', SVG_PATH);
-
+async function generateWin32() {
 	// Generate PNGs at all ICO sizes
 	const icoSizes = [16, 24, 32, 48, 64, 128, 256];
 	const pngBuffers = [];
@@ -162,6 +235,54 @@ async function main() {
 		const bmp = await buildBmp(svgBuffer, w, h);
 		writeFileSync(join(WIN32, `inno-small-${scale}.bmp`), bmp);
 		console.log(`  inno-small-${scale}.bmp: ${w}x${h}, ${bmp.length} bytes`);
+	}
+}
+
+// App, Dock and DMG icon on macOS.
+async function generateDarwin() {
+	const entries = [];
+	for (const [type, size] of icnsTypes) {
+		entries.push([type, await renderMacIcon(size)]);
+	}
+	const icns = buildIcns(entries);
+	writeFileSync(join(DARWIN, 'code.icns'), icns);
+	console.log(`  code.icns: ${icns.length} bytes (${entries.length} representations)`);
+}
+
+// Window icon on Linux, and the launcher icon the .deb/.rpm install.
+async function generateLinux() {
+	const png = await renderSvg(1024);
+	writeFileSync(join(LINUX, 'code.png'), png);
+	console.log(`  code.png: 1024x1024, ${png.length} bytes`);
+}
+
+// Web manifest icons of the server and web builds.
+async function generateServer() {
+	for (const size of [192, 512]) {
+		const png = await renderSvg(size);
+		writeFileSync(join(SERVER, `code-${size}.png`), png);
+		console.log(`  code-${size}.png: ${size}x${size}, ${png.length} bytes`);
+	}
+}
+
+const generators = {
+	win32: generateWin32,
+	darwin: generateDarwin,
+	linux: generateLinux,
+	server: generateServer,
+};
+
+async function main() {
+	const targets = process.argv.slice(2);
+	const unknown = targets.filter(target => !Object.hasOwn(generators, target));
+	if (unknown.length) {
+		throw new Error(`Unknown platform(s): ${unknown.join(', ')}. Expected any of: ${Object.keys(generators).join(', ')}.`);
+	}
+
+	console.log('Generating icons from', SVG_PATH);
+	for (const target of targets.length ? targets : Object.keys(generators)) {
+		console.log(`${target}:`);
+		await generators[target]();
 	}
 
 	console.log('\nDone! All icons generated.');
