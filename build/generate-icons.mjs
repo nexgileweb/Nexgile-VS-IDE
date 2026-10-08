@@ -40,11 +40,28 @@ const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
 // would be an upscaled bitmap. Raise the density to render the vector at size.
 const svgIntrinsicSize = Number(/<svg[^>]*\swidth="(\d+(?:\.\d+)?)"/.exec(svgBuffer.toString('utf8'))?.[1] ?? 256);
 
-function renderSvg(size) {
-	return sharp(svgBuffer, { density: 72 * Math.max(1, size / svgIntrinsicSize) })
+async function renderSvg(size) {
+	const png = await sharp(svgBuffer, { density: 72 * Math.max(1, size / svgIntrinsicSize) })
 		.resize(size, size, { fit: 'contain', background: TRANSPARENT })
 		.png()
 		.toBuffer();
+	return withoutPngChunk(png, 'pHYs');
+}
+
+// The raised density would otherwise be recorded as the PNG's physical
+// resolution (pHYs), and macOS can derive an image's point size from it. Like
+// iconutil's output, carry no resolution: the size is defined by pixels alone.
+function withoutPngChunk(png, chunkType) {
+	const parts = [png.subarray(0, 8)];
+	for (let offset = 8; offset < png.length;) {
+		const length = png.readUInt32BE(offset);
+		const end = offset + 12 + length;
+		if (png.toString('ascii', offset + 4, offset + 8) !== chunkType) {
+			parts.push(png.subarray(offset, end));
+		}
+		offset = end;
+	}
+	return Buffer.concat(parts);
 }
 
 // macOS app icons follow Apple's grid: the artwork fills an 824x824 square
@@ -55,10 +72,11 @@ async function renderMacIcon(size) {
 	const inner = Math.round(size * MACOS_ARTWORK_RATIO);
 	const before = Math.floor((size - inner) / 2);
 	const after = size - inner - before;
-	return sharp(await renderSvg(inner))
+	const png = await sharp(await renderSvg(inner))
 		.extend({ top: before, bottom: after, left: before, right: after, background: TRANSPARENT })
 		.png()
 		.toBuffer();
+	return withoutPngChunk(png, 'pHYs');
 }
 
 // ICNS format: 'icns' + total length, then one entry per representation:
