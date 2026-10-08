@@ -60,6 +60,14 @@ export const recommendedDeps = [
 // arm64 job to an ubuntu-22.04-arm runner would bring this list back in line
 // with x86_64's — and would require re-baselining these entries again.
 //
+// Not every entry comes from this CI's compiler, though. Since 1.141 the
+// package ships the Copilot SDK runtime prebuild (@github/copilot-sdk-linux-*,
+// runtime.node), which GitHub builds against glibc 2.28. It pulls in
+// libutil.so.1 (forkpty) on both arches, plus copy_file_range (GLIBC_2.27) and
+// splice (GLIBC_2.5) on x86_64. These are upstream's own entries, satisfied by
+// any glibc >= 2.28, so they do not move the floor above. Keep them when
+// re-baselining: the prebuild ships whatever toolchain this CI uses.
+//
 // armv7hl below is still upstream's, unverified against this CI.
 export const referenceGeneratedDepsByArch = {
 	'x86_64': [
@@ -90,6 +98,7 @@ export const referenceGeneratedDepsByArch = {
 		'libc.so.6(GLIBC_2.18)(64bit)',
 		'libc.so.6(GLIBC_2.2.5)(64bit)',
 		'libc.so.6(GLIBC_2.25)(64bit)',
+		'libc.so.6(GLIBC_2.27)(64bit)',
 		'libc.so.6(GLIBC_2.28)(64bit)',
 		'libc.so.6(GLIBC_2.3)(64bit)',
 		'libc.so.6(GLIBC_2.3.2)(64bit)',
@@ -98,6 +107,7 @@ export const referenceGeneratedDepsByArch = {
 		'libc.so.6(GLIBC_2.33)(64bit)',
 		'libc.so.6(GLIBC_2.34)(64bit)',
 		'libc.so.6(GLIBC_2.4)(64bit)',
+		'libc.so.6(GLIBC_2.5)(64bit)',
 		'libc.so.6(GLIBC_2.6)(64bit)',
 		'libc.so.6(GLIBC_2.7)(64bit)',
 		'libc.so.6(GLIBC_2.8)(64bit)',
@@ -177,6 +187,8 @@ export const referenceGeneratedDepsByArch = {
 		'libstdc++.so.6(GLIBCXX_3.4.9)(64bit)',
 		'libudev.so.1()(64bit)',
 		'libudev.so.1(LIBUDEV_183)(64bit)',
+		'libutil.so.1()(64bit)',
+		'libutil.so.1(GLIBC_2.2.5)(64bit)',
 		'libxcb.so.1()(64bit)',
 		'libxkbcommon.so.0()(64bit)',
 		'libxkbcommon.so.0(V_0.5.0)(64bit)',
@@ -395,6 +407,8 @@ export const referenceGeneratedDepsByArch = {
 		'libstdc++.so.6(GLIBCXX_3.4.9)(64bit)',
 		'libudev.so.1()(64bit)',
 		'libudev.so.1(LIBUDEV_183)(64bit)',
+		'libutil.so.1()(64bit)',
+		'libutil.so.1(GLIBC_2.17)(64bit)',
 		'libxcb.so.1()(64bit)',
 		'libxkbcommon.so.0()(64bit)',
 		'libxkbcommon.so.0(V_0.5.0)(64bit)',
