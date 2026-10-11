@@ -660,6 +660,13 @@ function stringifyURIs(contextValue: any): any {
 
 CommandsRegistry.registerCommand('_setContext', setContext);
 
+// Nexgile: extensions can set a context key but not read one. The built-in Markdown extension reads
+// `nexgile-code.licensed`, which the Nexgile Code extension sets, before it hands a preview to it
+// (extensions/markdown-language-features/src/preview/nexgilePreview.ts).
+CommandsRegistry.registerCommand('_nexgile.getContextKeyValue', (accessor, contextKey: unknown) => {
+	return typeof contextKey === 'string' ? accessor.get(IContextKeyService).getContextKeyValue(contextKey) : undefined;
+});
+
 CommandsRegistry.registerCommand({
 	id: 'getContextKeyInfo',
 	handler() {

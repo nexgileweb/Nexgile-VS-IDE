@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
+import { openInNexgilePreview } from '../preview/nexgilePreview';
 import { DynamicPreviewSettings, MarkdownPreviewManager } from '../preview/previewManager';
 import { TelemetryReporter } from '../telemetryReporter';
 
@@ -38,6 +39,12 @@ async function showPreview(
 	}
 
 	const resourceColumn = vscode.window.activeTextEditor?.viewColumn || vscode.ViewColumn.One;
+
+	// Nexgile: a Markdown file on disk opens in Nexgile Code's preview instead (see nexgilePreview.ts).
+	if (await openInNexgilePreview(resource)) {
+		return;
+	}
+
 	webviewManager.openDynamicPreview(resource, {
 		resourceColumn: resourceColumn,
 		previewColumn: previewSettings.sideBySide ? vscode.ViewColumn.Beside : resourceColumn,
@@ -64,9 +71,11 @@ export class ShowPreviewCommand implements Command {
 		this.#telemetryReporter = telemetryReporter;
 	}
 
-	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: DynamicPreviewSettings) {
+	public async execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: DynamicPreviewSettings) {
+		// Nexgile: one at a time, because Nexgile Code's preview is a single tab that moves to each
+		// file it is given; in turn, it ends on the last file every time.
 		for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
-			showPreview(this.#webviewManager, this.#telemetryReporter, uri, {
+			await showPreview(this.#webviewManager, this.#telemetryReporter, uri, {
 				sideBySide: false,
 				locked: previewSettings?.locked
 			});

@@ -8,6 +8,7 @@ import { DeferredPromise } from '../../../../base/common/async.js';
 import { URI } from '../../../../base/common/uri.js';
 import { mock } from '../../../../base/test/common/mock.js';
 import { ensureNoDisposablesAreLeakedInTestSuite } from '../../../../base/test/common/utils.js';
+import { CommandsRegistry } from '../../../commands/common/commands.js';
 import { IConfigurationService } from '../../../configuration/common/configuration.js';
 import { TestConfigurationService } from '../../../configuration/test/common/testConfigurationService.js';
 import { ContextKeyService, setContext } from '../../browser/contextKeyService.js';
@@ -101,6 +102,24 @@ suite('ContextKeyService', () => {
 
 		const expr = ContextKeyExpr.in('notebookCellResource', 'jupyter.runByLineCells');
 		assert.deepStrictEqual(contextKeyService.contextMatchesRules(expr), true);
+	});
+
+	test('Nexgile: _nexgile.getContextKeyValue reads back a key set with setContext', () => {
+		const configurationService: IConfigurationService = new TestConfigurationService();
+		const contextKeyService: IContextKeyService = testDisposables.add(new ContextKeyService(configurationService));
+		const instantiationService = testDisposables.add(new TestInstantiationService(new ServiceCollection(
+			[IConfigurationService, configurationService],
+			[IContextKeyService, contextKeyService],
+		)));
+		const getContextKeyValue = CommandsRegistry.getCommand('_nexgile.getContextKeyValue')!.handler;
+
+		instantiationService.invokeFunction(setContext, 'nexgile-code.licensed', true);
+
+		assert.deepStrictEqual([
+			instantiationService.invokeFunction(getContextKeyValue, 'nexgile-code.licensed'),
+			instantiationService.invokeFunction(getContextKeyValue, 'nexgile-code.neverSet'),
+			instantiationService.invokeFunction(getContextKeyValue, 42),
+		], [true, undefined, undefined]);
 	});
 
 	test('suppress update event from parent when one key is overridden by child', () => {

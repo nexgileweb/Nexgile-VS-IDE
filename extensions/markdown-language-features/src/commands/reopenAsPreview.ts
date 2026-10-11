@@ -5,11 +5,17 @@
 
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
+import { openInNexgilePreview } from '../preview/nexgilePreview';
 
 export class ReopenAsPreviewCommand implements Command {
 	public readonly id = 'markdown.reopenAsPreview';
 
 	public async execute() {
+		// Nexgile: a Markdown file on disk opens in Nexgile Code's preview instead (see nexgilePreview.ts).
+		if (await openInNexgilePreview(vscode.window.activeTextEditor?.document.uri)) {
+			return;
+		}
+
 		await vscode.commands.executeCommand('reopenActiveEditorWith', 'vscode.markdown.preview.editor');
 	}
 }
@@ -27,6 +33,11 @@ export class TogglePreviewCommand implements Command {
 
 	public async execute() {
 		if (vscode.window.activeTextEditor) {
+			// Nexgile: a Markdown file on disk opens in Nexgile Code's preview instead (see nexgilePreview.ts).
+			if (await openInNexgilePreview(vscode.window.activeTextEditor.document.uri)) {
+				return;
+			}
+
 			// In source editor, switch to preview
 			await vscode.commands.executeCommand('reopenActiveEditorWith', 'vscode.markdown.preview.editor');
 		} else {

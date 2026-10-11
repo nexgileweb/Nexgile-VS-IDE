@@ -18,6 +18,7 @@ import { MarkdownContributionProvider } from './markdownExtensions';
 import { MarkdownEditorProvider } from './preview/markdownEditorProvider';
 import { createSharedLinkPresentationService, registerLinkPresentationProvider } from './preview/linkPresentation/linkPresentationService';
 import { MdDocumentRenderer } from './preview/documentRenderer';
+import { registerNexgilePreviewContext } from './preview/nexgilePreview';
 import { MarkdownPreviewManager } from './preview/previewManager';
 import { ExtensionContentSecurityPolicyArbiter } from './preview/security';
 import { loadDefaultTelemetryReporter } from './telemetryReporter';
@@ -46,6 +47,7 @@ export function activateShared(
 
 	context.subscriptions.push(registerMarkdownLanguageFeatures(client, commandManager, engine));
 	context.subscriptions.push(registerMarkdownCommands(commandManager, previewManager, telemetryReporter, cspArbiter, engine));
+	context.subscriptions.push(registerNexgilePreviewContext());
 
 	const linkPresentationService = createSharedLinkPresentationService(logger);
 	context.subscriptions.push(

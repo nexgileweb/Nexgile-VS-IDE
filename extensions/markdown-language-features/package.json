@@ -574,13 +574,13 @@
       "editor/title": [
         {
           "command": "markdown.showPreviewToSide",
-          "when": "editorLangId =~ /^(markdown|prompt|instructions|chatagent|skill)$/ && !notebookEditorFocused && !hasCustomMarkdownPreview",
+          "when": "editorLangId =~ /^(markdown|prompt|instructions|chatagent|skill)$/ && !notebookEditorFocused && !hasCustomMarkdownPreview && !(markdown.nexgilePreviewAvailable && nexgile-code.licensed && resourceScheme == file && resourceLangId == markdown && resourceExtname =~ /^\\.(md|markdown)$/i)",
           "alt": "markdown.showPreview",
           "group": "navigation@1"
         },
         {
           "command": "markdown.reopenAsPreview",
-          "when": "activeEditor == workbench.editors.files.textFileEditor && resourceLangId =~ /^(markdown|prompt|instructions|chatagent|skill)$/ && !notebookEditorFocused && !hasCustomMarkdownPreview && !isSessionsWindow",
+          "when": "activeEditor == workbench.editors.files.textFileEditor && resourceLangId =~ /^(markdown|prompt|instructions|chatagent|skill)$/ && !notebookEditorFocused && !hasCustomMarkdownPreview && !isSessionsWindow && !(markdown.nexgilePreviewAvailable && nexgile-code.licensed && resourceScheme == file && resourceLangId == markdown && resourceExtname =~ /^\\.(md|markdown)$/i)",
           "group": "navigation@2"
         },
         {
