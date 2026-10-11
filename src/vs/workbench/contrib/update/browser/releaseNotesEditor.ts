@@ -3,13 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CancellationToken } from '../../../../base/common/cancellation.js';
 import { $, getWindow } from '../../../../base/browser/dom.js';
 import { safeSetInnerHtml, sanitizeHtml } from '../../../../base/browser/domSanitize.js';
 import { allowedMarkdownHtmlAttributes, allowedMarkdownHtmlTags } from '../../../../base/browser/markdownRenderer.js';
 import { status } from '../../../../base/browser/ui/aria/aria.js';
 import { RunOnceScheduler } from '../../../../base/common/async.js';
-import { Codicon } from '../../../../base/common/codicons.js';
 import { onUnexpectedError } from '../../../../base/common/errors.js';
 import { Event } from '../../../../base/common/event.js';
 import { escapeMarkdownSyntaxTokens } from '../../../../base/common/htmlContent.js';
@@ -27,7 +25,6 @@ import { IEnvironmentService } from '../../../../platform/environment/common/env
 import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
 import { IOpenerService } from '../../../../platform/opener/common/opener.js';
 import { IProductService } from '../../../../platform/product/common/productService.js';
-import { asTextOrError, IRequestService } from '../../../../platform/request/common/request.js';
 import { DEFAULT_MARKDOWN_STYLES, renderMarkdownDocument } from '../../markdown/browser/markdownDocumentRenderer.js';
 import { WebviewInput } from '../../webviewPanel/browser/webviewEditorInput.js';
 import { IWebviewWorkbenchService } from '../../webviewPanel/browser/webviewWorkbenchService.js';
@@ -40,7 +37,7 @@ import { TelemetryLevel } from '../../../../platform/telemetry/common/telemetry.
 import { Disposable, DisposableStore, MutableDisposable } from '../../../../base/common/lifecycle.js';
 import { SimpleSettingRenderer } from '../../markdown/browser/markdownSettingRenderer.js';
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
-import { Schemas } from '../../../../base/common/network.js';
+import { FileAccess, Schemas } from '../../../../base/common/network.js';
 import { ICodeEditorService } from '../../../../editor/browser/services/codeEditorService.js';
 import { dirname } from '../../../../base/common/resources.js';
 import { asWebviewUri } from '../../webview/common/webview.js';
@@ -49,6 +46,7 @@ import { AccessibilityVerbositySettingId } from '../../accessibility/browser/acc
 import { AccessibilityCommandId } from '../../accessibility/common/accessibilityCommands.js';
 import { RUN_ONBOARDING_TRYOUT_COMMAND_ID } from '../../onboarding/common/onboardingTryout.js';
 import { ReleaseNotesTryouts } from './releaseNotesTryouts.js';
+import { getNexgileReleaseNotes } from '../common/nexgileReleaseNotes.js';
 
 interface IReleaseNotesCodeBlock {
 	readonly id: string;
@@ -78,7 +76,6 @@ export class ReleaseNotesManager extends Disposable {
 		@IKeybindingService private readonly _keybindingService: IKeybindingService,
 		@ILanguageService private readonly _languageService: ILanguageService,
 		@IOpenerService private readonly _openerService: IOpenerService,
-		@IRequestService private readonly _requestService: IRequestService,
 		@IConfigurationService private readonly _configurationService: IConfigurationService,
 		@IEditorService private readonly _editorService: IEditorService,
 		@IEditorGroupsService private readonly _editorGroupService: IEditorGroupsService,
@@ -133,7 +130,8 @@ export class ReleaseNotesManager extends Disposable {
 				return dirname(currentFileUri);
 			}
 		}
-		return URI.parse('https://code.visualstudio.com/raw');
+		// Nexgile: relative links in the bundled release notes resolve against Nexgile's release notes page.
+		return URI.parse(this._productService.releaseNotesUrl ?? 'https://nexgile.com/release-notes');
 	}
 
 	public async show(version: string, useCurrentFile: boolean): Promise<boolean> {
@@ -169,6 +167,8 @@ export class ReleaseNotesManager extends Disposable {
 		if (this._currentReleaseNotes) {
 			this._currentReleaseNotes.setWebviewTitle(title);
 		} else {
+			// Nexgile: the tab shows the product's own icon, not the VS Code logo.
+			const productIcon = FileAccess.asBrowserUri('vs/workbench/browser/media/code-icon.svg');
 			this._currentReleaseNotes = this._webviewWorkbenchService.openWebview(
 				{
 					title,
@@ -185,7 +185,7 @@ export class ReleaseNotesManager extends Disposable {
 				},
 				'releaseNotes',
 				title,
-				Codicon.vscode,
+				{ light: productIcon, dark: productIcon },
 				{ group: ACTIVE_GROUP, preserveFocus: false });
 
 			const input = this._currentReleaseNotes;
@@ -257,9 +257,6 @@ export class ReleaseNotesManager extends Disposable {
 			throw new Error('not found');
 		}
 
-		const versionLabel = match[1].replace(/\./g, '_');
-		const baseUrl = 'https://code.visualstudio.com/raw';
-		const url = `${baseUrl}/v${versionLabel}.md`;
 		const unassigned = nls.localize('unassigned', "unassigned");
 
 		const escapeMdHtml = (text: string): string => {
@@ -317,7 +314,9 @@ export class ReleaseNotesManager extends Disposable {
 					const file = this._codeEditorService.getActiveCodeEditor()?.getModel()?.getValue();
 					text = file ? file.substring(file.indexOf('#')) : undefined;
 				} else {
-					text = await asTextOrError(await this._requestService.request({ url, callSite: 'releaseNotesEditor.fetchReleaseNotes' }, CancellationToken.None));
+					// Nexgile: this build's own release notes (see nexgileReleaseNotes.ts), not VS Code's
+					// from code.visualstudio.com.
+					text = getNexgileReleaseNotes(version);
 				}
 			} catch {
 				throw new Error('Failed to fetch release notes');

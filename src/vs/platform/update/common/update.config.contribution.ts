@@ -71,12 +71,13 @@ configurationRegistry.registerConfiguration({
 			description: localize('enableWindowsBackgroundUpdates', "Enable to download and install new VS Code versions in the background."),
 			included: isWindows && !isWeb
 		},
+		// Nexgile: the release notes and the post-install tooltip ship with the product
+		// (contrib/update/common/nexgileReleaseNotes.ts), so neither setting uses an online service.
 		'update.showReleaseNotes': {
 			type: 'boolean',
 			default: true,
 			scope: ConfigurationScope.APPLICATION,
-			description: localize('showReleaseNotes', "Show Release Notes after an update. The Release Notes are fetched from a Microsoft online service."),
-			tags: ['usesOnlineServices'],
+			description: localize('showReleaseNotes', "Show Release Notes after an update."),
 			agentsWindow: { default: false, readOnly: true },
 		},
 		'update.showPostInstallInfo': {
@@ -85,7 +86,6 @@ configurationRegistry.registerConfiguration({
 			experiment: { mode: 'auto' },
 			scope: ConfigurationScope.APPLICATION,
 			description: localize('showPostInstallInfo', "Show a post-install update tooltip in the title bar instead of opening the release notes editor."),
-			tags: ['usesOnlineServices']
 		},
 		'update.titleBar': {
 			type: 'boolean',
