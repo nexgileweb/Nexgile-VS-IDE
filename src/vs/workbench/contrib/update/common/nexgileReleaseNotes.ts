@@ -37,13 +37,13 @@ const releases = new Map<string, INexgileRelease>([
 		title: 'Nexgile Code 1.141',
 		intro: `Release date: October 2026
 
-Nexgile Code 1.141 is built on Visual Studio Code 1.141 and ships with version 3.6.158 of the Nexgile Code agent. These notes cover what has changed since Nexgile Code 1.123.`,
+Nexgile Code 1.141 is built on Visual Studio Code 1.141 and ships with version 3.6.159 of the Nexgile Code agent. These notes cover what has changed since Nexgile Code 1.123.`,
 		highlights: [
 			{ icon: 'preview', title: 'One Markdown preview', description: 'Open Preview now opens Nexgile Code\'s preview, where you can select any part of a document, comment on it and have the AI rewrite that part.' },
 			{ icon: 'shield', title: 'Offline security checks', description: 'Files the agent writes and files you save are scanned on your machine, and Security mode starts from what the scanners found.' },
-			{ icon: 'type-hierarchy', title: 'Cortex on NxGraph', description: 'Cortex now runs on NxGraph 2.1.0, and code search works in /batch task worktrees.' },
+			{ icon: 'checklist', title: 'Plan mode', description: 'Architect mode is now Plan mode: review a plan in its preview, comment on any part of it, and choose Proceed when it is right.' },
+			{ icon: 'type-hierarchy', title: 'Cortex on NxGraph', description: 'Cortex now runs on NxGraph 2.3.0 and follows calls from one service into the next, and code search works in /batch task worktrees.' },
 			{ icon: 'debug-restart', title: 'Work that survives a reload', description: 'Parallel subtasks and Agent Teams pick up where they left off after the window reloads.' },
-			{ icon: 'sparkle', title: 'Claude Sonnet 5.5', description: 'Claude Sonnet 5.5 joins the model pickers, and long DeepSeek answers are no longer cut off.' },
 		],
 		details: `## Nexgile Code IDE
 
@@ -57,11 +57,15 @@ Every way into the preview opens it: the preview button in the editor title bar,
 
 **Branding.** The macOS and Linux app icons and the publisher named on the binaries are Nexgile Code's, and the Windows installer names Nexgile Code instead of VS Code in its messages.
 
-## Nexgile Code agent 3.6.158
+## Nexgile Code agent 3.6.159
+
+**Plan mode.** Architect mode is now Plan mode, reached with \`/plan\`, and anything saved under the old name keeps working. A finished plan opens in a preview beside the chat: select any part of it and choose **Comment**, then **Review** sends all your comments at once and the agent presents the revised plan in the same tab. Nothing is implemented until you choose **Proceed**. The chat keeps a small card with the plan's title and summary. Plans are saved in the project's own folder, \`~/.nexgile/projects/<project>/plans\`, instead of in the repository.
+
+**UI Designer preview.** Once UI Designer has written a design, a **Preview** button under the conversation opens it rendered in an editor tab, with Mobile, Tablet, Desktop and Fit widths. The design runs in a sandboxed frame that cannot reach the network or the disk.
 
 **Offline security checks.** Every file the agent writes is scanned before the agent carries on: a high or critical finding goes back to the agent the way a compile error does, so it fixes what it just introduced, and everything else appears in the Problems panel. Files you save are scanned too, **Nexgile Code: Scan Workspace for Security Problems** scans every indexed folder, and Security mode starts from what the scanners found. The checks use NxGraph's security rules and taint analysis, plus Opengrep, ast-grep, Betterleaks, OSV-Scanner, actionlint and zizmor from the Nexgile Security Pack extension. The scanners run with their network features switched off, and nothing is downloaded while they run.
 
-**Cortex runs on NxGraph.** Cortex's engine, formerly CodeGraph, is now NxGraph 2.1.0. Each project's index is built again the first time the project opens after this update, and Cortex settings start from their defaults once, so set them again in **Settings > Cortex**. The Cortex commands keep their titles but have new IDs, so a keybinding made for one of them needs to be set again. Every /batch task worktree can have a Cortex index of its own, and codebase search works in those worktrees too.
+**Cortex runs on NxGraph.** Cortex's engine is now NxGraph 2.3.0. It reads a repository as services, apps and libraries, and follows HTTP calls, gRPC calls and messages from one service into the next, through gateways, Dapr and sagas, so explore, impact and flows cross service boundaries. HTML pages and templates are indexed too. Each project's index is built again the first time the project opens after this update, and Cortex settings start from their defaults once, so set them again in **Settings > Cortex**. The Cortex commands keep their titles but have new IDs, so a keybinding made for one of them needs to be set again. Every /batch task worktree can have a Cortex index of its own, and codebase search works in those worktrees too.
 
 **Work that survives a reload.** Parallel subtasks and Agent Teams now survive a window reload: open the parent task from history and choose **Continue**, and every child resumes. Workflow scripts can start child tasks, wait for them and combine their results in code, and a task can carry read scopes beside its write scopes.
 
