@@ -37,7 +37,7 @@ const releases = new Map<string, INexgileRelease>([
 		title: 'Nexgile Code 1.141',
 		intro: `Release date: October 2026
 
-Nexgile Code 1.141 is built on Visual Studio Code 1.141 and ships with version 3.6.161 of the Nexgile Code agent. These notes cover what has changed since Nexgile Code 1.123.`,
+Nexgile Code 1.141 is built on Visual Studio Code 1.141 and ships with version 3.6.162 of the Nexgile Code agent. These notes cover what has changed since Nexgile Code 1.123.`,
 		highlights: [
 			{ icon: 'preview', title: 'One Markdown preview', description: 'Open Preview now opens Nexgile Code\'s preview, where you can select any part of a document, comment on it and have the AI rewrite that part.' },
 			{ icon: 'sparkle', title: 'Inline edit', description: 'Select some lines, press Ctrl+I (Cmd+I on macOS) and say what should change: the rewrite appears in place for you to accept or reject.' },
@@ -57,7 +57,7 @@ Every way into the preview opens it: the preview button in the editor title bar,
 
 **Branding.** The macOS and Linux app icons and the publisher named on the binaries are Nexgile Code's, and the Windows installer names Nexgile Code instead of VS Code in its messages.
 
-## Nexgile Code agent 3.6.161
+## Nexgile Code agent 3.6.162
 
 **Inline edit.** Select some lines, press Ctrl+I (Cmd+I on macOS) and say what should change: the rewrite appears in place in the editor, with **Accept**, **Reject**, **Follow-up** and **Show diff** above it, and Reject puts the original lines back exactly. With nothing selected, the same keys write new code at the cursor. It works in remote windows and untitled editors too, and you choose its model under **Settings > Prompts > Inline Edit**. Nothing is sent from a file \`.nexgileignore\` covers or a file that looks like a secret.
 
