@@ -37,13 +37,13 @@ const releases = new Map<string, INexgileRelease>([
 		title: 'Nexgile Code 1.141',
 		intro: `Release date: October 2026
 
-Nexgile Code 1.141 is built on Visual Studio Code 1.141 and ships with version 3.6.162 of the Nexgile Code agent. These notes cover what has changed since Nexgile Code 1.123.`,
+Nexgile Code 1.141 is built on Visual Studio Code 1.141 and ships with version 3.6.163 of the Nexgile Code agent. These notes cover what has changed since Nexgile Code 1.123.`,
 		highlights: [
 			{ icon: 'preview', title: 'One Markdown preview', description: 'Open Preview now opens Nexgile Code\'s preview, where you can select any part of a document, comment on it and have the AI rewrite that part.' },
-			{ icon: 'sparkle', title: 'Inline edit', description: 'Select some lines, press Ctrl+I (Cmd+I on macOS) and say what should change: the rewrite appears in place for you to accept or reject.' },
+			{ icon: 'rocket', title: 'Greenfield', description: 'Describe a new app and Greenfield builds it in one chat: it asks you questions, writes a spec for you to approve, builds the work in parallel and runs the app, deploying only when you ask.' },
 			{ icon: 'checklist', title: 'Plan and Spec modes', description: 'Comment on a plan beside its lines before you choose Proceed, or let Spec mode write requirements, design and tasks for you to review, then run the tasks.' },
 			{ icon: 'shield', title: 'Offline security checks', description: 'Files the agent writes and files you save are scanned on your machine, /security-review reviews your changes, and Security mode starts from what the scanners found.' },
-			{ icon: 'type-hierarchy', title: 'Cortex on NxGraph', description: 'Cortex now runs on NxGraph 2.5.0 and reads your repository as services: each says what it does, and calls are followed from one service into the next.' },
+			{ icon: 'type-hierarchy', title: 'Cortex on NxGraph', description: 'Cortex now runs on NxGraph 2.6.0 and reads your repository as services: each says what it does, and calls are followed from one service into the next.' },
 		],
 		details: `## Nexgile Code IDE
 
@@ -57,7 +57,9 @@ Every way into the preview opens it: the preview button in the editor title bar,
 
 **Branding.** The macOS and Linux app icons and the publisher named on the binaries are Nexgile Code's, and the Windows installer names Nexgile Code instead of VS Code in its messages.
 
-## Nexgile Code agent 3.6.162
+## Nexgile Code agent 3.6.163
+
+**Greenfield.** The new **Greenfield** view in the activity bar builds a new app from a description, in one chat of cards you answer with a click. It asks you a few rounds of questions, writes the requirements, design and task list for you to approve, creates a GitHub repository with one issue per task, and builds the issues in parallel waves, each coded, checked, reviewed, tested and merged. A website, web app or server is then run on your computer and its local address shown, and the app is deployed only when you choose **Deploy**. Greenfield uses the provider and model you set in Nexgile Code. It needs Git, and the GitHub CLI signed in unless you choose **Local only**.
 
 **Inline edit.** Select some lines, press Ctrl+I (Cmd+I on macOS) and say what should change: the rewrite appears in place in the editor, with **Accept**, **Reject**, **Follow-up** and **Show diff** above it, and Reject puts the original lines back exactly. With nothing selected, the same keys write new code at the cursor. It works in remote windows and untitled editors too, and you choose its model under **Settings > Prompts > Inline Edit**. Nothing is sent from a file \`.nexgileignore\` covers or a file that looks like a secret.
 
@@ -75,7 +77,7 @@ Every way into the preview opens it: the preview button in the editor title bar,
 
 **Safer with a cloned repository.** A repository's MCP servers start only after you approve them in **Review MCP servers**, a repository can no longer replace a built-in slash command such as \`/review\`, and a settings file can no longer approve a repository's hooks. Front matter in a repository's commands, skills and agents can no longer run code, text the agent reads, such as a file or a command's output, can no longer act as your message, and one click approves only the request it was shown on. The agent's file tools refuse to write inside a \`.git\` folder, and a shell command that writes a protected file or deletes the root, your home folder or the workspace always waits for you, however its path is written and whatever your auto-approval settings say. \`@problems\` and the diagnostics the agent is given leave out files \`.nexgileignore\` covers.
 
-**Cortex runs on NxGraph.** Cortex's engine is now NxGraph 2.5.0. It reads a repository as services, apps and libraries, each service says what it does, and every Cortex tab names the service of its rows and can narrow to one service. It follows HTTP calls, gRPC calls, messages and background jobs from one service into the next, through gateways, Dapr and sagas, so explore, impact and flows cross service boundaries. A new **Codemaps** tab answers a question about the code with a map of where it happens, in the order the code runs. HTML pages and templates are indexed too. Each project's index is built again the first time the project opens after this update, and Cortex settings start from their defaults once, so set them again in **Settings > Cortex**. The Cortex commands keep their titles but have new IDs, so a keybinding made for one of them needs to be set again. Every /batch task worktree can have a Cortex index of its own, and codebase search works in those worktrees too.
+**Cortex runs on NxGraph.** Cortex's engine is now NxGraph 2.6.0. It reads a repository as services, apps and libraries, each service says what it does, and every Cortex tab names the service of its rows and can narrow to one service. It follows HTTP calls, gRPC calls, messages and background jobs from one service into the next, through gateways, Dapr and sagas, so explore, impact and flows cross service boundaries. Each entry's flows lead with the journeys that do real work, and a click in a React or Blazor page is followed through its handlers to the request it sends. A new **Codemaps** tab answers a question about the code with a map of where it happens, in the order the code runs. HTML pages and templates are indexed too. Each project's index is built again the first time the project opens after this update, and Cortex settings start from their defaults once, so set them again in **Settings > Cortex**. The Cortex commands keep their titles but have new IDs, so a keybinding made for one of them needs to be set again. Every /batch task worktree can have a Cortex index of its own, and codebase search works in those worktrees too.
 
 **Work that survives a reload.** Parallel subtasks and Agent Teams now survive a window reload: open the parent task from history and choose **Continue**, and every child resumes. Delegated sub-agents can work in git worktrees of their own, never touching your folder, and their changes are applied to your folder as uncommitted changes when the last one reports; a conflict waits for you. Commands left running in the background get a process id the agent can list, read and stop, and \`monitor\` tells the agent when a command it watches prints what it is waiting for. Workflow scripts can start child tasks, wait for them and combine their results in code, and a task can carry read scopes beside its write scopes.
 
@@ -93,7 +95,9 @@ Every way into the preview opens it: the preview button in the editor title bar,
 
 **Every mode tested end to end.** All 31 built-in modes were reviewed, and every mode with a gap was run end to end against a real model; what that found is fixed. A question whose "yes" would commit, push, open or merge a pull request, deploy, apply a migration or delete data is now always an approval question, and never answers itself.
 
-**Models.** Claude Sonnet 5.5 can be picked on Anthropic, Amazon Bedrock, Google Vertex AI, OpenRouter and the Vercel AI Gateway. DeepSeek usage outside DeepSeek's peak hours is costed at its off-peak prices, and long DeepSeek answers are no longer cut off at 8,192 tokens.
+**Models.** Claude Sonnet 5.5 and Claude Haiku 5.5 can be picked on Anthropic, Amazon Bedrock, Google Vertex AI, OpenRouter and the Vercel AI Gateway, and GPT-6.1 Sol, Gemini 4 Argon and Mistral Large 4 (preview) are available too. Models their providers have retired, such as OpenAI o1, o3-mini and o4-mini, are hidden from the picker, and profiles that use them still load. DeepSeek usage outside DeepSeek's peak hours is costed at its off-peak prices, and long DeepSeek answers are no longer cut off at 8,192 tokens.
+
+**Licence activation.** A licence now runs on one computer at a time. Activate this computer with your licence key, by signing in, or offline. Nexgile Code checks in about once a day and keeps working for 7 days without a connection, and **Settings > License** shows this computer, with **Check now** and **Deactivate**.
 
 **Removed.** The Translation Hub is removed. Translate mode stays, and **Nexgile Code: Translate Code** opens a chat in it.
 

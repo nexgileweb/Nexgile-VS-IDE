@@ -111,10 +111,10 @@
 		},
 		{
 			"name": "nexgile.nexgile-code",
-			"version": "3.6.162",
-			"sha256": "7739fb4bb0091250f79f40ec9c3e18fba6713d5f428bf153feeb4299f51c0e59",
+			"version": "3.6.163",
+			"sha256": "12cfa2f1dd5462b889f92407981648ea558014fefdfed1b65d38df4a01f002bd",
 			"repo": "https://github.com/nexgileweb/Nexgile-RC-CodingAgent",
-			"vsix": "build/extensions/nexgile-code-3.6.162.vsix",
+			"vsix": "build/extensions/nexgile-code-3.6.163.vsix",
 			"metadata": {
 				"id": "nexgile-code-builtin-001",
 				"publisherId": {
