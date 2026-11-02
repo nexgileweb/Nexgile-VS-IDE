@@ -516,6 +516,7 @@
 		"disableAICustomizations": true,
 		"workbench.disableAICustomizations": true,
 		"chat.agentsControl.enabled": "hidden",
+		"workbench.browser.enableChatTools": false,
 		"workbench.colorTheme": "Nexgile Teal Dark",
 		"workbench.preferredDarkColorTheme": "Nexgile Teal Dark",
 		"workbench.preferredLightColorTheme": "Nexgile Light Enterprise",
