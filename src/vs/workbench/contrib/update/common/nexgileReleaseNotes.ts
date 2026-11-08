@@ -33,6 +33,47 @@ interface INexgileRelease {
 }
 
 const releases = new Map<string, INexgileRelease>([
+	['1.145', {
+		title: 'Nexgile Code 1.145',
+		intro: `Release date: November 2026
+
+Nexgile Code 1.145 is built on Visual Studio Code 1.145 and ships with version 3.6.174 of the Nexgile Code agent. These notes cover what has changed since Nexgile Code 1.141.`,
+		highlights: [
+			{ icon: 'versions', title: 'Built on Visual Studio Code 1.145', description: 'The editor moves from the Visual Studio Code 1.141 base to 1.145 and picks up the editor, terminal, source control and issue reporting improvements made in between.' },
+			{ icon: 'markdown', title: 'A Markdown editor', description: 'Reopen Editor With... > Markdown Editor edits a Markdown file as rendered text, with images pasted straight in and F2 renaming a file link everywhere it appears.' },
+			{ icon: 'report', title: 'A new issue reporter', description: 'Help > Report Issue opens a single-page reporter that can attach a screenshot or a screen recording to the report.' },
+			{ icon: 'warning', title: 'Every problem in a big file', description: 'The editor now underlines up to 5,000 errors and warnings in a file instead of 500, and the status bar says when a file has more.' },
+			{ icon: 'terminal', title: 'Terminal sign-in prompts in front', description: 'On Windows, a dialog that a command in the terminal opens, such as a sign-in prompt, now appears in front of Nexgile Code instead of behind it.' },
+		],
+		details: `## Nexgile Code IDE
+
+**Built on Visual Studio Code 1.145.** The editor moves from the Visual Studio Code 1.141 base to 1.145. Visual Studio Code's own AI features stay switched off, including the new GitHub Copilot CLI page in Visual Studio Code's Windows installer and its \`copilot\` command, which Nexgile Code does not install: all AI in Nexgile Code comes from the Nexgile Code agent.
+
+**A Markdown editor.** **Reopen Editor With...** on a Markdown file now offers **Markdown Editor**, which shows the document as rendered text you edit in place, each source line on its own line while you edit. Paste an image, such as a screenshot, straight into the document, press F2 on a file link to rename it everywhere it appears, and follow the document's headings in the Outline view and the breadcrumbs. Code blocks get a copy button. Open Preview still opens Nexgile Code's preview.
+
+**A new issue reporter.** **Help > Report Issue** now opens a single-page reporter. It can capture a screenshot or record the screen and attach it to the report, and files can be pasted or dropped in. Turn \`issueReporter.wizard.enabled\` off to go back to the classic reporter.
+
+**Editor.** A file with more than 500 errors and warnings now has up to 5,000 of them underlined, and the language status item in the status bar says when a file has more than that. \`editor.occurrencesHighlightFromAllProviders\` merges the highlights of every language feature that marks a symbol's other uses, instead of showing only one.
+
+**Source control.** \`multiDiffEditor.experimental.fileList\` (experimental) adds a list of the changed files beside the multi-file diff editor, with each file's status letter, as a list or a tree, on the left or the right.
+
+**Terminal.** On Windows, a dialog that a console program in the terminal opens, such as a sign-in prompt, now appears in front of Nexgile Code instead of behind it (\`terminal.integrated.windowsReparentConsoleWindow\`).
+
+**An update reminder.** Once a build of Nexgile Code is two months old, a banner says so, at most once a month, with **Open Download Page**. Turn it off with \`update.showOutdatedBuildReminder\`.
+
+## Earlier in Nexgile Code 1.141
+
+Coming from Nexgile Code 1.141? Its builds moved Nexgile Code from the Visual Studio Code 1.123 base to 1.141 and brought the Nexgile Code agent up to 3.6.174:
+
+- **One Markdown preview**: Open Preview opens Nexgile Code's preview, where any part of a document can be selected, commented on and rewritten by the AI.
+- **Greenfield** builds a new app from a description in one chat: an interview, a spec you approve, a build in parallel, and the app run on your computer.
+- **Threads** runs a project's work as threads, each an agent in a git worktree of its own, with a coordinator that starts them.
+- **The agent's browser**, **Memory**, **Inline edit**, **Commit messages**, **Plan mode**, **Spec mode** and **Auto mode**.
+- **Offline security checks** on every file the agent writes and every file you save, and \`/security-review\`.
+- **Cortex** on NxGraph 2.10.0, reading a repository as services.
+- **Nexgile Code release notes** that ship with the product, and Nexgile's own app icons and installer messages.
+`,
+	}],
 	['1.141', {
 		title: 'Nexgile Code 1.141',
 		intro: `Release date: October 2026

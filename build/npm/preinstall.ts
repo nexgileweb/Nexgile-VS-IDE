@@ -7,6 +7,8 @@ import * as fs from 'fs';
 import * as child_process from 'child_process';
 import * as os from 'os';
 import { isUpToDate, forceInstallMessage } from './installStateHash.ts';
+import { isCloudSandbox } from './cloudSandbox.ts';
+import { installNodeGypHeaders } from './nodeGypHeaders.ts';
 
 if (!process.env['VSCODE_SKIP_NODE_VERSION_CHECK']) {
 	// Get the running Node.js version
@@ -63,12 +65,12 @@ if (process.platform === 'win32') {
 	if (!hasSupportedVisualStudioVersion()) {
 		console.error('\x1b[1;31m*** Invalid C/C++ Compiler Toolchain. Please check https://github.com/microsoft/vscode/wiki/How-to-Contribute#prerequisites.\x1b[0;0m');
 		console.error('\x1b[1;31m*** If you have Visual Studio installed in a custom location, you can specify it via the environment variable:\x1b[0;0m');
-		console.error('\x1b[1;31m*** set vs2022_install=<path> (or vs2019_install for older versions)\x1b[0;0m');
+		console.error('\x1b[1;31m*** set vs2026_install=<path> (or vs2022_install / vs2019_install for older versions)\x1b[0;0m');
 		throw new Error();
 	}
 }
 
-installHeaders();
+await installHeaders();
 
 if (process.arch !== os.arch()) {
 	console.error(`\x1b[1;31m*** ARCHITECTURE MISMATCH: The node.js process is ${process.arch}, but your OS architecture is ${os.arch()}. ***\x1b[0;0m`);
@@ -78,19 +80,19 @@ if (process.arch !== os.arch()) {
 function hasSupportedVisualStudioVersion() {
 	// Translated over from
 	// https://source.chromium.org/chromium/chromium/src/+/master:build/vs_toolchain.py;l=140-175
-	// Map of env var suffix -> directory names to check
-	const supportedVersions: Array<{ envSuffix: string; dirNames: string[] }> = [
-		{ envSuffix: '2026', dirNames: ['18'] },
-		{ envSuffix: '2022', dirNames: ['2022'] },
-		{ envSuffix: '2019', dirNames: ['2019'] },
+	// Visual Studio 2026 installs into a folder named after its major version instead of its year.
+	const supportedVersions = [
+		{ year: '2026', folder: '18' },
+		{ year: '2022', folder: '2022' },
+		{ year: '2019', folder: '2019' },
 	];
 
 	const availableVersions = [];
-	for (const { envSuffix, dirNames } of supportedVersions) {
+	for (const { year, folder } of supportedVersions) {
 		// Check environment variable first (explicit override)
-		let vsPath = process.env[`vs${envSuffix}_install`];
+		let vsPath = process.env[`vs${year}_install`];
 		if (vsPath && fs.existsSync(vsPath)) {
-			availableVersions.push(envSuffix);
+			availableVersions.push(year);
 			break;
 		}
 
@@ -99,33 +101,27 @@ function hasSupportedVisualStudioVersion() {
 		const programFiles64Path = process.env['ProgramFiles'];
 
 		const vsTypes = ['Enterprise', 'Professional', 'Community', 'Preview', 'BuildTools', 'IntPreview'];
-		let found = false;
-		for (const dirName of dirNames) {
-			if (programFiles64Path) {
-				vsPath = `${programFiles64Path}/Microsoft Visual Studio/${dirName}`;
-				if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
-					availableVersions.push(envSuffix);
-					found = true;
-					break;
-				}
-			}
-
-			if (programFiles86Path) {
-				vsPath = `${programFiles86Path}/Microsoft Visual Studio/${dirName}`;
-				if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
-					availableVersions.push(envSuffix);
-					found = true;
-					break;
-				}
+		if (programFiles64Path) {
+			vsPath = `${programFiles64Path}/Microsoft Visual Studio/${folder}`;
+			if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
+				availableVersions.push(year);
+				break;
 			}
 		}
-		if (found) { break; }
+
+		if (programFiles86Path) {
+			vsPath = `${programFiles86Path}/Microsoft Visual Studio/${folder}`;
+			if (vsTypes.some(vsType => fs.existsSync(path.join(vsPath!, vsType)))) {
+				availableVersions.push(year);
+				break;
+			}
+		}
 	}
 
 	return availableVersions.length;
 }
 
-function installHeaders() {
+async function installHeaders() {
 	const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 	child_process.execSync(`${npm} ${process.env.npm_command || 'ci'}`, {
 		env: process.env,
@@ -135,22 +131,20 @@ function installHeaders() {
 
 	// The node gyp package got installed using the above npm command using the gyp/package.json
 	// file checked into our repository. So from that point it is safe to construct the path
-	// to that executable
-	const node_gyp = process.platform === 'win32'
-		? path.join(import.meta.dirname, 'gyp', 'node_modules', '.bin', 'node-gyp.cmd')
-		: path.join(import.meta.dirname, 'gyp', 'node_modules', '.bin', 'node-gyp');
+	// to its entry point
+	const nodeGypScript = path.join(import.meta.dirname, 'gyp', 'node_modules', 'node-gyp', 'bin', 'node-gyp.js');
 
 	const local = getHeaderInfo(path.join(import.meta.dirname, '..', '..', '.npmrc'));
 	const remote = getHeaderInfo(path.join(import.meta.dirname, '..', '..', 'remote', '.npmrc'));
 
 	if (local !== undefined) {
 		// Both disturl and target come from a file checked into our repository
-		child_process.execFileSync(node_gyp, ['install', '--dist-url', local.disturl, local.target], { shell: true });
+		await installNodeGypHeaders(nodeGypScript, local.disturl, local.target);
 	}
 
 	if (remote !== undefined) {
 		// Both disturl and target come from a file checked into our repository
-		child_process.execFileSync(node_gyp, ['install', '--dist-url', remote.disturl, remote.target], { shell: true });
+		await installNodeGypHeaders(nodeGypScript, remote.disturl, remote.target);
 	}
 
 	// Overlay any custom headers shipped in build/npm/gyp/custom-headers on top of
@@ -205,6 +199,9 @@ function getHeaderInfo(rcFile: string): { disturl: string; target: string } | un
 		let match = line.match(/\s*disturl=*\"(.*)\"\s*$/);
 		if (match !== null && match.length >= 1) {
 			disturl = match[1];
+			if (isCloudSandbox() && disturl === 'https://electronjs.org/headers') {
+				disturl = 'https://artifacts.electronjs.org/headers/dist';
+			}
 		}
 		match = line.match(/\s*target=*\"(.*)\"\s*$/);
 		if (match !== null && match.length >= 1) {

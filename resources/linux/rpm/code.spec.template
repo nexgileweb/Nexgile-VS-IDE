@@ -49,6 +49,11 @@ cp usr/share/bash-completion/completions/%{name} %{buildroot}%{_datadir}/bash-co
 cp usr/share/zsh/site-functions/_%{name} %{buildroot}%{_datadir}/zsh/site-functions/_%{name}
 
 %post
+@@COPILOT_LINK_HELPER@@
+
+# The helper only manages /usr/bin/copilot for Microsoft's code and code-insiders packages: a no-op for this one.
+vscode_copilot_link install "%{name}" || :
+
 # Install the desktop entry
 update-desktop-database &> /dev/null || :
 
@@ -56,6 +61,12 @@ update-desktop-database &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
 
 %postun
+@@COPILOT_LINK_HELPER@@
+
+if [ "$1" = 0 ]; then
+	vscode_copilot_link remove "%{name}" || :
+fi
+
 # Uninstall the desktop entry
 update-desktop-database &> /dev/null || :
 

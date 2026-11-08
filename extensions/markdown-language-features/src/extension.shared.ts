@@ -66,7 +66,7 @@ export function activateShared(
 		opener,
 		contributions,
 		logger,
-		href => linkPresentationService.openLink(href),
+		(href, fromResource) => linkPresentationService.openLink(href, fromResource),
 	);
 	context.subscriptions.push(markdownEditorProvider);
 	context.subscriptions.push(registerMarkdownEditorCommands(context, markdownEditorProvider));
@@ -102,7 +102,9 @@ function registerMarkdownEditorCommands(
 			}
 			return vscode.commands.registerCommand(commandId, () => provider.executeCommand(commandId));
 		});
-	return vscode.Disposable.from(...registrations);
+	return vscode.Disposable.from(...registrations,
+		vscode.commands.registerCommand('markdown.editor.rename', () => provider.executeCommand('markdown.editor.rename')),
+		vscode.commands.registerCommand('markdown.editor.triggerSuggest', () => provider.executeCommand('markdown.editor.triggerSuggest')));
 }
 
 function registerMarkdownLanguageFeatures(
