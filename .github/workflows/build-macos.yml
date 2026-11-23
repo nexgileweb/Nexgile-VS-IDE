@@ -33,7 +33,8 @@ jobs:
       matrix:
         edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
     name: macOS arm64 (Apple Silicon, ${{ matrix.edition }})
-    runs-on: macos-14
+    # macos-14 was retired by GitHub and now refuses jobs.
+    runs-on: macos-15
     timeout-minutes: 60
     env:
       VSCODE_ARCH: arm64
@@ -58,7 +59,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .build/node_modules_cache
-          key: node_modules-macos-arm64-${{ hashFiles('package-lock.json') }}
+          key: node_modules-macos15-arm64-${{ hashFiles('package-lock.json') }}
 
       - name: Extract node_modules cache
         if: steps.cache-node-modules.outputs.cache-hit == 'true'
@@ -152,7 +153,8 @@ jobs:
       matrix:
         edition: ${{ fromJSON(inputs.edition == 'both' && '["standard","taa"]' || format('["{0}"]', inputs.edition || 'standard')) }}
     name: macOS x64 (Intel, ${{ matrix.edition }})
-    runs-on: macos-13
+    # macos-13 was retired by GitHub and now refuses jobs.
+    runs-on: macos-15-intel
     timeout-minutes: 60
     env:
       VSCODE_ARCH: x64
@@ -177,7 +179,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .build/node_modules_cache
-          key: node_modules-macos-x64-${{ hashFiles('package-lock.json') }}
+          key: node_modules-macos15-x64-${{ hashFiles('package-lock.json') }}
 
       - name: Extract node_modules cache
         if: steps.cache-node-modules.outputs.cache-hit == 'true'
