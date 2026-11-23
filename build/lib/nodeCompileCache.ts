@@ -29,7 +29,13 @@ export function shouldGenerateNodeCompileCache(platform: string, arch: string, p
 		return false;
 	}
 
-	return platform === 'darwin' ? arch === 'arm64' : (platform === 'linux' || platform === 'win32') && arch === 'x64';
+	// Nexgile: Windows x64 only, as before VS Code 1.145. Upstream re-enabled the
+	// macOS and Linux caches for Microsoft's own Electron builds (product
+	// `electronArtifactFeed`), whose runtime fixes portable caching with the eager
+	// and read-only options. This product packages the public Electron release
+	// (`electronArtifactFeed` is empty), and on Linux it writes no `main` cache, so
+	// the package step fails validation. Without a cache the app starts as before.
+	return platform === 'win32' && arch === 'x64';
 }
 
 export function getNodeCompileCachePaths(platform: string, outputDirectory: string, versionedResourcesFolder: string, product: INodeCompileCacheProduct): INodeCompileCachePaths {

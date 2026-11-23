@@ -52,13 +52,12 @@ jobs:
 
       # Native-module build + .deb/.rpm packaging prerequisites. Linux does not
       # code-sign, so there is no signtool/codesign step (unlike win32/darwin).
-      # xvfb gives the minified build the X display it launches the app on.
       - name: Install Linux build dependencies
         run: |
           set -e
           sudo apt-get update
           sudo apt-get install -y build-essential pkg-config python3-setuptools \
-            libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev fakeroot rpm xvfb
+            libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev fakeroot rpm
 
       - name: Restore node_modules cache
         id: cache-node-modules
@@ -117,13 +116,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Since VS Code 1.145 the x64 package step ends by launching the built app
-      # once to generate its Node.js compile cache (build/lib/nodeCompileCache.ts).
-      # Electron needs an X display for that and the runner has none ("Missing X
-      # server or $DISPLAY"), so run the build on a virtual one, as upstream's
-      # pipelines do with Xvfb. Linux arm64 skips that step, so it needs none.
       - name: Build client (minified)
-        run: xvfb-run -a npm run gulp vscode-linux-x64-min
+        run: npm run gulp vscode-linux-x64-min
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
