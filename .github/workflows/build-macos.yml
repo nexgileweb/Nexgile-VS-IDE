@@ -35,7 +35,7 @@ jobs:
     name: macOS arm64 (Apple Silicon, ${{ matrix.edition }})
     # macos-14 was retired by GitHub and now refuses jobs.
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       VSCODE_ARCH: arm64
       NPM_ARCH: arm64
@@ -155,7 +155,9 @@ jobs:
     name: macOS x64 (Intel, ${{ matrix.edition }})
     # macos-13 was retired by GitHub and now refuses jobs.
     runs-on: macos-15-intel
-    timeout-minutes: 60
+    # Intel runners take ~70 min when node_modules is not cached (npm ci alone
+    # is ~20), and the cache is only saved by a run that finishes.
+    timeout-minutes: 120
     env:
       VSCODE_ARCH: x64
       NPM_ARCH: x64
