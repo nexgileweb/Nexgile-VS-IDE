@@ -130,11 +130,23 @@ jobs:
       - name: Install dmgbuild
         run: python3 -m pip install --break-system-packages dmgbuild
 
+      # The runner indexes and scans each disk image dmgbuild mounts, which can
+      # keep it from detaching the image ("hdiutil: couldn't eject disk2 -
+      # Resource busy"). Turn Spotlight off and retry, detaching what is left.
       - name: Build .dmg installer (unsigned)
         run: |
           set -e
+          sudo mdutil -a -i off || true
           mkdir -p "$GITHUB_WORKSPACE/.build/darwin"
-          node build/darwin/create-dmg.ts "$(dirname "$GITHUB_WORKSPACE")" "$GITHUB_WORKSPACE/.build/darwin"
+          for i in 1 2 3; do
+            node build/darwin/create-dmg.ts "$(dirname "$GITHUB_WORKSPACE")" "$GITHUB_WORKSPACE/.build/darwin" && break
+            if [ $i -eq 3 ]; then echo "create-dmg failed 3 times" >&2; exit 1; fi
+            for v in "/Volumes/Nexgile Code"*; do
+              if [ -d "$v" ]; then hdiutil detach "$v" -force || true; fi
+            done
+            echo "Retry $i..."
+            sleep 15
+          done
         env:
           VSCODE_ARCH: arm64
           VSCODE_QUALITY: stable
@@ -252,11 +264,23 @@ jobs:
       - name: Install dmgbuild
         run: python3 -m pip install --break-system-packages dmgbuild
 
+      # The runner indexes and scans each disk image dmgbuild mounts, which can
+      # keep it from detaching the image ("hdiutil: couldn't eject disk2 -
+      # Resource busy"). Turn Spotlight off and retry, detaching what is left.
       - name: Build .dmg installer (unsigned)
         run: |
           set -e
+          sudo mdutil -a -i off || true
           mkdir -p "$GITHUB_WORKSPACE/.build/darwin"
-          node build/darwin/create-dmg.ts "$(dirname "$GITHUB_WORKSPACE")" "$GITHUB_WORKSPACE/.build/darwin"
+          for i in 1 2 3; do
+            node build/darwin/create-dmg.ts "$(dirname "$GITHUB_WORKSPACE")" "$GITHUB_WORKSPACE/.build/darwin" && break
+            if [ $i -eq 3 ]; then echo "create-dmg failed 3 times" >&2; exit 1; fi
+            for v in "/Volumes/Nexgile Code"*; do
+              if [ -d "$v" ]; then hdiutil detach "$v" -force || true; fi
+            done
+            echo "Retry $i..."
+            sleep 15
+          done
         env:
           VSCODE_ARCH: x64
           VSCODE_QUALITY: stable
